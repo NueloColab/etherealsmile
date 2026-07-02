@@ -22,7 +22,7 @@ export default function Home() {
             top: star.top,
             '--duration': star.duration,
             '--delay': star.delay,
-          } as React.CSSProperties}
+          }}
         />
       ))}
 
