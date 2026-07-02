@@ -23,7 +23,7 @@ export default function Home() {
 
       {/* The illustrated mouth - the brand logo */}
       <div style={{ animation: 'float 7s ease-in-out infinite', maxWidth: '320px', width: '100%', marginBottom: '1.5rem' }}>
-        <img src="/brand-card-2.png" alt="Ethereal Smile" style={{ width: '100%', height: 'auto', borderRadius: '10px', display: 'block' }} />
+        <img src="/brand-card-2.png?v=2" alt="Ethereal Smile" style={{ width: '100%', height: 'auto', borderRadius: '10px', display: 'block' }} />
       </div>
 
       {/* Heading */}
