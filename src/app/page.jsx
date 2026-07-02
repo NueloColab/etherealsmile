@@ -1,72 +1,116 @@
 'use client'
 
 export default function Home() {
-  const stars = Array.from({ length: 30 }, (_, i) => ({
+  const stars = Array.from({ length: 50 }, (_, i) => ({
     id: i,
     left: `${Math.random() * 100}%`,
     top: `${Math.random() * 100}%`,
-    duration: `${2 + Math.random() * 4}s`,
-    delay: `${Math.random() * 5}s`,
-    isGold: i % 5 === 0,
+    duration: `${3 + Math.random() * 5}s`,
+    delay: `${Math.random() * 6}s`,
+    isGold: i % 6 === 0,
   }))
 
   return (
-    <main style={{ minHeight: '100vh', maxHeight: '100vh', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem 1.25rem' }}>
-      {/* Stars background */}
+    <main style={{ height: '100vh', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem 1.5rem' }}>
+      {/* Starfield */}
       {stars.map((star) => (
         <div
           key={star.id}
           className={`star ${star.isGold ? 'gold' : ''}`}
-          style={{
-            left: star.left,
-            top: star.top,
-            '--duration': star.duration,
-            '--delay': star.delay,
-          }}
+          style={{ left: star.left, top: star.top, '--duration': star.duration, '--delay': star.delay }}
         />
       ))}
 
-      {/* Subtle glow */}
-      <div style={{ position: 'absolute', top: '40%', left: '50%', transform: 'translate(-50%, -50%)', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(139,0,70,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
-
-      {/* Logo */}
-      <div style={{ animation: 'float 6s ease-in-out infinite', maxWidth: '240px', width: '100%', marginBottom: '0.75rem' }}>
-        <img src="/logo.jpg" alt="Ethereal Smile" style={{ width: '100%', height: 'auto', borderRadius: '10px' }} />
+      {/* Hero image */}
+      <div style={{ animation: 'float 7s ease-in-out infinite', maxWidth: '260px', width: '100%', marginBottom: '2rem', animationName: 'float, fadeInUp', animationDuration: '7s, 0.8s', animationTimingFunction: 'ease-in-out, ease-out', animationIterationCount: 'infinite, 1', animationDelay: '0s, 0s', animationFillMode: 'none, both' }}>
+        <img src="/logo.jpg" alt="Ethereal Smile" style={{ width: '100%', height: 'auto', borderRadius: '10px', display: 'block' }} />
       </div>
 
-      {/* Brand name */}
-      <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(1.6rem, 4.5vw, 2.8rem)', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', textAlign: 'center', lineHeight: 1.1, color: '#ffffff', animation: 'fadeInUp 0.8s ease-out 0.2s both', margin: 0 }}>
+      {/* Heading */}
+      <h1 style={{
+        fontFamily: "'Playfair Display', serif",
+        fontSize: 'clamp(1.5rem, 4.5vw, 2.6rem)',
+        fontWeight: 500,
+        letterSpacing: '0.2em',
+        textTransform: 'uppercase',
+        textAlign: 'center',
+        lineHeight: 1.2,
+        color: '#ffffff',
+        animation: 'fadeInUp 0.8s ease-out 0.2s both',
+        marginBottom: '0.75rem',
+      }}>
         Ethereal Smile
       </h1>
 
       {/* Tagline */}
-      <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 'clamp(0.8rem, 1.8vw, 0.95rem)', color: '#c9a96e', textAlign: 'center', letterSpacing: '0.06em', animation: 'fadeInUp 0.8s ease-out 0.4s both', margin: '0.4rem 0 0' }}>
+      <p style={{
+        fontFamily: "'Playfair Display', serif",
+        fontStyle: 'italic',
+        fontSize: 'clamp(0.75rem, 1.6vw, 0.9rem)',
+        color: '#c9a96e',
+        textAlign: 'center',
+        letterSpacing: '0.06em',
+        animation: 'fadeInUp 0.8s ease-out 0.35s both',
+        marginBottom: '1.5rem',
+      }}>
         Genuine Swarovski &amp; Preciosa Crystal Tooth Gems
       </p>
 
       {/* Coming Soon */}
-      <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 'clamp(0.75rem, 1.8vw, 0.9rem)', fontWeight: 300, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.6)', animation: 'fadeInUp 0.8s ease-out 0.5s both', margin: '0.6rem 0 0' }}>
+      <p style={{
+        fontFamily: "'Inter', sans-serif",
+        fontSize: 'clamp(0.7rem, 1.5vw, 0.85rem)',
+        fontWeight: 300,
+        letterSpacing: '0.35em',
+        textTransform: 'uppercase',
+        color: 'rgba(255,255,255,0.7)',
+        animation: 'fadeInUp 0.8s ease-out 0.5s both',
+        marginBottom: '0.35rem',
+      }}>
         Coming Soon
       </p>
 
-      {/* Social links */}
-      <div style={{ display: 'flex', gap: '1.5rem', animation: 'fadeInUp 0.8s ease-out 0.6s both', marginTop: '0.6rem' }}>
+      {/* Subtitle */}
+      <p style={{
+        fontFamily: "'Inter', sans-serif",
+        fontSize: '0.7rem',
+        color: 'rgba(255,255,255,0.35)',
+        letterSpacing: '0.04em',
+        animation: 'fadeInUp 0.8s ease-out 0.6s both',
+        marginBottom: '1.5rem',
+      }}>
+        Follow us for upcoming events and bookings
+      </p>
+
+      {/* Social icons */}
+      <div style={{ display: 'flex', gap: '1.75rem', animation: 'fadeInUp 0.8s ease-out 0.7s both' }}>
         <a href="https://www.instagram.com/etherealsmilex" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="social-link">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" /><circle cx="12" cy="12" r="5" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" /><circle cx="12" cy="12" r="5" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>
           <span>Instagram</span>
         </a>
         <a href="https://www.tiktok.com/@etherealsmilex" target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="social-link">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.57a8.27 8.27 0 004.76 1.5V6.69h-1z" /></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 104 4V4a5 5 0 004 2" /></svg>
           <span>TikTok</span>
         </a>
         <a href="mailto:etherealsmilex@gmail.com" aria-label="Email" className="social-link">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="M22 4L12 13L2 4" /></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="M22 4L12 13L2 4" /></svg>
           <span>Email</span>
         </a>
       </div>
 
-      {/* by Hattie Clifford */}
-      <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '0.6rem', color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', textTransform: 'uppercase', animation: 'fadeInUp 0.8s ease-out 0.7s both', marginTop: '0.6rem' }}>
+      {/* Divider */}
+      <div style={{ width: '50px', height: '1px', background: 'rgba(255,255,255,0.15)', marginTop: '1.75rem', animation: 'fadeInUp 0.8s ease-out 0.85s both' }} />
+
+      {/* Footer */}
+      <p style={{
+        fontFamily: "'Inter', sans-serif",
+        fontSize: '0.55rem',
+        color: 'rgba(255,255,255,0.2)',
+        letterSpacing: '0.2em',
+        textTransform: 'uppercase',
+        marginTop: '0.6rem',
+        animation: 'fadeInUp 0.8s ease-out 0.95s both',
+      }}>
         by Hattie Clifford
       </p>
     </main>
