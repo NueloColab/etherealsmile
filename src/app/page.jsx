@@ -21,9 +21,9 @@ export default function Home() {
         />
       ))}
 
-      {/* Hero image */}
-      <div style={{ animation: 'float 7s ease-in-out infinite', maxWidth: '260px', width: '100%', marginBottom: '2rem', animationName: 'float, fadeInUp', animationDuration: '7s, 0.8s', animationTimingFunction: 'ease-in-out, ease-out', animationIterationCount: 'infinite, 1', animationDelay: '0s, 0s', animationFillMode: 'none, both' }}>
-        <img src="/logo.jpg" alt="Ethereal Smile" style={{ width: '100%', height: 'auto', borderRadius: '10px', display: 'block' }} />
+      {/* The illustrated mouth - the brand logo */}
+      <div style={{ animation: 'float 7s ease-in-out infinite', maxWidth: '320px', width: '100%', marginBottom: '1.5rem' }}>
+        <img src="/brand-card-2.png" alt="Ethereal Smile" style={{ width: '100%', height: 'auto', borderRadius: '10px', display: 'block' }} />
       </div>
 
       {/* Heading */}
