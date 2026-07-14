@@ -1,5 +1,6 @@
 import Hero from './sections/Hero'
 import About from './sections/About'
+import Showreel from './sections/Showreel'
 import Hattie from './sections/Hattie'
 import Book from './sections/Book'
 import Services from './sections/Services'
@@ -15,6 +16,7 @@ export default function Home() {
     <main style={{ position: 'relative', zIndex: 1 }}>
       <Hero />
       <About />
+      <Showreel />
       <Hattie />
       <Book />
       <Services />
