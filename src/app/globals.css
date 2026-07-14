@@ -483,6 +483,12 @@ label {
   margin: 3rem auto 0;
 }
 
+.services-grid > div:hover,
+.services-grid > .service-card:hover {
+  border-color: rgba(233,68,128,0.25) !important;
+  box-shadow: 0 4px 24px rgba(233,68,128,0.08);
+}
+
 @media (max-width: 768px) {
   .services-grid {
     grid-template-columns: 1fr;

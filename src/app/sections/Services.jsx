@@ -25,7 +25,7 @@ export default async function Services() {
             items.map((item, i) => (
               <div
                 key={item.id}
-                className="reveal"
+                className="reveal service-card"
                 style={{
                   border: '1px solid rgba(255,255,255,0.08)',
                   borderRadius: '16px',
@@ -34,14 +34,6 @@ export default async function Services() {
                   transition: 'all 0.3s ease',
                   display: 'flex',
                   flexDirection: 'column',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(233,68,128,0.25)'
-                  e.currentTarget.style.boxShadow = '0 4px 24px rgba(233,68,128,0.08)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
-                  e.currentTarget.style.boxShadow = 'none'
                 }}
               >
                 <div
