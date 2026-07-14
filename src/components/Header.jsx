@@ -73,7 +73,7 @@ export default function Header() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            height: '72px',
+            height: '100px',
           }}
         >
           {/* Logo */}
@@ -89,7 +89,7 @@ export default function Header() {
               src="/ethereal-logo.png"
               alt="Ethereal Smile"
               style={{
-                height: '72px',
+                height: '100px',
                 width: 'auto',
                 display: 'block',
               }}
@@ -280,7 +280,7 @@ export default function Header() {
           src="/ethereal-logo.png"
           alt="Ethereal Smile"
           style={{
-            height: '110px',
+            height: '140px',
             width: 'auto',
             marginBottom: '1rem',
             opacity: menuOpen ? 1 : 0,

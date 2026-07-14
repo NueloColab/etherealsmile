@@ -25,7 +25,7 @@ export default function AdminSidebar() {
           <img
             src="/ethereal-logo.png"
             alt="Ethereal Smile"
-            className="h-16 w-auto"
+            className="h-24 w-auto"
           />
         </Link>
         <p className="text-[0.65rem] text-white/30 tracking-[0.15em] uppercase mt-2">

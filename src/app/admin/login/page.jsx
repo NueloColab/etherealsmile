@@ -78,7 +78,7 @@ export default function AdminLogin() {
             src="/ethereal-logo.png"
             alt="Ethereal Smile"
             style={{
-              height: '80px',
+              height: '120px',
               width: 'auto',
               display: 'block',
               margin: '0 auto 1rem',

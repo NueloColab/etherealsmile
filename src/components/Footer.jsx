@@ -26,7 +26,7 @@ export default function Footer() {
             src="/ethereal-logo.png"
             alt="Ethereal Smile"
             style={{
-              height: '48px',
+              height: '72px',
               width: 'auto',
               display: 'block',
               marginBottom: '0.5rem',
