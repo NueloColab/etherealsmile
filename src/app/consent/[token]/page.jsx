@@ -56,6 +56,7 @@ export default function ConsentPage() {
   const [email, setEmail] = useState('')
   const [address, setAddress] = useState('')
   const [allergies, setAllergies] = useState('')
+  const [currentMedications, setCurrentMedications] = useState('')
   const [medicalConditions, setMedicalConditions] = useState({
     abscessOrUlcer: false,
     ongoingDentalProblems: false,
@@ -68,6 +69,8 @@ export default function ConsentPage() {
     sensitiveTeeth: false,
   })
   const [illnessInLast48h, setIllnessInLast48h] = useState(false)
+  const [dentalIssues, setDentalIssues] = useState('')
+  const [previousToothGems, setPreviousToothGems] = useState('')
   const [consentAgreed, setConsentAgreed] = useState(false)
 
   const [youngPersonName, setYoungPersonName] = useState('')
@@ -192,8 +195,11 @@ export default function ConsentPage() {
       responses.email = email
       responses.address = address
       responses.allergies = allergies
+      responses.currentMedications = currentMedications
       responses.medicalConditions = Object.assign({}, medicalConditions)
       responses.illnessInLast48h = illnessInLast48h
+      responses.dentalIssues = dentalIssues
+      responses.previousToothGems = previousToothGems
       responses.consentAgreed = consentAgreed
     }
 
@@ -308,6 +314,9 @@ export default function ConsentPage() {
             <label style={labelStyle}>Allergies</label>
             <input type="text" value={allergies} onChange={function(e) { setAllergies(e.target.value) }} style={inputStyle} placeholder="None, or list allergies" />
 
+            <label style={labelStyle}>Current Medications</label>
+            <input type="text" value={currentMedications} onChange={function(e) { setCurrentMedications(e.target.value) }} style={inputStyle} placeholder="None, or list current medications" />
+
             {Object.keys(medicalConditions).map(function(key) {
               return (
                 <label key={key} style={{ display: 'flex', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #f0f0f0', cursor: 'pointer' }}>
@@ -321,6 +330,12 @@ export default function ConsentPage() {
               <input type="checkbox" checked={illnessInLast48h} onChange={function(e) { setIllnessInLast48h(e.target.checked) }} style={checkboxStyle} />
               <span style={{ fontSize: '0.9rem', color: TEXT }}>Have you had vomiting, diarrhoea, or any infection in the last 48 hours?</span>
             </label>
+
+            <label style={labelStyle}>Any Current Dental Issues</label>
+            <input type="text" value={dentalIssues} onChange={function(e) { setDentalIssues(e.target.value) }} style={inputStyle} placeholder="e.g. sensitive teeth, loose crown, gum bleeding" />
+
+            <label style={labelStyle}>Previous Tooth Gems or Jewellery</label>
+            <input type="text" value={previousToothGems} onChange={function(e) { setPreviousToothGems(e.target.value) }} style={inputStyle} placeholder="None, or describe previous tooth gems" />
           </div>
         )}
 
