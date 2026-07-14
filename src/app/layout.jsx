@@ -1,8 +1,5 @@
 import './globals.css'
-import Header from '../components/Header'
-import Footer from '../components/Footer'
-import Starfield from '../components/Starfield'
-import ScrollReveal from '../components/ScrollReveal'
+import LayoutWrapper from '../components/LayoutWrapper'
 
 export const metadata = {
   title: 'Ethereal Smile | Swarovski \u0026 Preciosa Crystal Tooth Gems',
@@ -46,10 +43,7 @@ export default function RootLayout({ children }) {
         <script src="https://upload-widget.cloudinary.com/v2.0/global/all.js" async></script>
       </head>
       <body style={{ background: '#000', color: '#fff', margin: 0 }}>
-        <Starfield />
-        <Header />
-        <ScrollReveal>{children}</ScrollReveal>
-        <Footer />
+        <LayoutWrapper>{children}</LayoutWrapper>
       </body>
     </html>
   )
