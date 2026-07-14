@@ -12,7 +12,6 @@ export default function Showreel() {
 
   const type = content?.type || 'video'
   const videoUrl = content?.videoUrl || '/showreel.mp4'
-  const posterImage = content?.posterImage || '/hattie-working.jpg'
   const fallbackImage = content?.fallbackImage || '/hattie-working.jpg'
   const overlayText = content?.overlayText || 'The Art of the Sparkle'
 
@@ -56,7 +55,6 @@ export default function Showreel() {
           loop
           playsInline
           preload="metadata"
-          poster={posterImage}
           src={videoUrl}
           style={{
             position: 'absolute',
