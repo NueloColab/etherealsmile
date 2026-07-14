@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
 export default function AdminLogin() {
@@ -17,20 +16,38 @@ export default function AdminLogin() {
     setLoading(true)
     setError(null)
 
-    const result = await signIn('credentials', {
-      email,
-      password,
-      redirect: false,
-    })
+    try {
+      // First, get CSRF token
+      const csrfRes = await fetch('/api/auth/csrf')
+      const { csrfToken } = await csrfRes.json()
 
-    if (result?.error) {
-      setError('Invalid email or password.')
+      // Sign in via NextAuth credentials callback
+      const res = await fetch('/api/auth/callback/credentials', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          email,
+          password,
+          csrfToken,
+          callbackUrl: '/admin',
+          json: 'true',
+        }),
+      })
+
+      const data = await res.json()
+
+      if (data?.error) {
+        setError('Invalid email or password.')
+        setLoading(false)
+        return
+      }
+
+      router.push('/admin')
+      router.refresh()
+    } catch {
+      setError('Something went wrong. Please try again.')
       setLoading(false)
-      return
     }
-
-    router.push('/admin')
-    router.refresh()
   }
 
   return (
@@ -43,22 +60,36 @@ export default function AdminLogin() {
         padding: '2rem',
         position: 'relative',
         zIndex: 1,
+        background: '#000000',
       }}
     >
       <div
-        className="frame-card"
         style={{
           width: '100%',
           maxWidth: '420px',
           padding: '2.5rem',
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(233, 68, 128, 0.2)',
+          borderRadius: '14px',
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <img
+            src="/hero-logo-card.png"
+            alt="Ethereal Smile"
+            style={{
+              height: '64px',
+              width: 'auto',
+              display: 'block',
+              margin: '0 auto 1rem',
+              opacity: 0.9,
+            }}
+          />
           <h1
             style={{
-              fontFamily: "'Playfair Display', serif",
+              fontFamily: "'Pirata One', 'Playfair Display', cursive",
               fontSize: '1.4rem',
-              color: '#c9a96e',
+              color: '#e94480',
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
               marginBottom: '0.5rem',
@@ -72,25 +103,70 @@ export default function AdminLogin() {
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Email</label>
+          <div style={{ marginBottom: '1.25rem' }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.7rem',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.5)',
+                marginBottom: '0.5rem',
+              }}
+            >
+              Email
+            </label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="admin@etherealsmile.co.uk"
+              style={{
+                width: '100%',
+                padding: '0.85rem 1rem',
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '8px',
+                color: '#ffffff',
+                fontSize: '0.85rem',
+                outline: 'none',
+                fontFamily: "'Inter', sans-serif",
+              }}
             />
           </div>
-          <div className="form-group" style={{ position: 'relative' }}>
-            <label>Password</label>
+
+          <div style={{ marginBottom: '1.25rem', position: 'relative' }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.7rem',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.5)',
+                marginBottom: '0.5rem',
+              }}
+            >
+              Password
+            </label>
             <input
               type={showPassword ? 'text' : 'password'}
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              style={{ paddingRight: '3rem' }}
+              style={{
+                width: '100%',
+                padding: '0.85rem 1rem',
+                paddingRight: '3rem',
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '8px',
+                color: '#ffffff',
+                fontSize: '0.85rem',
+                outline: 'none',
+                fontFamily: "'Inter', sans-serif",
+              }}
             />
             <button
               type="button"
@@ -129,7 +205,25 @@ export default function AdminLogin() {
             <p style={{ color: '#e57373', fontSize: '0.8rem', marginBottom: '1rem' }}>{error}</p>
           )}
 
-          <button type="submit" className="btn btn-primary" disabled={loading} style={{ width: '100%' }}>
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '0.85rem 2rem',
+              background: '#e94480',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: '50px',
+              fontSize: '0.75rem',
+              fontWeight: 500,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              cursor: 'pointer',
+              opacity: loading ? 0.7 : 1,
+              fontFamily: "'Inter', sans-serif",
+            }}
+          >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
