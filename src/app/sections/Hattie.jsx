@@ -42,21 +42,32 @@ export default function Hattie() {
           {subtitle}
         </p>
         <div
+          className="hattie-grid reveal reveal-scale"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.5fr)',
             gap: '2rem',
             marginTop: '3rem',
+            alignItems: 'start',
           }}
         >
-          <div className="frame-card reveal reveal-scale">
+          {/* Left column: two stacked images */}
+          <div className="reveal reveal-scale" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <img
               src={portraitImage}
               alt={heading}
-              style={{ width: '100%', borderRadius: '8px', marginBottom: '1rem' }}
+              style={{ width: '100%', borderRadius: '8px', display: 'block' }}
             />
+            {workingImage && (
+              <img
+                src={workingImage}
+                alt={`${heading} at work`}
+                style={{ width: '100%', borderRadius: '8px', display: 'block' }}
+              />
+            )}
           </div>
-          <div className="frame-card reveal reveal-scale reveal-delay-1" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          {/* Right column: text */}
+          <div className="frame-card reveal reveal-delay-1" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             {paragraphs.length > 0 ? (
               paragraphs.map((para, i) => (
                 <p
@@ -80,16 +91,14 @@ export default function Hattie() {
           </div>
         </div>
 
-        {/* Working image */}
-        {workingImage && (
-          <div className="reveal reveal-delay-2" style={{ marginTop: '2rem', textAlign: 'center' }}>
-            <img
-              src={workingImage}
-              alt={`${heading} at work`}
-              style={{ width: '100%', maxWidth: '600px', borderRadius: '8px' }}
-            />
-          </div>
-        )}
+        {/* Mobile responsive: stack on small screens */}
+        <style>{`
+          @media (max-width: 768px) {
+            #hattie .hattie-grid {
+              grid-template-columns: 1fr !important;
+            }
+          }
+        `}</style>
       </div>
     </section>
   )

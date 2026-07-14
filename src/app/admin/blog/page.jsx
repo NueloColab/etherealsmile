@@ -6,7 +6,7 @@ import CloudinaryUpload from '../../../components/CloudinaryUpload'
 
 export default function AdminBlog() {
   const [items, setItems] = useState([])
-  const [form, setForm] = useState({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', images: [], status: 'draft' })
+  const [form, setForm] = useState({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', images: [], videoUrl: '', videoPoster: '', readTime: 5, status: 'draft' })
   const [editing, setEditing] = useState(null)
   const [loading, setLoading] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -70,6 +70,9 @@ export default function AdminBlog() {
       excerpt: item.excerpt || '',
       imageUrl: item.imageUrl || '',
       images: Array.isArray(item.images) ? item.images : [],
+      videoUrl: item.videoUrl || '',
+      videoPoster: item.videoPoster || '',
+      readTime: item.readTime || 5,
       status: item.status,
     })
   }
@@ -146,6 +149,16 @@ export default function AdminBlog() {
               <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem' }}>Excerpt</label>
               <textarea rows={2} value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} style={{ ...inputStyle, resize: 'vertical' }} placeholder="Short summary..." />
             </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem' }}>Video URL</label>
+                <input value={form.videoUrl} onChange={(e) => setForm({ ...form, videoUrl: e.target.value })} style={inputStyle} placeholder="/videos/article.mp4" />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem' }}>Read Time (min)</label>
+                <input type="number" min={1} max={60} value={form.readTime} onChange={(e) => setForm({ ...form, readTime: parseInt(e.target.value) || 5 })} style={inputStyle} />
+              </div>
+            </div>
             <div>
               <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem' }}>Content</label>
               <textarea rows={8} value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} required style={{ ...inputStyle, resize: 'vertical' }} placeholder="Full post content..." />
@@ -166,7 +179,7 @@ export default function AdminBlog() {
                 {loading ? 'Saving...' : saved ? 'Saved!' : editing ? 'Update' : 'Add Post'}
               </button>
               {editing && (
-                <button type="button" onClick={() => { setEditing(null); setForm({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', images: [], status: 'draft' }) }} style={resetButtonStyle}>
+                <button type="button" onClick={() => { setEditing(null); setForm({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', images: [], videoUrl: '', videoPoster: '', readTime: 5, status: 'draft' }) }} style={resetButtonStyle}>
                   Cancel
                 </button>
               )}
