@@ -125,9 +125,6 @@ function drawFooter(doc, documentType, documentVersion, originalPdfUrl) {
 export function generateConsentPdf({ documentType, documentTitle, documentVersion, pdfUrl, responses, signatoryName, signatoryRelationship, signedAt, signedIp, clientName, clientEmail }) {
   return new Promise((resolve, reject) => {
     try {
-      // Resolve font path for Vercel serverless (fonts copied to public/data/)
-      const fontDir = path.join(process.cwd(), 'public', 'data')
-      
       const doc = new PDFDocument({
         size: 'A4',
         margins: { top: 20, bottom: 40, left: 50, right: 50 },
@@ -138,16 +135,6 @@ export function generateConsentPdf({ documentType, documentTitle, documentVersio
           Creator: 'Ethereal Smile Consent System',
         }
       })
-
-      // Register fonts from the data directory
-      try {
-        doc.registerFont('Helvetica', path.join(fontDir, 'Helvetica.afm'))
-        doc.registerFont('Helvetica-Bold', path.join(fontDir, 'Helvetica-Bold.afm'))
-        doc.registerFont('Helvetica-Oblique', path.join(fontDir, 'Helvetica-Oblique.afm'))
-      } catch (fontErr) {
-        // If font registration fails, pdfkit will fall back to built-in fonts
-        console.error('Font registration failed, using defaults:', fontErr.message)
-      }
 
       const chunks = []
       doc.on('data', (chunk) => chunks.push(chunk))
