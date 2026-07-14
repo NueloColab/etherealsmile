@@ -40,8 +40,26 @@ function isDateInPast(year, month, day) {
 
 export default function Book() {
   const searchParams = useSearchParams()
-  const prefillService = searchParams.get('service') || ''
-  const prefillPrice = searchParams.get('price') || ''
+  const [prefillService, setPrefillService] = useState('')
+  const [prefillPrice, setPrefillPrice] = useState('')
+
+  // Listen for URL changes (from EnquireButton popstate)
+  useEffect(() => {
+    function readParams() {
+      const params = new URLSearchParams(window.location.search)
+      setPrefillService(params.get('service') || '')
+      setPrefillPrice(params.get('price') || '')
+    }
+    readParams()
+    window.addEventListener('popstate', readParams)
+    return () => window.removeEventListener('popstate', readParams)
+  }, [])
+
+  // Also read from Next.js searchParams on initial load/navigation
+  useEffect(() => {
+    setPrefillService(searchParams.get('service') || '')
+    setPrefillPrice(searchParams.get('price') || '')
+  }, [searchParams])
 
   const today = new Date()
   const [year, setYear] = useState(today.getFullYear())
@@ -53,9 +71,15 @@ export default function Book() {
     email: '',
     phone: '',
     message: '',
-    service: prefillService,
-    price: prefillPrice,
+    service: '',
+    price: '',
   })
+
+  // Update form when prefill changes
+  useEffect(() => {
+    setForm((f) => ({ ...f, service: prefillService, price: prefillPrice }))
+  }, [prefillService, prefillPrice])
+
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -326,7 +350,10 @@ export default function Book() {
                   onClick={(e) => {
                     e.preventDefault()
                     setForm((f) => ({ ...f, service: '', price: '' }))
-                    window.history.replaceState(null, '', '/#book')
+                    setPrefillService('')
+                    setPrefillPrice('')
+                    window.history.pushState(null, '', '/#book')
+                    window.dispatchEvent(new Event('popstate'))
                   }}
                   style={{
                     fontSize: '0.65rem',

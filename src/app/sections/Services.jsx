@@ -1,6 +1,7 @@
 import { db } from '../../lib/db'
 import { services } from '../../lib/schema'
 import { eq, asc } from 'drizzle-orm'
+import EnquireButton from '../../components/EnquireButton'
 
 export default async function Services() {
   const items = await db.select().from(services).where(eq(services.active, true)).orderBy(asc(services.sortOrder))
@@ -91,18 +92,7 @@ export default async function Services() {
                     >
                       {item.price}
                     </span>
-                    <a
-                      href={`/#book?service=${encodeURIComponent(item.name)}&price=${encodeURIComponent(item.price)}`}
-                      className="btn btn-outline"
-                      style={{
-                        padding: '0.4rem 1rem',
-                        fontSize: '0.6rem',
-                        letterSpacing: '0.15em',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      Enquire
-                    </a>
+                    <EnquireButton name={item.name} price={item.price} />
                   </div>
                 </div>
 
