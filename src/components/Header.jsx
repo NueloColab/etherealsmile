@@ -244,12 +244,13 @@ export default function Header() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
-          gap: '2.5rem',
+          justifyContent: 'flex-start',
+          gap: '2rem',
           opacity: menuOpen ? 1 : 0,
           visibility: menuOpen ? 'visible' : 'hidden',
           transition: 'opacity 0.6s ease, visibility 0.6s ease',
-          padding: '6rem 2rem',
+          padding: '7rem 2rem 4rem',
+          overflowY: 'auto',
         }}
       >
         {/* Close button */}
@@ -318,10 +319,8 @@ export default function Header() {
         {/* Bottom credit */}
         <div
           style={{
-            position: 'absolute',
-            bottom: '2rem',
-            left: 0,
-            right: 0,
+            marginTop: 'auto',
+            paddingTop: '1rem',
             textAlign: 'center',
             opacity: menuOpen ? 0.5 : 0,
             transition: 'opacity 0.5s ease 0.5s',
