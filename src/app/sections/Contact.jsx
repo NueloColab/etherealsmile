@@ -323,6 +323,8 @@ export default function Contact() {
               Leave a Review
             </a>
 
+          </div>
+
           {/* Right: Form */}
           <div className="reveal reveal-scale reveal-delay-1"
             style={{
@@ -557,6 +559,7 @@ export default function Contact() {
             )}
           </div>
 
+          </div>
         </div>
       </div>
     </section>
