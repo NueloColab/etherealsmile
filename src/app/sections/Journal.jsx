@@ -1,15 +1,22 @@
-import { db } from '../../lib/db'
-import { blogPosts } from '../../lib/schema'
-import { eq, desc } from 'drizzle-orm'
+'use client'
+
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
-export default async function Journal() {
-  const posts = await db
-    .select()
-    .from(blogPosts)
-    .where(eq(blogPosts.status, 'published'))
-    .orderBy(desc(blogPosts.publishedAt))
-    .limit(6)
+export default function Journal() {
+  const [posts, setPosts] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/blog-posts')
+      .then((r) => r.json())
+      .then((data) => {
+        const published = (data || []).filter((p) => p.status === 'published')
+        setPosts(published.slice(0, 6))
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
+  }, [])
 
   return (
     <section
@@ -25,7 +32,9 @@ export default async function Journal() {
         <h2 className="section-title reveal">Journal</h2>
         <p className="section-subtitle reveal reveal-delay-1">Tips, trends, and aftercare wisdom</p>
 
-        {posts.length > 0 ? (
+        {loading ? (
+          <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', marginTop: '3rem' }}>Loading journal...</p>
+        ) : posts.length > 0 ? (
           <div
             style={{
               display: 'grid',
@@ -34,7 +43,7 @@ export default async function Journal() {
               marginTop: '3rem',
             }}
           >
-            {posts.map((post, i) => (
+            {posts.map((post) => (
               <Link
                 key={post.id}
                 href={`/journal/${post.slug}`}
@@ -44,7 +53,7 @@ export default async function Journal() {
                 }}
               >
                 <article
-                  className="reveal reveal-scale"
+                  className="journal-card reveal reveal-scale"
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -55,21 +64,12 @@ export default async function Journal() {
                     transition: 'all 0.4s cubic-bezier(0.16,1,0.3,1)',
                     cursor: 'pointer',
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(233, 68, 128, 0.25)'
-                    e.currentTarget.style.boxShadow = '0 0 30px rgba(233, 68, 128, 0.1)'
-                    e.currentTarget.style.transform = 'translateY(-4px)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'
-                    e.currentTarget.style.boxShadow = 'none'
-                    e.currentTarget.style.transform = 'translateY(0)'
-                  }}
                 >
                   <div style={{ position: 'relative', overflow: 'hidden', aspectRatio: '16/10' }}>
                     <img
                       src={post.imageUrl || '/hero-logo-card.png'}
                       alt={post.title}
+                      className="journal-img"
                       style={{
                         width: '100%',
                         height: '100%',
@@ -77,8 +77,6 @@ export default async function Journal() {
                         display: 'block',
                         transition: 'transform 0.6s cubic-bezier(0.16,1,0.3,1)',
                       }}
-                      onMouseEnter={(e) => (e.target.style.transform = 'scale(1.08)')}
-                      onMouseLeave={(e) => (e.target.style.transform = 'scale(1)')}
                     />
                     <div
                       style={{
@@ -135,7 +133,7 @@ export default async function Journal() {
                         flex: 1,
                       }}
                     >
-                      {post.excerpt || post.content.slice(0, 140)}{post.content.length > 140 || post.excerpt ? '...' : ''}
+                      {post.excerpt || post.content?.slice(0, 140)}{post.content?.length > 140 || post.excerpt ? '...' : ''}
                     </p>
 
                     <div

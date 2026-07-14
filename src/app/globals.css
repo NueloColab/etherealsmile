@@ -263,6 +263,17 @@ label {
   transform: scale(1.05);
 }
 
+/* Journal card hover */
+.journal-card:hover {
+  border-color: rgba(233, 68, 128, 0.25);
+  box-shadow: 0 0 30px rgba(233, 68, 128, 0.1);
+  transform: translateY(-4px);
+}
+
+.journal-card:hover .journal-img {
+  transform: scale(1.08);
+}
+
 /* Link hover gold */
 .link-gold {
   transition: color 0.3s ease;
