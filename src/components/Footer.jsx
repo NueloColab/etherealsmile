@@ -23,7 +23,7 @@ export default function Footer() {
       >
         <div>
           <img
-            src="/ethereal-logo.jpg"
+            src="/ethereal-logo.png"
             alt="Ethereal Smile"
             style={{
               height: '72px',
