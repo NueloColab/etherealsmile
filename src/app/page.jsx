@@ -18,8 +18,8 @@ export default function Home() {
       <About />
       <Showreel />
       <Hattie />
-      <Book />
       <Services />
+      <Book />
       <Gallery />
       <Journal />
       <Contact />
