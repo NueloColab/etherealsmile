@@ -6,10 +6,12 @@ import { usePathname } from 'next/navigation'
 const menuItems = [
   { label: 'Dashboard', href: '/admin' },
   { label: 'Enquiries', href: '/admin/enquiries' },
+  { label: 'Bookings', href: '/admin/bookings' },
   { label: 'CMS Editor', href: '/admin/cms' },
   { label: 'Services', href: '/admin/services' },
   { label: 'Journal', href: '/admin/blog' },
   { label: 'Gallery', href: '/admin/gallery' },
+  { label: 'Invoices', href: '/admin/invoices' },
 ]
 
 export default function AdminSidebar() {
