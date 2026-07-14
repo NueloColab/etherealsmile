@@ -1,112 +1,45 @@
 'use client'
 
+import { useCmsContent } from '../../lib/useCmsContent'
+
 export default function Hattie() {
+  const { content } = useCmsContent('hattie')
+
+  const heading = content?.heading || "Who's Hattie"
+  const bodyText = content?.bodyText || 'Hattie Clifford is the founder and lead artist at Ethereal Smile. With years of experience in dental aesthetics and a passion for unique beauty, Hattie has transformed thousands of smiles across the UK.'
+  const portraitImage = content?.portraitImage || '/hattie-portrait.jpg'
+  const workingImage = content?.workingImage || '/hattie-working.jpg'
+
   return (
     <section
       id="hattie"
       className="section"
       style={{
-        background: 'rgba(0, 0, 0, 0.6)',
-        borderTop: '1px solid rgba(233, 68, 128, 0.08)',
-        borderBottom: '1px solid rgba(233, 68, 128, 0.08)',
+        background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.6) 10%, rgba(0,0,0,0.6) 90%, transparent)',
         paddingTop: '6rem',
         paddingBottom: '6rem',
       }}
     >
       <div className="section-inner">
+        <h2 className="section-title reveal">{heading}</h2>
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '3rem',
-            alignItems: 'center',
-            marginTop: '2rem',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '2rem',
+            marginTop: '3rem',
           }}
         >
-          { /* Left — Image */ }
-          <div
-            className="reveal reveal-left reveal-scale reveal-delay-1"
-            style={{
-              borderRadius: '16px',
-              overflow: 'hidden',
-              border: '1px solid rgba(233, 68, 128, 0.2)',
-              boxShadow: '0 0 40px rgba(233, 68, 128, 0.1)',
-            }}
-          >
+          <div className="frame-card reveal reveal-scale">
             <img
-              src="/hattie-working.jpg"
-              alt="Hattie Clifford at work"
-              style={{
-                width: '100%',
-                height: 'auto',
-                display: 'block',
-              }}
+              src={portraitImage}
+              alt={heading}
+              style={{ width: '100%', borderRadius: '8px', marginBottom: '1rem' }}
             />
           </div>
-
-          { /* Right — Text */ }
-          <div
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '0.9rem',
-              color: 'rgba(255,255,255,0.75)',
-              lineHeight: 1.8,
-            }}
-          >
-            <h2
-              className="reveal reveal-right"
-              style={{
-                fontFamily: "'Pirata One', 'Playfair Display', cursive",
-                fontSize: 'clamp(2rem, 5vw, 3.2rem)',
-                fontWeight: 400,
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                color: '#e94480',
-                marginBottom: '0.5rem',
-                lineHeight: 1.1,
-                textShadow: '0 0 30px rgba(233, 68, 128, 0.25)',
-              }}
-            >
-              Who&rsquo;s Hattie
-            </h2>
-            <p
-              className="reveal reveal-delay-1"
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontStyle: 'italic',
-                fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)',
-                color: '#e94480',
-                letterSpacing: '0.06em',
-                marginBottom: '2rem',
-                opacity: 0.8,
-              }}
-            >
-              The face behind the sparkle
-            </p>
-
-            <p className="reveal reveal-delay-2" style={{ marginBottom: '1.25rem' }}>
-              I&rsquo;m Hattie Clifford, the founder and artist behind Ethereal Smile. What started as a fascination with the intersection of beauty and self-expression has grown into a passion for helping people discover a new kind of confidence, one tiny sparkle at a time.
-            </p>
-
-            <p className="reveal reveal-delay-2" style={{ marginBottom: '1.25rem' }}>
-              I trained extensively in tooth gem application and oral safety, ensuring every procedure meets the highest hygiene standards. But beyond the technical skill, what matters most to me is the experience: making sure every client feels comfortable, heard, and leaves with a smile that truly feels like their own.
-            </p>
-
-            <p className="reveal reveal-delay-2" style={{ marginBottom: '1.25rem' }}>
-              Every crystal I place is chosen for its brilliance and quality. I work exclusively with Swarovski and Preciosa because I believe in using only the best. This isn&rsquo;t just a service; it&rsquo;s a collaboration between us, creating something beautiful together.
-            </p>
-
-            <p
-              className="reveal reveal-delay-4"
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontStyle: 'italic',
-                color: '#e94480',
-                fontSize: '1rem',
-                opacity: 0.9,
-              }}
-            >
-              Your smile is the canvas. Let&rsquo;s make it ethereal.
+          <div className="frame-card reveal reveal-scale reveal-delay-1" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '0.95rem', lineHeight: 1.8, color: 'rgba(255,255,255,0.8)' }}>
+              {bodyText}
             </p>
           </div>
         </div>

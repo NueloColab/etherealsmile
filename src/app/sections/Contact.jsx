@@ -1,224 +1,105 @@
 'use client'
 
-import { useState } from 'react'
+import { useCmsContent } from '../../lib/useCmsContent'
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: '', email: '', message: '' })
-  const [submitted, setSubmitted] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
+  const { content } = useCmsContent('contact')
 
-  async function handleSubmit(e) {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
-    try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      })
-      if (!res.ok) throw new Error('Something went wrong. Please try again.')
-      setSubmitted(true)
-      setForm({ name: '', email: '', message: '' })
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const heading = content?.heading || 'Get in Touch'
+  const subtitle = content?.subtitle || 'We would love to hear from you'
+  const email = content?.email || 'etherealsmilex@gmail.com'
+  const phone = content?.phone || ''
+  const instagram = content?.instagram || '@etherealsmilex'
+  const tiktok = content?.tiktok || '@etherealsmilex'
 
   return (
     <section
       id="contact"
       className="section"
       style={{
-        background: 'rgba(0, 0, 0, 0.6)',
-        borderTop: '1px solid rgba(233, 68, 128, 0.08)',
-        borderBottom: '1px solid rgba(233, 68, 128, 0.08)',
+        background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.6) 10%, rgba(0,0,0,0.6) 90%, transparent)',
         paddingTop: '6rem',
         paddingBottom: '6rem',
       }}
     >
       <div className="section-inner">
-        <h2 className="section-title reveal">Contact</h2>
-        <p className="section-subtitle reveal reveal-delay-1">We'd love to hear from you</p>
+        <h2 className="section-title reveal">{heading}</h2>
+        {subtitle && <p className="section-subtitle reveal reveal-delay-1">{subtitle}</p>}
 
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '3rem',
+            gap: '2rem',
             marginTop: '3rem',
-            alignItems: 'start',
           }}
         >
-          <div className="frame-card reveal reveal-scale reveal-delay-2">
-            <h3
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: '1.1rem',
-                color: '#e94480',
-                marginBottom: '1.5rem',
-                fontWeight: 500,
-              }}
-            >
-              Get in Touch
+          <div className="frame-card reveal reveal-scale">
+            <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', color: '#e94480', marginBottom: '1.5rem' }}>
+              Contact Details
             </h3>
-
-            <div style={{ marginBottom: '1.5rem' }}>
-              <p
-                style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '0.7rem',
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.4)',
-                  marginBottom: '0.35rem',
-                }}
-              >
-                Email
-              </p>
-              <a
-                href="mailto:etherealsmilex@gmail.com"
-                style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '0.9rem',
-                  color: 'rgba(255,255,255,0.8)',
-                  textDecoration: 'none',
-                }}
-              >
-                etherealsmilex@gmail.com
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <a href={`mailto:${email}`} style={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none', fontFamily: "'Inter', sans-serif", fontSize: '0.9rem' }}>
+                {email}
               </a>
-            </div>
-
-            <div style={{ marginBottom: '1.5rem' }}>
-              <p
-                style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '0.7rem',
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.4)',
-                  marginBottom: '0.35rem',
-                }}
-              >
-                Social
-              </p>
-              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                <a
-                  href="https://www.instagram.com/etherealsmilex"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline"
-                  style={{ padding: '0.5rem 1rem', fontSize: '0.65rem' }}
-                >
-                  Instagram
+              {phone && (
+                <a href={`tel:${phone}`} style={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none', fontFamily: "'Inter', sans-serif", fontSize: '0.9rem' }}>
+                  {phone}
                 </a>
-                <a
-                  href="https://www.tiktok.com/@etherealsmilex"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline"
-                  style={{ padding: '0.5rem 1rem', fontSize: '0.65rem' }}
-                >
-                  TikTok
+              )}
+              {instagram && (
+                <a href={`https://instagram.com/${instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none', fontFamily: "'Inter', sans-serif", fontSize: '0.9rem' }}>
+                  {instagram}
                 </a>
-              </div>
-            </div>
-
-            <div>
-              <p
-                style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '0.7rem',
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.4)',
-                  marginBottom: '0.35rem',
-                }}
-              >
-                Bookings
-              </p>
-              <a href="#book" style={{ fontSize: '0.85rem', color: '#e94480', textDecoration: 'none' }}>
-                Use our enquiry calendar &rarr;
-              </a>
+              )}
+              {tiktok && (
+                <a href={`https://tiktok.com/${tiktok.replace('@', '')}`} target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none', fontFamily: "'Inter', sans-serif", fontSize: '0.9rem' }}>
+                  {tiktok}
+                </a>
+              )}
             </div>
           </div>
 
-          <div className="frame-card reveal reveal-scale reveal-delay-2">
-            <h3
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: '1.1rem',
-                color: '#e94480',
-                marginBottom: '1.5rem',
-                fontWeight: 500,
-              }}
-            >
+          <div className="frame-card reveal reveal-scale reveal-delay-1">
+            <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', color: '#e94480', marginBottom: '1.5rem' }}>
               Send a Message
             </h3>
-
-            {submitted ? (
-              <div style={{ textAlign: 'center', padding: '2rem 0' }}>
-                <div
-                  style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '50%',
-                    background: 'rgba(233, 68, 128, 0.15)',
-                    border: '1px solid rgba(233, 68, 128, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    margin: '0 auto 1rem',
-                    color: '#e94480',
-                  }}
-                >
-                  &#10003;
-                </div>
-                <p style={{ color: '#e94480', fontSize: '0.9rem' }}>Message sent. We'll be in touch soon.</p>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault()
+                const form = e.target
+                const res = await fetch('/api/contact', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    name: form.name.value,
+                    email: form.email.value,
+                    message: form.message.value,
+                  }),
+                })
+                if (res.ok) {
+                  alert('Message sent successfully!')
+                  form.reset()
+                } else {
+                  alert('Something went wrong. Please try again.')
+                }
+              }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+            >
+              <div className="form-group">
+                <label>Name</label>
+                <input type="text" name="name" required placeholder="Your name" />
               </div>
-            ) : (
-              <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label>Name</label>
-                  <input
-                    type="text"
-                    required
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="Your name"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Email</label>
-                  <input
-                    type="email"
-                    required
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    placeholder="your@email.com"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Message</label>
-                  <textarea
-                    rows={4}
-                    required
-                    value={form.message}
-                    onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    placeholder="What would you like to ask?"
-                  />
-                </div>
-                {error && (
-                  <p style={{ color: '#e57373', fontSize: '0.8rem', marginBottom: '1rem' }}>{error}</p>
-                )}
-                <button type="submit" className="btn btn-primary" disabled={loading} style={{ width: '100%' }}>
-                  {loading ? 'Sending...' : 'Send Message'}
-                </button>
-              </form>
-            )}
+              <div className="form-group">
+                <label>Email</label>
+                <input type="email" name="email" required placeholder="your@email.com" />
+              </div>
+              <div className="form-group">
+                <label>Message</label>
+                <textarea name="message" rows={4} placeholder="Your message" />
+              </div>
+              <button type="submit" className="btn btn-primary">Send Message</button>
+            </form>
           </div>
         </div>
       </div>

@@ -1,56 +1,52 @@
+'use client'
+
+import { useCmsContent } from '../../lib/useCmsContent'
+
 export default function Review() {
+  const { content } = useCmsContent('review')
+
+  const heading = content?.heading || 'Leave a Review'
+  const subtitle = content?.subtitle || 'Share your experience with others'
+  const linkText = content?.linkText || 'Leave us a review on Google'
+  const reviewUrl = content?.reviewUrl || 'https://search.google.com/local/writereview?placeid=ChIJ'
+
   return (
     <section
       id="review"
       className="section"
       style={{
-        background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.6) 10%, rgba(0,0,0,0.6) 90%, transparent)',
-        paddingTop: '6rem',
-        paddingBottom: '6rem',
+        background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.4) 20%, rgba(0,0,0,0.4) 80%, transparent)',
+        paddingTop: '5rem',
+        paddingBottom: '5rem',
+        textAlign: 'center',
       }}
     >
       <div className="section-inner">
-        <div
-          className="frame-card reveal reveal-scale reveal-delay-2"
-          style={{
-            textAlign: 'center',
-            maxWidth: '600px',
-            margin: '0 auto',
-          }}
-        >
-          <h3
-            className="reveal"
-            style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: '1.3rem',
-              color: '#e94480',
-              marginBottom: '0.75rem',
-              fontWeight: 500,
-            }}
-          >
-            Love Your Smile?
-          </h3>
-
-          <p
-            className="reveal reveal-delay-1"
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '0.85rem',
-              color: 'rgba(255,255,255,0.65)',
-              lineHeight: 1.7,
-              marginBottom: '1.5rem',
-            }}
-          >
-            If you've visited Ethereal Smile, we'd be honoured if you left us a review. Your words help others discover the sparkle.
-          </p>
-
+        <h2 className="section-title reveal">{heading}</h2>
+        {subtitle && <p className="section-subtitle reveal reveal-delay-1">{subtitle}</p>}
+        <div style={{ marginTop: '2rem' }} className="reveal reveal-delay-2">
           <a
-            href="https://www.google.com/search?q=ethereal+smile+tooth+gems"
+            href={reviewUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn btn-outline reveal reveal-delay-3"
+            className="btn btn-primary"
+            style={{
+              display: 'inline-block',
+              padding: '0.85rem 2.5rem',
+              background: '#e94480',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: '50px',
+              fontSize: '0.75rem',
+              fontWeight: 500,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+            }}
           >
-            Leave a Review on Google
+            {linkText}
           </a>
         </div>
       </div>

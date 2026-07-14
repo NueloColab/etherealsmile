@@ -2,10 +2,15 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useCmsContent } from '../../lib/useCmsContent'
 
 export default function Journal() {
+  const { content: cmsContent } = useCmsContent('journal')
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
+
+  const heading = cmsContent?.heading || 'Journal'
+  const subtitle = cmsContent?.subtitle || 'Tooth gem tips, trends, and stories'
 
   useEffect(() => {
     fetch('/api/blog-posts')
@@ -29,7 +34,7 @@ export default function Journal() {
       }}
     >
       <div className="section-inner">
-        <h2 className="section-title reveal">Journal</h2>
+        <h2 className="section-title reveal">{heading}</h2>
         <p className="section-subtitle reveal reveal-delay-1">Tips, trends, and aftercare wisdom</p>
 
         {loading ? (

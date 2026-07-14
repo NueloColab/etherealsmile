@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { useCmsContent } from '../../lib/useCmsContent'
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -10,13 +11,7 @@ const MONTHS = [
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
-const TIME_SLOTS = [
-  '10:00',
-  '11:30',
-  '13:00',
-  '14:30',
-  '16:00',
-]
+const DEFAULT_TIME_SLOTS = ['10:00', '11:30', '13:00', '14:30', '16:00']
 
 function getCalendarDays(year, month) {
   const firstDay = new Date(year, month, 1).getDay()
@@ -40,8 +35,15 @@ function isDateInPast(year, month, day) {
 
 export default function Book() {
   const searchParams = useSearchParams()
+  const { content: cmsContent } = useCmsContent('book')
   const [prefillService, setPrefillService] = useState('')
   const [prefillPrice, setPrefillPrice] = useState('')
+
+  const bookHeading = cmsContent?.heading || 'Book an Appointment'
+  const bookSubtitle = cmsContent?.subtitle || 'Select a date and send us an enquiry'
+  const timeSlots = Array.isArray(cmsContent?.timeSlots) && cmsContent.timeSlots.length > 0
+    ? cmsContent.timeSlots
+    : DEFAULT_TIME_SLOTS
 
   // Listen for URL changes (from EnquireButton popstate)
   useEffect(() => {
@@ -163,8 +165,8 @@ export default function Book() {
       }}
     >
       <div className="section-inner">
-        <h2 className="section-title reveal">Book an Appointment</h2>
-        <p className="section-subtitle reveal reveal-delay-1">Select a date and send us an enquiry</p>
+        <h2 className="section-title reveal">{bookHeading}</h2>
+        <p className="section-subtitle reveal reveal-delay-1">{bookSubtitle}</p>
 
         <div
           style={{
@@ -415,7 +417,7 @@ export default function Book() {
                       gap: '0.5rem',
                     }}
                   >
-                    {TIME_SLOTS.map((time) => {
+                    {timeSlots.map((time) => {
                       const isSelected = selectedTime === time
                       return (
                         <button

@@ -1,12 +1,17 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { useCmsContent } from '../../lib/useCmsContent'
 
 export default function Gallery() {
+  const { content: cmsContent } = useCmsContent('gallery')
   const [items, setItems] = useState([])
   const [selected, setSelected] = useState(null)
   const [loading, setLoading] = useState(true)
   const scrollRef = useRef(null)
+
+  const heading = cmsContent?.heading || 'Gallery'
+  const subtitle = cmsContent?.subtitle || 'Our work speaks for itself'
 
   useEffect(() => {
     fetch('/api/gallery')
@@ -48,8 +53,8 @@ export default function Gallery() {
     return (
       <section id="gallery" className="section" style={{ paddingTop: '6rem', paddingBottom: '6rem' }}>
         <div className="section-inner">
-          <h2 className="section-title reveal">Gallery</h2>
-          <p className="section-subtitle reveal reveal-delay-1">See the sparkle for yourself</p>
+          <h2 className="section-title reveal">{heading}</h2>
+          <p className="section-subtitle reveal reveal-delay-1">{subtitle}</p>
           <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', marginTop: '3rem' }}>Loading gallery...</p>
         </div>
       </section>
@@ -69,8 +74,8 @@ export default function Gallery() {
       }}
     >
       <div className="section-inner">
-        <h2 className="section-title reveal">Gallery</h2>
-        <p className="section-subtitle reveal reveal-delay-1">See the sparkle for yourself</p>
+        <h2 className="section-title reveal">{heading}</h2>
+        <p className="section-subtitle reveal reveal-delay-1">{subtitle}</p>
 
         {items.length > 0 ? (
           <div style={{ position: 'relative', marginTop: '3rem' }}>
