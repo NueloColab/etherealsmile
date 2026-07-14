@@ -1,11 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -15,24 +17,20 @@ export default function AdminLogin() {
     setLoading(true)
     setError(null)
 
-    try {
-      const res = await fetch('/api/auth/callback/credentials', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ email, password, csrfToken: 'dummy', callbackUrl: '/admin', json: 'true' }),
-      })
-      const data = await res.json()
-      if (data?.error) {
-        setError('Invalid email or password.')
-        setLoading(false)
-        return
-      }
-      router.push('/admin')
-      router.refresh()
-    } catch {
-      setError('Something went wrong.')
+    const result = await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
+    })
+
+    if (result?.error) {
+      setError('Invalid email or password.')
       setLoading(false)
+      return
     }
+
+    router.push('/admin')
+    router.refresh()
   }
 
   return (
@@ -84,15 +82,34 @@ export default function AdminLogin() {
               placeholder="admin@etherealsmile.co.uk"
             />
           </div>
-          <div className="form-group">
+          <div className="form-group" style={{ position: 'relative' }}>
             <label>Password</label>
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
+              style={{ paddingRight: '3rem' }}
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: 'absolute',
+                right: '0.75rem',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                color: 'rgba(255,255,255,0.4)',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                padding: '0.25rem',
+              }}
+            >
+              {showPassword ? '🙈' : '👁️'}
+            </button>
           </div>
 
           {error && (
