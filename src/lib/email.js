@@ -124,7 +124,7 @@ export async function sendConfirmationEmail({ to, name, date, time, service, pri
         </html>
       `,
     })
-    return { success: true }
+    return { success: true, id: result?.data?.id || result?.id || null }
   } catch (err) {
     console.error('Confirmation email failed:', err)
     return { success: false, error: err.message }
@@ -241,7 +241,7 @@ export async function sendAlternativeProposalEmail({ to, name, originalDate, ori
         </html>
       `,
     })
-    return { success: true }
+    return { success: true, id: result?.data?.id || result?.id || null }
   } catch (err) {
     console.error('Proposal email failed:', err)
     return { success: false, error: err.message }
@@ -340,7 +340,7 @@ export async function sendNewEnquiryNotification({ name, email, phone, preferred
         </html>
       `,
     })
-    return { success: true, id: result?.id || null }
+    return { success: true, id: result?.data?.id || result?.id || null }
   } catch (err) {
     console.error('New enquiry notification failed:', err)
     return { success: false, error: err.message }
