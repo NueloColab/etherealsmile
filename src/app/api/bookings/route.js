@@ -53,10 +53,10 @@ export async function GET(request) {
   try {
     const url = new URL(request.url)
     const limit = parseInt(url.searchParams.get('limit') || '200')
-    const sort = url.searchParams.get('sort') || '-createdAt'
+    const sort = url.searchParams.get('sort') || '-date'
 
-    // Admin read: use direct connection for fresh data, newest first
-    const result = await dbAdmin.select().from(bookings).orderBy(desc(bookings.createdAt)).limit(limit)
+    // Admin read: use direct connection for fresh data, newest booking date first
+    const result = await dbAdmin.select().from(bookings).orderBy(desc(bookings.date)).limit(limit)
 
     return NextResponse.json(result)
   } catch (err) {
