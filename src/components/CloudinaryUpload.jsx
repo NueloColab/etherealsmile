@@ -11,7 +11,6 @@ export default function CloudinaryUpload({ onUpload, label = 'Upload Image', cur
 
   function openWidget() {
     if (typeof window === 'undefined' || !window.cloudinary) {
-      // Fallback: open Cloudinary upload page directly
       window.open(`https://console.cloudinary.com/console/media-library?cloud_name=${CLOUD_NAME}`, '_blank')
       return
     }
@@ -23,7 +22,7 @@ export default function CloudinaryUpload({ onUpload, label = 'Upload Image', cur
         folder: 'nuelo/etherealsmile',
         sources: ['local', 'url', 'camera'],
         multiple: false,
-        maxFileSize: 10000000, // 10MB
+        maxFileSize: 10000000,
         styles: {
           palette: {
             window: '#000000',
@@ -53,13 +52,36 @@ export default function CloudinaryUpload({ onUpload, label = 'Upload Image', cur
           {label}
         </label>
       )}
-      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        {/* Large image preview */}
+        {currentUrl && (
+          <div style={{
+            width: '100%',
+            maxWidth: '400px',
+            aspectRatio: '16/10',
+            borderRadius: '10px',
+            overflow: 'hidden',
+            border: '1px solid rgba(233,68,128,0.15)',
+            background: 'rgba(255,255,255,0.02)',
+          }}>
+            <img
+              src={currentUrl}
+              alt="Preview"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                display: 'block',
+              }}
+            />
+          </div>
+        )}
         <button
           type="button"
           onClick={openWidget}
           disabled={uploading}
           style={{
-            padding: '0.6rem 1.2rem',
+            padding: '0.7rem 1.5rem',
             background: uploading ? 'rgba(233,68,128,0.3)' : 'rgba(233,68,128,0.1)',
             color: uploading ? 'rgba(255,255,255,0.4)' : '#e94480',
             border: uploading ? '1px solid rgba(233,68,128,0.2)' : '1px solid rgba(233,68,128,0.3)',
@@ -69,15 +91,11 @@ export default function CloudinaryUpload({ onUpload, label = 'Upload Image', cur
             cursor: uploading ? 'not-allowed' : 'pointer',
             fontFamily: "'Inter', sans-serif",
             transition: 'all 0.2s ease',
+            alignSelf: 'flex-start',
           }}
         >
-          {uploading ? 'Uploading...' : 'Choose Image'}
+          {uploading ? 'Uploading...' : currentUrl ? 'Replace Image' : 'Choose Image'}
         </button>
-        {currentUrl && (
-          <div style={{ width: '40px', height: '40px', borderRadius: '6px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
-            <img src={currentUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          </div>
-        )}
       </div>
     </div>
   )
