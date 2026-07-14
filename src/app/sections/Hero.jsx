@@ -1,25 +1,25 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function Hero() {
-  const logoRef = useRef(null)
   const [scrolled, setScrolled] = useState(false)
+  const [scrollY, setScrollY] = useState(0)
 
   useEffect(() => {
     function onScroll() {
       const y = window.scrollY
+      setScrollY(y)
       setScrolled(y > 50)
-      if (logoRef.current) {
-        const scale = Math.max(0.4, 1 - y / 1200)
-        const translateY = y * 0.15
-        logoRef.current.style.transform = `scale(${scale}) translateY(${translateY}px)`
-        logoRef.current.style.opacity = Math.max(0, 1 - y / 800)
-      }
     }
-    window.addEventListener('scroll', onScroll)
+    window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  // Smooth CSS-driven values
+  const logoScale = Math.max(0.5, 1 - scrollY / 2500)
+  const logoTranslate = scrollY * 0.08
+  const logoOpacity = Math.max(0, 1 - scrollY / 1400)
 
   return (
     <section
@@ -32,63 +32,99 @@ export default function Hero() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '6rem 1.5rem 4rem',
+        padding: '6rem 1.5rem 3rem',
         overflow: 'hidden',
       }}
     >
+      {/* Logo card — smooth CSS transform */}
       <div
-        ref={logoRef}
         style={{
-          maxWidth: '520px',
+          maxWidth: '540px',
           width: '90%',
-          marginBottom: '1.5rem',
-          transition: 'transform 0.1s linear, opacity 0.1s linear',
+          marginBottom: '2rem',
+          transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
           willChange: 'transform, opacity',
+          transform: `scale(${logoScale}) translateY(${logoTranslate}px)`,
+          opacity: logoOpacity,
         }}
       >
         <img
-          src="/brand-card-2.png?v=3"
+          src="/brand-card-2.png?v=4"
           alt="Ethereal Smile"
           style={{
             width: '100%',
             height: 'auto',
-            borderRadius: '12px',
+            borderRadius: '14px',
             display: 'block',
             boxShadow: '0 0 60px rgba(201, 169, 110, 0.15)',
           }}
         />
       </div>
 
+      {/* Gothic pink title */}
       <h1
         className="animate-fadeInUp"
         style={{
-          fontFamily: "'Playfair Display', serif",
-          fontSize: 'clamp(1.6rem, 4.5vw, 2.8rem)',
-          fontWeight: 500,
-          letterSpacing: '0.2em',
+          fontFamily: "'Pirata One', 'Playfair Display', cursive",
+          fontSize: 'clamp(2rem, 6vw, 4rem)',
+          fontWeight: 400,
+          letterSpacing: '0.15em',
           textTransform: 'uppercase',
           textAlign: 'center',
-          lineHeight: 1.2,
-          color: '#ffffff',
-          marginBottom: '1.5rem',
+          lineHeight: 1.1,
+          color: '#e94480',
+          marginBottom: '2.5rem',
           animationDelay: '0.2s',
           opacity: 0,
+          textShadow: '0 0 40px rgba(233, 68, 128, 0.3)',
         }}
       >
         Ethereal Smile
       </h1>
 
+      {/* Semi-transparent pill button — bigger, lower */}
       <a
         href="#book"
-        className="btn btn-primary animate-fadeInUp"
+        className="animate-fadeInUp"
         style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '0.5rem',
+          padding: '1rem 3rem',
+          fontFamily: "'Inter', sans-serif",
+          fontSize: '0.85rem',
+          fontWeight: 500,
+          letterSpacing: '0.2em',
+          textTransform: 'uppercase',
+          textDecoration: 'none',
+          borderRadius: '50px',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease',
+          background: 'rgba(233, 68, 128, 0.15)',
+          color: '#e94480',
+          border: '1px solid rgba(233, 68, 128, 0.4)',
+          backdropFilter: 'blur(8px)',
           animationDelay: '0.4s',
           opacity: 0,
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = 'rgba(233, 68, 128, 0.25)'
+          e.currentTarget.style.borderColor = '#e94480'
+          e.currentTarget.style.boxShadow = '0 0 30px rgba(233, 68, 128, 0.2)'
+          e.currentTarget.style.transform = 'translateY(-2px)'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = 'rgba(233, 68, 128, 0.15)'
+          e.currentTarget.style.borderColor = 'rgba(233, 68, 128, 0.4)'
+          e.currentTarget.style.boxShadow = 'none'
+          e.currentTarget.style.transform = 'translateY(0)'
         }}
       >
         Book Now
       </a>
 
+      {/* Scroll indicator */}
       <div
         style={{
           position: 'absolute',
@@ -97,6 +133,7 @@ export default function Hero() {
           transform: 'translateX(-50%)',
           opacity: scrolled ? 0 : 0.3,
           transition: 'opacity 0.5s ease',
+          color: '#e94480',
         }}
       >
         <svg width="20" height="30" viewBox="0 0 20 30" fill="none" stroke="currentColor" strokeWidth="1.5">
