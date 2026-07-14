@@ -248,7 +248,7 @@ export async function sendAlternativeProposalEmail({ to, name, originalDate, ori
   }
 }
 
-export async function sendNewBookingNotification({ name, email, phone, preferredDate, preferredTime, service, price, message }) {
+export async function sendNewBookingNotification({ name, email, phone, preferredDate, preferredTime, service, price, message, isMinor }) {
   const client = getResend()
   if (!client) return { success: false, skipped: true }
 
@@ -292,6 +292,13 @@ export async function sendNewBookingNotification({ name, email, phone, preferred
                     <p class="email-box-label">Phone</p>
                     <p class="email-box-value">${phone}</p>
                   </div>
+
+                  ${isMinor ? `
+                  <div class="email-box" style="border-color: rgba(233, 68, 128, 0.4); background: rgba(233, 68, 128, 0.1);">
+                    <p class="email-box-label" style="color: #e94480;">Under 18 Booking</p>
+                    <p class="email-box-value" style="color: #e94480;">This booking is for someone under 18. A parent/guardian will need to sign consent forms.</p>
+                  </div>
+                  ` : ''}
 
                   <div class="email-box">
                     <p class="email-box-label">Preferred Date</p>

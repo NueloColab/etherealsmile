@@ -46,6 +46,7 @@ export default function Book() {
     name: '',
     email: '',
     phone: '',
+    isMinor: false,
     message: '',
     service: '',
     price: '',
@@ -118,7 +119,7 @@ export default function Book() {
       })
       if (!res.ok) throw new Error('Something went wrong. Please try again.')
       setSubmitted(true)
-      setForm({ name: '', email: '', phone: '', message: '', service: '', price: '' })
+      setForm({ name: '', email: '', phone: '', isMinor: false, message: '', service: '', price: '' })
       setSelectedDate(null)
       setSelectedTime(null)
     } catch (err) {
@@ -488,6 +489,20 @@ export default function Book() {
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                     placeholder="+44 7..."
                   />
+                </div>
+                <div className="form-group">
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={form.isMinor}
+                      onChange={(e) => setForm({ ...form, isMinor: e.target.checked })}
+                      style={{ accentColor: '#e94480', width: '1rem', height: '1rem' }}
+                    />
+                    <span>This booking is for someone under 18</span>
+                  </label>
+                  <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', margin: '0.25rem 0 0', lineHeight: 1.4 }}>
+                    A parent or guardian will need to sign the consent forms.
+                  </p>
                 </div>
                 <div className="form-group">
                   <label>Message</label>

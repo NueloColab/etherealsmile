@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 import { sendConfirmationEmail, sendAlternativeProposalEmail } from '../../../../lib/email'
 import { createOrAttachClient } from '../../../../lib/createOrAttachClient'
+import { sendConsentForms } from '../../../../lib/sendConsentForms'
 import { randomBytes } from 'crypto'
 
 export async function GET(request, { params }) {
@@ -30,6 +31,7 @@ export async function PUT(request, { params }) {
     if (body.name !== undefined) update.name = body.name
     if (body.email !== undefined) update.email = body.email
     if (body.phone !== undefined) update.phone = body.phone
+    if (body.isMinor !== undefined) update.isMinor = body.isMinor
     if (body.date !== undefined) update.date = body.date ? new Date(body.date) : null
     if (body.timeSlot !== undefined) update.timeSlot = body.timeSlot
     if (body.service !== undefined) update.service = body.service
@@ -60,8 +62,9 @@ export async function PUT(request, { params }) {
     // Send emails based on action
     if (body.status === 'confirmed' && booking) {
       // Create or attach client — failure must NOT block the confirm
+      let clientId = booking.clientId
       try {
-        await createOrAttachClient({
+        clientId = await createOrAttachClient({
           email: booking.email,
           name: booking.name,
           phone: booking.phone || null,
@@ -72,6 +75,7 @@ export async function PUT(request, { params }) {
         console.error('Client attach failed (non-blocking):', clientErr.message)
       }
 
+      // Send confirmation email
       await sendConfirmationEmail({
         to: booking.email,
         name: booking.name,
@@ -80,6 +84,58 @@ export async function PUT(request, { params }) {
         service: booking.service,
         price: booking.price,
       })
+
+      // Auto-send consent forms — failure must NOT block the confirm, but must be visible
+      if (clientId) {
+        try {
+          const result = await sendConsentForms({
+            clientId: clientId,
+            bookingId: booking.id,
+            isMinor: booking.isMinor || false,
+          })
+
+          if (result.sent.length > 0) {
+            // Mark success on the booking
+            await db.update(bookings).set({
+              consentSentAt: new Date(),
+              consentSendError: null,
+            }).where(eq(bookings.id, booking.id))
+          }
+
+          if (result.skipped.length > 0 && result.sent.length === 0) {
+            // All were skipped (duplicates or errors) — record the detail
+            await db.update(bookings).set({
+              consentSendError: 'Skipped: ' + result.skipped.join(', '),
+            }).where(eq(bookings.id, booking.id))
+          }
+
+          if (result.error) {
+            // Partial or total failure — record the error on the booking
+            await db.update(bookings).set({
+              consentSendError: result.error,
+            }).where(eq(bookings.id, booking.id))
+          }
+        } catch (consentErr) {
+          console.error('Consent auto-send failed (non-blocking):', consentErr.message)
+          // Record the failure on the booking so Hattie can see it
+          try {
+            await db.update(bookings).set({
+              consentSendError: consentErr.message,
+            }).where(eq(bookings.id, booking.id))
+          } catch (dbErr) {
+            console.error('Failed to record consent error on booking:', dbErr.message)
+          }
+        }
+      } else {
+        // No client ID — can't send consent forms
+        try {
+          await db.update(bookings).set({
+            consentSendError: 'Could not send consent forms: no client ID',
+          }).where(eq(bookings.id, booking.id))
+        } catch (dbErr) {
+          console.error('Failed to record consent error on booking:', dbErr.message)
+        }
+      }
     }
 
     if (body.proposedDate && booking && booking.proposalToken) {

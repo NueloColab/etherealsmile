@@ -338,6 +338,33 @@ export default function BookingDetailClient({ booking: initialBooking }) {
         {booking.confirmedAt && <div>Confirmed: {new Date(booking.confirmedAt).toLocaleString('en-GB')}</div>}
         {booking.proposalToken && <div>Proposal sent (token: {booking.proposalToken.substring(0, 8)}...)</div>}
       </div>
+
+      {/* Consent Status */}
+      {booking.status === 'confirmed' && (
+        <div style={{ marginTop: '1rem', padding: '0.75rem', borderRadius: '8px', background: booking.consentSendError ? 'rgba(239,68,68,0.08)' : booking.consentSentAt ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.03)', border: `1px solid ${booking.consentSendError ? 'rgba(239,68,68,0.2)' : booking.consentSentAt ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.06)'}` }}>
+          <div style={{ fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>Consent Forms</div>
+          {booking.consentSentAt && !booking.consentSendError && (
+            <div style={{ fontSize: '0.85rem', color: '#4ade80' }}>
+              Sent {new Date(booking.consentSentAt).toLocaleString('en-GB')}
+            </div>
+          )}
+          {booking.consentSendError && (
+            <div style={{ fontSize: '0.85rem', color: '#f87171' }}>
+              Failed: {booking.consentSendError}
+            </div>
+          )}
+          {!booking.consentSentAt && !booking.consentSendError && (
+            <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)' }}>
+              Not yet sent
+            </div>
+          )}
+          {booking.isMinor && (
+            <div style={{ fontSize: '0.75rem', color: '#e94480', marginTop: '0.25rem' }}>
+              Under 18 booking - guardian consent required
+            </div>
+          )}
+        </div>
+      )}
       <style jsx>{`
         @media (max-width: 768px) {
           .admin-booking-grid {

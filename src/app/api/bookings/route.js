@@ -7,7 +7,7 @@ import { sendNewBookingNotification } from '../../../lib/email'
 export async function POST(request) {
   try {
     const body = await request.json()
-    const { name, email, phone, preferredDate, preferredTime, service, price, message } = body
+    const { name, email, phone, preferredDate, preferredTime, service, price, message, isMinor } = body
 
     if (!name || !email || !phone || !preferredDate || !preferredTime) {
       return NextResponse.json({ error: 'Name, email, phone, date and time are required' }, { status: 400 })
@@ -17,6 +17,7 @@ export async function POST(request) {
       name,
       email,
       phone: phone || null,
+      isMinor: isMinor || false,
       date: preferredDate ? new Date(preferredDate) : null,
       timeSlot: preferredTime || null,
       service: service || null,
@@ -37,6 +38,7 @@ export async function POST(request) {
       service: service || 'Not specified',
       price: price || 'Not specified',
       message: message || 'None',
+      isMinor: isMinor || false,
     })
 
     return NextResponse.json({ success: true, emailId: emailResult?.id || null }, { status: 201 })
