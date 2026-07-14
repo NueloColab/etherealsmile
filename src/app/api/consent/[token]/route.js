@@ -137,22 +137,36 @@ export async function POST(request, { params }) {
       console.error('Client attach failed (non-blocking):', clientErr.message)
     }
 
-    // Send notification email to Hattie
+    // Send confirmation email to signer + notification to Hattie
     try {
-      const { sendConsentSignedNotification } = await import('../../../../lib/email')
       const clientRows = await db.select().from(clients).where(eq(clients.id, record.clientId))
       const client = clientRows[0]
+      
+      // Confirmation to signer
+      if (client && client.email) {
+        const { sendConsentConfirmationEmail } = await import('../../../../lib/email')
+        await sendConsentConfirmationEmail({
+          to: client.email,
+          name: signatoryName.trim() || client.name,
+          documentType: doc?.documentType || 'consent',
+          documentTitle: doc?.title || 'Consent Form',
+          pdfUrl: doc?.pdfUrl || '',
+        }).catch(function(err) { console.error('Signer confirmation failed:', err.message) })
+      }
+
+      // Notification to Hattie
       if (client) {
+        const { sendConsentSignedNotification } = await import('../../../../lib/email')
         await sendConsentSignedNotification({
           clientName: client.name,
           clientEmail: client.email,
-          documentType: doc?.documentType || record.documentId,
+          documentType: doc?.documentType || 'consent',
           signatoryName: signatoryName.trim(),
           signatoryRelationship: signatoryRelationship || 'self',
-        })
+        }).catch(function(err) { console.error('Hattie notification failed:', err.message) })
       }
     } catch (emailErr) {
-      console.error('Consent signed notification failed (non-blocking):', emailErr.message)
+      console.error('Consent emails failed (non-blocking):', emailErr.message)
     }
 
     return NextResponse.json({ success: true, action: 'signed' })

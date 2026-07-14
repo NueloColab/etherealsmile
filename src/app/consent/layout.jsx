@@ -1,6 +1,6 @@
 export default function ConsentLayout({ children }) {
   return (
-    <div style={{ background: '#000', minHeight: '100vh', color: '#fff' }}>
+    <div style={{ background: '#ffffff', minHeight: '100vh', color: '#1a1a1a' }}>
       {children}
     </div>
   )

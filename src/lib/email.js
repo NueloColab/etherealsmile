@@ -526,3 +526,78 @@ export async function sendConsentSignedNotification({ clientName, clientEmail, d
     return { success: false, error: err.message }
   }
 }
+
+export async function sendConsentConfirmationEmail({ to, name, documentType, documentTitle, pdfUrl }) {
+  const client = getResend()
+  if (!client) return { success: false, skipped: true }
+
+  const docTypeLabel = {
+    consent: 'Consent Form',
+    consultation: 'Consultation Form',
+    guardian_consent: 'Guardian Consent Form',
+    aftercare: 'Aftercare Information',
+  }[documentType] || documentTitle
+
+  try {
+    const result = await client.emails.send({
+      from: FROM,
+      to,
+      subject: `Your ${docTypeLabel} has been signed - Ethereal Smile`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <style>${emailStyles}</style>
+        </head>
+        <body class="email-wrapper">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr><td align="center" style="padding: 2rem 1rem;">
+
+              <div class="email-container">
+                <div class="email-header">
+                  <img src="${SITE_URL}/hero-logo-card.png" alt="Ethereal Smile" class="email-logo" />
+                  <h1 class="email-title">Ethereal Smile</h1>
+                  <p class="email-subtitle">${sparkles()} Form Signed ${sparkles()}</p>
+                </div>
+
+                <div class="email-body">
+                  <p class="email-text">
+                    Hi ${name},<br /><br />
+                    Your <strong style="color: #e94480;">${docTypeLabel}</strong> has been signed and submitted successfully. A copy of the signed document is attached for your records.
+                  </p>
+
+                  <div style="text-align: center; margin: 1.5rem 0;">
+                    <a href="${pdfUrl}" style="display: inline-block; padding: 0.8rem 1.5rem; border-radius: 50px; background: rgba(233, 68, 128, 0.15); color: #e94480; border: 1px solid rgba(233, 68, 128, 0.4); text-decoration: none; font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;">
+                      Download Your Copy
+                    </a>
+                  </div>
+
+                  <div class="email-divider"></div>
+
+                  <p class="email-text" style="font-size: 0.8rem; color: rgba(255,255,255,0.5); text-align: center;">
+                    This is an automated confirmation. If you did not sign this form, please contact us immediately at <a href="mailto:hattie@etherealsmile.co.uk" style="color: #e94480;">hattie@etherealsmile.co.uk</a>
+                  </p>
+                </div>
+
+                <div class="email-footer">
+                  <p class="email-footer-text">
+                    Ethereal Smile by Hattie Clifford<br />
+                    <a href="${SITE_URL}" style="color: #e94480; text-decoration: none;">${SITE_URL.replace('https://', '')}</a>
+                  </p>
+                </div>
+              </div>
+
+            </td></tr>
+          </table>
+        </body>
+        </html>
+      `,
+    })
+    return { success: true, id: result?.data?.id || result?.id || null }
+  } catch (err) {
+    console.error('Consent confirmation email failed:', err)
+    return { success: false, error: err.message }
+  }
+}
