@@ -8,7 +8,7 @@ export default function About() {
   const heading = content?.heading || 'About Ethereal Smile'
   const subtitle = content?.subtitle || 'Luxury crystal tooth gems, applied with precision'
   const bodyText = content?.bodyText || ''
-  const image = content?.image || '/hattie-portrait.jpg'
+  const image = content?.image || '/brand-card-1.png'
 
   // Split body text into paragraphs if it contains newlines
   const paragraphs = bodyText ? bodyText.split('\n\n').filter(Boolean) : []
