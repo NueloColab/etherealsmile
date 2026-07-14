@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import AdminNav from '../../../components/AdminNav'
 
 export default function AdminServices() {
@@ -8,6 +9,17 @@ export default function AdminServices() {
   const [form, setForm] = useState({ name: '', description: '', price: '', duration: '', sortOrder: 0, active: true })
   const [editing, setEditing] = useState(null)
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
+
+  useEffect(() => {
+    fetch('/api/auth/session')
+      .then((r) => r.json())
+      .then((session) => {
+        if (!session?.user) {
+          router.push('/admin/login')
+        }
+      })
+  }, [router])
 
   useEffect(() => {
     fetchItems()

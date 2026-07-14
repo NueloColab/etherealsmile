@@ -4,9 +4,14 @@ import { db } from '../../lib/db'
 import { enquiries, blogPosts, galleryItems, services } from '../../lib/schema'
 import { sql } from 'drizzle-orm'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 export default async function AdminDashboard() {
   const session = await getServerSession(authOptions)
+
+  if (!session) {
+    redirect('/admin/login')
+  }
 
   const enquiryCount = await db.select({ count: sql`count(*)` }).from(enquiries)
   const postCount = await db.select({ count: sql`count(*)` }).from(blogPosts)

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import AdminNav from '../../../components/AdminNav'
 
 export default function AdminGallery() {
@@ -8,6 +9,17 @@ export default function AdminGallery() {
   const [url, setUrl] = useState('')
   const [caption, setCaption] = useState('')
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
+
+  useEffect(() => {
+    fetch('/api/auth/session')
+      .then((r) => r.json())
+      .then((session) => {
+        if (!session?.user) {
+          router.push('/admin/login')
+        }
+      })
+  }, [router])
 
   useEffect(() => {
     fetchItems()
