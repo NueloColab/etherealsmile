@@ -1,10 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useCmsContent } from '../../lib/useCmsContent'
 
 export default function Hero() {
   const [scrolled, setScrolled] = useState(false)
   const [scrollY, setScrollY] = useState(0)
+  const { content } = useCmsContent('home')
 
   useEffect(() => {
     function onScroll() {
@@ -16,10 +18,14 @@ export default function Hero() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Smooth CSS-driven values
   const logoScale = Math.max(0.5, 1 - scrollY / 2500)
   const logoTranslate = scrollY * 0.08
   const logoOpacity = Math.max(0, 1 - scrollY / 1400)
+
+  const heroHeading = content?.heroHeading || 'Ethereal Smile'
+  const heroSubtitle = content?.heroSubtitle || 'Swarovski \u0026 Preciosa Crystal Tooth Gems'
+  const ctaText = content?.ctaText || 'Book Now'
+  const backgroundImage = content?.backgroundImage || '/hero-logo-card.png'
 
   return (
     <section
@@ -36,7 +42,7 @@ export default function Hero() {
         overflow: 'hidden',
       }}
     >
-      {/* Logo card — smooth CSS transform */}
+      {/* Logo card */}
       <div
         style={{
           maxWidth: '540px',
@@ -49,8 +55,8 @@ export default function Hero() {
         }}
       >
         <img
-          src="/hero-logo-card.png"
-          alt="Ethereal Smile"
+          src={backgroundImage}
+          alt={heroHeading}
           style={{
             width: '100%',
             height: 'auto',
@@ -79,10 +85,10 @@ export default function Hero() {
           textShadow: '0 0 40px rgba(233, 68, 128, 0.3)',
         }}
       >
-        Ethereal Smile
+        {heroHeading}
       </h1>
 
-      {/* Semi-transparent pill button — bigger, lower */}
+      {/* Semi-transparent pill button */}
       <a
         href="#book"
         className="animate-fadeInUp reveal reveal-delay-1"
@@ -121,7 +127,7 @@ export default function Hero() {
           e.currentTarget.style.transform = 'translateY(0)'
         }}
       >
-        Book Now
+        {ctaText}
       </a>
 
       {/* Scroll indicator */}
