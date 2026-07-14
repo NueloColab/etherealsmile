@@ -39,7 +39,7 @@ export default function Hero() {
       <div
         ref={logoRef}
         style={{
-          maxWidth: '280px',
+          maxWidth: '340px',
           width: '100%',
           marginBottom: '2rem',
           transition: 'transform 0.1s linear, opacity 0.1s linear',
@@ -47,7 +47,7 @@ export default function Hero() {
         }}
       >
         <img
-          src="/logo.jpg"
+          src="/brand-card-2.png?v=3"
           alt="Ethereal Smile"
           style={{
             width: '100%',

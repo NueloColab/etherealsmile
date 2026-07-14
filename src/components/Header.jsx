@@ -68,7 +68,7 @@ export default function Header() {
           }}
         >
           <img
-            src="/logo.jpg"
+            src="/brand-card-2.png?v=3"
             alt="Ethereal Smile"
             style={{
               height: '32px',
@@ -198,7 +198,7 @@ export default function Header() {
           }}
         >
           <img
-            src="/logo.jpg"
+            src="/brand-card-2.png?v=3"
             alt="Ethereal Smile"
             style={{
               height: '28px',
