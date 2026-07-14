@@ -30,6 +30,7 @@ export default function Footer() {
               width: 'auto',
               display: 'block',
               marginBottom: '0.5rem',
+              filter: 'drop-shadow(0 0 8px rgba(233,68,128,0.3))',
             }}
           />
           <p
