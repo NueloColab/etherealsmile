@@ -57,7 +57,7 @@ export default function Showreel() {
         }}
       >
         <source
-          src="https://videos.pexels.com/video-files/3209828/3209828-uhd_2560_1440_25fps.mp4"
+          src="/showreel.mp4"
           type="video/mp4"
         />
       </video>
