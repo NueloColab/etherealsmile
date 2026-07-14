@@ -47,33 +47,33 @@ export default function BookingCalendar({ bookings }) {
   return (
     <div>
       {/* Month navigation */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
         <button
           onClick={prevMonth}
-          style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer' }}
+          style={{ padding: '0.3rem 0.6rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.7)', fontSize: '0.65rem', letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer' }}
         >
           &larr;
         </button>
-        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', color: '#e94480', letterSpacing: '0.08em' }}>
+        <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '0.85rem', fontWeight: 600, color: '#e94480', letterSpacing: '0.06em' }}>
           {MONTHS[month]} {year}
         </span>
         <button
           onClick={nextMonth}
-          style={{ padding: '0.5rem 1rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer' }}
+          style={{ padding: '0.3rem 0.6rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.7)', fontSize: '0.65rem', letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer' }}
         >
           &rarr;
         </button>
       </div>
 
       {/* Calendar grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.4rem', textAlign: 'center' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px', textAlign: 'center' }}>
         {WEEKDAYS.map(d => (
-          <div key={d} style={{ fontFamily: "'Inter', sans-serif", fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', padding: '0.5rem 0' }}>
+          <div key={d} style={{ fontFamily: "'Inter', sans-serif", fontSize: '0.55rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)', padding: '0.25rem 0' }}>
             {d}
           </div>
         ))}
         {days.map((day, i) => {
-          if (!day) return <div key={i} style={{ aspectRatio: '1' }} />
+          if (!day) return <div key={i} style={{ height: '2rem' }} />
 
           const past = isDateInPast(year, month, day)
           const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
@@ -88,13 +88,13 @@ export default function BookingCalendar({ bookings }) {
               onClick={() => !past && setSelectedDay(day)}
               disabled={past}
               style={{
-                aspectRatio: '1',
+                height: '2rem',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '2px',
-                borderRadius: '6px',
+                gap: '1px',
+                borderRadius: '4px',
                 border: isSelected ? '1px solid #e94480' : '1px solid transparent',
                 background: isSelected
                   ? 'rgba(233,68,128,0.15)'
@@ -102,29 +102,29 @@ export default function BookingCalendar({ bookings }) {
                   ? 'transparent'
                   : dayBookings.length > 0
                   ? 'rgba(255,255,255,0.04)'
-                  : 'rgba(255,255,255,0.02)',
+                  : 'transparent',
                 color: isSelected
                   ? '#e94480'
                   : past
                   ? 'rgba(255,255,255,0.15)'
                   : 'rgba(255,255,255,0.8)',
                 fontFamily: "'Inter', sans-serif",
-                fontSize: '0.8rem',
+                fontSize: '0.65rem',
                 fontWeight: isSelected ? 600 : 400,
                 cursor: past ? 'default' : 'pointer',
                 transition: 'all 0.2s ease',
-                boxShadow: isSelected ? '0 0 12px rgba(233,68,128,0.2)' : 'none',
+                boxShadow: isSelected ? '0 0 8px rgba(233,68,128,0.2)' : 'none',
                 position: 'relative',
               }}
             >
               {day}
               {dayBookings.length > 0 && (
-                <div style={{ display: 'flex', gap: '3px', marginTop: '1px' }}>
+                <div style={{ display: 'flex', gap: '2px' }}>
                   {hasConfirmed && (
-                    <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#4ade80' }} />
+                    <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#4ade80' }} />
                   )}
                   {hasPending && (
-                    <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#e94480' }} />
+                    <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#e94480' }} />
                   )}
                 </div>
               )}
