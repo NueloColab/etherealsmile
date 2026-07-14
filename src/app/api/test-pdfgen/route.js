@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import { generateConsentPdf } from '../../../../lib/generateConsentPdf'
-import { uploadConsentPdf } from '../../../../lib/uploadConsentPdf'
+import { generateConsentPdf } from '../../../lib/generateConsentPdf'
+import { uploadConsentPdf } from '../../../lib/uploadConsentPdf'
 
 export async function GET() {
   const errors = []
