@@ -526,3 +526,10 @@ label {
 
   /* Journal carousel: 1 card visible on mobile — handled by .journal-slide class above */
 }
+
+
+/* Float animation for review stars */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
