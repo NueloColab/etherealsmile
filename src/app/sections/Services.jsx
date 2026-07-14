@@ -10,10 +10,15 @@ export default async function Services() {
       id="services"
       className="section"
       style={{
-        background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.4) 20%, rgba(0,0,0,0.4) 80%, transparent)',
+        background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.5) 10%, rgba(0,0,0,0.5) 90%, transparent)',
+        paddingTop: '6rem',
+        paddingBottom: '6rem',
       }}
     >
       <div className="section-inner">
+        <div className="section-divider">
+          <span className="section-number">04</span>
+        </div>
         <h2 className="section-title">Services & Price List</h2>
         <p className="section-subtitle">Luxury crystal options, priced with transparency</p>
         <div className="gold-line" />
@@ -42,7 +47,7 @@ export default async function Services() {
                     style={{
                       fontFamily: "'Playfair Display', serif",
                       fontSize: '1.1rem',
-                      color: '#c9a96e',
+                      color: '#e94480',
                       marginBottom: '0.5rem',
                       fontWeight: 500,
                     }}

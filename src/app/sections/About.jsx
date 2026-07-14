@@ -6,10 +6,15 @@ export default function About() {
       id="about"
       className="section"
       style={{
-        background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.4) 20%, rgba(0,0,0,0.4) 80%, transparent)',
+        background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.5) 10%, rgba(0,0,0,0.5) 90%, transparent)',
+        paddingTop: '6rem',
+        paddingBottom: '6rem',
       }}
     >
       <div className="section-inner">
+        <div className="section-divider">
+          <span className="section-number">01</span>
+        </div>
         <h2 className="section-title">About Ethereal Smile</h2>
         <p className="section-subtitle">Luxury crystal tooth gems, applied with precision</p>
         <div className="gold-line" />
@@ -27,7 +32,7 @@ export default function About() {
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: '1.2rem',
-                color: '#c9a96e',
+                color: '#e94480',
                 marginBottom: '1rem',
                 fontWeight: 500,
               }}
@@ -51,7 +56,7 @@ export default function About() {
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: '1.2rem',
-                color: '#c9a96e',
+                color: '#e94480',
                 marginBottom: '1rem',
                 fontWeight: 500,
               }}
@@ -66,7 +71,7 @@ export default function About() {
                 lineHeight: 1.8,
               }}
             >
-              We use only genuine Swarovski and Preciosa crystals, the world\u2019s finest. Each gem is hand-selected for its cut, clarity, and fire. Whether you choose a single subtle stone or a constellation of sparkles, you\u2019re wearing the same quality trusted by luxury jewellers worldwide.
+              We use only genuine Swarovski and Preciosa crystals, the world's finest. Each gem is hand-selected for its cut, clarity, and fire. Whether you choose a single subtle stone or a constellation of sparkles, you're wearing the same quality trusted by luxury jewellers worldwide.
             </p>
           </div>
 
@@ -75,7 +80,7 @@ export default function About() {
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: '1.2rem',
-                color: '#c9a96e',
+                color: '#e94480',
                 marginBottom: '1rem',
                 fontWeight: 500,
               }}

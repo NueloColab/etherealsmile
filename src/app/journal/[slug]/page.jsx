@@ -35,7 +35,7 @@ export default async function JournalPost({ params }) {
           fontSize: '0.7rem',
           letterSpacing: '0.12em',
           textTransform: 'uppercase',
-          color: '#c9a96e',
+          color: '#e94480',
           textDecoration: 'none',
           marginBottom: '2rem',
         }}
@@ -48,7 +48,7 @@ export default async function JournalPost({ params }) {
           style={{
             borderRadius: '12px',
             overflow: 'hidden',
-            border: '1px solid rgba(201, 169, 110, 0.15)',
+            border: '1px solid rgba(233, 68, 128, 0.15)',
             marginBottom: '2rem',
           }}
         >

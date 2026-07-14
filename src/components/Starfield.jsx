@@ -8,15 +8,18 @@ export default function Starfield() {
 
   const stars = useMemo(() => {
     const arr = []
-    for (let i = 0; i < 150; i++) {
+    // Denser, smaller, sharper stars - like the original holding page
+    const count = 200
+    for (let i = 0; i < count; i++) {
       arr.push({
         x: Math.random(),
         y: Math.random(),
-        size: 0.5 + Math.random() * 2,
-        opacity: 0.2 + Math.random() * 0.8,
-        speed: 0.0002 + Math.random() * 0.0005,
+        size: 0.3 + Math.random() * 1.2,     // smaller: 0.3 to 1.5 px
+        opacity: 0.15 + Math.random() * 0.7, // more subtle
+        speed: 0.0001 + Math.random() * 0.0003,
         phase: Math.random() * Math.PI * 2,
-        isGold: i % 7 === 0,
+        isPink: i % 6 === 0,                 // pink stars instead of gold
+        twinkleSpeed: 1.5 + Math.random() * 2.5,
       })
     }
     return arr
@@ -28,10 +31,16 @@ export default function Starfield() {
     const ctx = canvas.getContext('2d')
     let w = 0
     let h = 0
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
 
     function resize() {
-      w = canvas.width = window.innerWidth
-      h = canvas.height = window.innerHeight
+      w = window.innerWidth
+      h = window.innerHeight
+      canvas.width = w * dpr
+      canvas.height = h * dpr
+      canvas.style.width = w + 'px'
+      canvas.style.height = h + 'px'
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
     resize()
     window.addEventListener('resize', resize)
@@ -43,26 +52,45 @@ export default function Starfield() {
 
       for (const star of stars) {
         const sx = star.x * w
-        const sy = (star.y * h + time * 3) % h
+        const sy = (star.y * h + time * 2) % h
 
-        const flicker = 0.5 + 0.5 * Math.sin(time * 2 + star.phase)
+        const flicker = 0.5 + 0.5 * Math.sin(time * star.twinkleSpeed + star.phase)
         const alpha = star.opacity * flicker
 
-        const gradient = ctx.createRadialGradient(sx, sy, 0, sx, sy, star.size * 2)
-        if (star.isGold) {
-          gradient.addColorStop(0, `rgba(201, 169, 110, ${alpha})`)
-          gradient.addColorStop(1, `rgba(201, 169, 110, 0)`)
+        // Crisp single-pixel or tiny-cross stars, no blur
+        const s = star.size
+        ctx.globalAlpha = alpha
+
+        if (star.isPink) {
+          ctx.fillStyle = '#e94480'
         } else {
-          gradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`)
-          gradient.addColorStop(1, `rgba(255, 255, 255, 0)`)
+          ctx.fillStyle = '#ffffff'
         }
 
-        ctx.beginPath()
-        ctx.arc(sx, sy, star.size * 2, 0, Math.PI * 2)
-        ctx.fillStyle = gradient
-        ctx.fill()
+        // Draw a sharp point - tiny filled rect or circle
+        if (s < 1) {
+          // Single pixel crisp point
+          ctx.fillRect(Math.floor(sx), Math.floor(sy), 1, 1)
+        } else if (s < 1.8) {
+          // Slightly larger but still crisp
+          ctx.beginPath()
+          ctx.arc(sx, sy, s * 0.4, 0, Math.PI * 2)
+          ctx.fill()
+        } else {
+          // Tiny cross sparkle for the brightest ones
+          const half = Math.max(1, s * 0.35)
+          ctx.lineWidth = 0.6
+          ctx.strokeStyle = star.isPink ? '#e94480' : '#ffffff'
+          ctx.beginPath()
+          ctx.moveTo(sx - half, sy)
+          ctx.lineTo(sx + half, sy)
+          ctx.moveTo(sx, sy - half)
+          ctx.lineTo(sx, sy + half)
+          ctx.stroke()
+        }
       }
 
+      ctx.globalAlpha = 1
       animRef.current = requestAnimationFrame(draw)
     }
     animRef.current = requestAnimationFrame(draw)

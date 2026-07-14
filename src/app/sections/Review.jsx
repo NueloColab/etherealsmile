@@ -4,11 +4,15 @@ export default function Review() {
       id="review"
       className="section"
       style={{
-        background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.5) 20%, rgba(0,0,0,0.5) 80%, transparent)',
-        padding: '4rem 1.5rem',
+        background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.6) 10%, rgba(0,0,0,0.6) 90%, transparent)',
+        paddingTop: '6rem',
+        paddingBottom: '6rem',
       }}
     >
       <div className="section-inner">
+        <div className="section-divider">
+          <span className="section-number">08</span>
+        </div>
         <div
           className="frame-card"
           style={{
@@ -21,7 +25,7 @@ export default function Review() {
             style={{
               fontFamily: "'Playfair Display', serif",
               fontSize: '1.3rem',
-              color: '#c9a96e',
+              color: '#e94480',
               marginBottom: '0.75rem',
               fontWeight: 500,
             }}
@@ -38,7 +42,7 @@ export default function Review() {
               marginBottom: '1.5rem',
             }}
           >
-            If you\u2019ve visited Ethereal Smile, we\u2019d be honoured if you left us a review. Your words help others discover the sparkle.
+            If you've visited Ethereal Smile, we'd be honoured if you left us a review. Your words help others discover the sparkle.
           </p>
 
           <a

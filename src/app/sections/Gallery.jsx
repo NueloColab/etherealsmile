@@ -23,11 +23,16 @@ export default function Gallery() {
       className="section"
       style={{
         background: 'rgba(0, 0, 0, 0.6)',
-        borderTop: '1px solid rgba(201, 169, 110, 0.08)',
-        borderBottom: '1px solid rgba(201, 169, 110, 0.08)',
+        borderTop: '1px solid rgba(233, 68, 128, 0.08)',
+        borderBottom: '1px solid rgba(233, 68, 128, 0.08)',
+        paddingTop: '6rem',
+        paddingBottom: '6rem',
       }}
     >
       <div className="section-inner">
+        <div className="section-divider">
+          <span className="section-number">05</span>
+        </div>
         <h2 className="section-title">Gallery</h2>
         <p className="section-subtitle">See the sparkle for yourself</p>
         <div className="gold-line" />
@@ -142,7 +147,7 @@ export default function Gallery() {
                 maxHeight: '85vh',
                 objectFit: 'contain',
                 borderRadius: '8px',
-                border: '1px solid rgba(201, 169, 110, 0.2)',
+                border: '1px solid rgba(233, 68, 128, 0.2)',
               }}
             />
           </div>

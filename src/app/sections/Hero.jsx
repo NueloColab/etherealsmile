@@ -39,7 +39,7 @@ export default function Hero() {
       <div
         ref={logoRef}
         style={{
-          maxWidth: '340px',
+          maxWidth: '280px',
           width: '100%',
           marginBottom: '2rem',
           transition: 'transform 0.1s linear, opacity 0.1s linear',
@@ -47,14 +47,14 @@ export default function Hero() {
         }}
       >
         <img
-          src="/brand-card-2.png?v=2"
+          src="/logo.jpg"
           alt="Ethereal Smile"
           style={{
             width: '100%',
             height: 'auto',
             borderRadius: '10px',
             display: 'block',
-            boxShadow: '0 0 60px rgba(201, 169, 110, 0.15)',
+            boxShadow: '0 0 50px rgba(233, 68, 128, 0.2)',
           }}
         />
       </div>
@@ -84,7 +84,7 @@ export default function Hero() {
           fontFamily: "'Playfair Display', serif",
           fontStyle: 'italic',
           fontSize: 'clamp(0.8rem, 1.6vw, 1rem)',
-          color: '#c9a96e',
+          color: '#e94480',
           textAlign: 'center',
           letterSpacing: '0.06em',
           marginBottom: '2.5rem',

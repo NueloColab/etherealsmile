@@ -16,10 +16,15 @@ export default async function Journal() {
       id="journal"
       className="section"
       style={{
-        background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.4) 20%, rgba(0,0,0,0.4) 80%, transparent)',
+        background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.5) 10%, rgba(0,0,0,0.5) 90%, transparent)',
+        paddingTop: '6rem',
+        paddingBottom: '6rem',
       }}
     >
       <div className="section-inner">
+        <div className="section-divider">
+          <span className="section-number">06</span>
+        </div>
         <h2 className="section-title">Journal</h2>
         <p className="section-subtitle">Tips, trends, and aftercare wisdom</p>
         <div className="gold-line" />
@@ -72,7 +77,7 @@ export default async function Journal() {
                       style={{
                         fontFamily: "'Playfair Display', serif",
                         fontSize: '1.05rem',
-                        color: '#c9a96e',
+                        color: '#e94480',
                         marginBottom: '0.5rem',
                         fontWeight: 500,
                       }}

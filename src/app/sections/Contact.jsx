@@ -34,13 +34,18 @@ export default function Contact() {
       className="section"
       style={{
         background: 'rgba(0, 0, 0, 0.6)',
-        borderTop: '1px solid rgba(201, 169, 110, 0.08)',
-        borderBottom: '1px solid rgba(201, 169, 110, 0.08)',
+        borderTop: '1px solid rgba(233, 68, 128, 0.08)',
+        borderBottom: '1px solid rgba(233, 68, 128, 0.08)',
+        paddingTop: '6rem',
+        paddingBottom: '6rem',
       }}
     >
       <div className="section-inner">
+        <div className="section-divider">
+          <span className="section-number">07</span>
+        </div>
         <h2 className="section-title">Contact</h2>
-        <p className="section-subtitle">We\u2019d love to hear from you</p>
+        <p className="section-subtitle">We'd love to hear from you</p>
         <div className="gold-line" />
 
         <div
@@ -57,7 +62,7 @@ export default function Contact() {
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: '1.1rem',
-                color: '#c9a96e',
+                color: '#e94480',
                 marginBottom: '1.5rem',
                 fontWeight: 500,
               }}
@@ -139,7 +144,7 @@ export default function Contact() {
               >
                 Bookings
               </p>
-              <a href="#book" style={{ fontSize: '0.85rem', color: '#c9a96e', textDecoration: 'none' }}>
+              <a href="#book" style={{ fontSize: '0.85rem', color: '#e94480', textDecoration: 'none' }}>
                 Use our enquiry calendar &rarr;
               </a>
             </div>
@@ -150,7 +155,7 @@ export default function Contact() {
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: '1.1rem',
-                color: '#c9a96e',
+                color: '#e94480',
                 marginBottom: '1.5rem',
                 fontWeight: 500,
               }}
@@ -165,18 +170,18 @@ export default function Contact() {
                     width: '48px',
                     height: '48px',
                     borderRadius: '50%',
-                    background: 'rgba(201, 169, 110, 0.15)',
-                    border: '1px solid rgba(201, 169, 110, 0.3)',
+                    background: 'rgba(233, 68, 128, 0.15)',
+                    border: '1px solid rgba(233, 68, 128, 0.3)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     margin: '0 auto 1rem',
-                    color: '#c9a96e',
+                    color: '#e94480',
                   }}
                 >
                   &#10003;
                 </div>
-                <p style={{ color: '#c9a96e', fontSize: '0.9rem' }}>Message sent. We\u2019ll be in touch soon.</p>
+                <p style={{ color: '#e94480', fontSize: '0.9rem' }}>Message sent. We'll be in touch soon.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit}>

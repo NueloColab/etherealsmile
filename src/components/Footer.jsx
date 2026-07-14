@@ -8,7 +8,7 @@ export default function Footer() {
       style={{
         position: 'relative',
         zIndex: 1,
-        borderTop: '1px solid rgba(201, 169, 110, 0.1)',
+        borderTop: '1px solid rgba(233, 68, 128, 0.1)',
         padding: '3rem 1.5rem 2rem',
       }}
     >
@@ -22,19 +22,17 @@ export default function Footer() {
         }}
       >
         <div>
-          <p
+          <img
+            src="/logo.jpg"
+            alt="Ethereal Smile"
             style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: '0.9rem',
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              color: '#c9a96e',
+              height: '28px',
+              width: 'auto',
+              borderRadius: '4px',
+              display: 'block',
               marginBottom: '0.5rem',
-              fontWeight: 500,
             }}
-          >
-            Ethereal Smile
-          </p>
+          />
           <p
             style={{
               fontFamily: "'Inter', sans-serif",
@@ -73,7 +71,7 @@ export default function Footer() {
               marginBottom: '0.4rem',
               transition: 'color 0.3s',
             }}
-            onMouseEnter={(e) => (e.target.style.color = '#c9a96e')}
+            onMouseEnter={(e) => (e.target.style.color = '#e94480')}
             onMouseLeave={(e) => (e.target.style.color = 'rgba(255,255,255,0.5)')}
           >
             Instagram
@@ -90,7 +88,7 @@ export default function Footer() {
               textDecoration: 'none',
               transition: 'color 0.3s',
             }}
-            onMouseEnter={(e) => (e.target.style.color = '#c9a96e')}
+            onMouseEnter={(e) => (e.target.style.color = '#e94480')}
             onMouseLeave={(e) => (e.target.style.color = 'rgba(255,255,255,0.5)')}
           >
             TikTok
@@ -121,7 +119,7 @@ export default function Footer() {
               marginBottom: '0.4rem',
               transition: 'color 0.3s',
             }}
-            onMouseEnter={(e) => (e.target.style.color = '#c9a96e')}
+            onMouseEnter={(e) => (e.target.style.color = '#e94480')}
             onMouseLeave={(e) => (e.target.style.color = 'rgba(255,255,255,0.5)')}
           >
             Email Us
@@ -137,7 +135,7 @@ export default function Footer() {
               marginTop: '1rem',
               transition: 'color 0.3s',
             }}
-            onMouseEnter={(e) => (e.target.style.color = '#c9a96e')}
+            onMouseEnter={(e) => (e.target.style.color = '#e94480')}
             onMouseLeave={(e) => (e.target.style.color = 'rgba(255,255,255,0.25)')}
           >
             Admin

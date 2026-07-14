@@ -22,7 +22,7 @@ export default async function AdminDashboard() {
           style={{
             fontFamily: "'Playfair Display', serif",
             fontSize: '1.5rem',
-            color: '#c9a96e',
+            color: '#e94480',
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
           }}
@@ -62,7 +62,7 @@ export default async function AdminDashboard() {
                 style={{
                   fontFamily: "'Playfair Display', serif",
                   fontSize: '2rem',
-                  color: '#c9a96e',
+                  color: '#e94480',
                   marginBottom: '0.25rem',
                 }}
               >
@@ -98,7 +98,7 @@ export default async function AdminDashboard() {
             style={{
               fontFamily: "'Playfair Display', serif",
               fontSize: '1.1rem',
-              color: '#c9a96e',
+              color: '#e94480',
               fontWeight: 500,
             }}
           >
@@ -108,7 +108,7 @@ export default async function AdminDashboard() {
             href="/admin/enquiries"
             style={{
               fontSize: '0.7rem',
-              color: '#c9a96e',
+              color: '#e94480',
               textDecoration: 'none',
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
@@ -167,19 +167,19 @@ export default async function AdminDashboard() {
                               ? 'rgba(76, 175, 80, 0.15)'
                               : e.status === 'rejected'
                               ? 'rgba(244, 67, 54, 0.15)'
-                              : 'rgba(201, 169, 110, 0.15)',
+                              : 'rgba(233, 68, 128, 0.15)',
                           color:
                             e.status === 'confirmed'
                               ? '#81c784'
                               : e.status === 'rejected'
                               ? '#e57373'
-                              : '#c9a96e',
+                              : '#e94480',
                           border:
                             e.status === 'confirmed'
                               ? '1px solid rgba(76, 175, 80, 0.3)'
                               : e.status === 'rejected'
                               ? '1px solid rgba(244, 67, 54, 0.3)'
-                              : '1px solid rgba(201, 169, 110, 0.3)',
+                              : '1px solid rgba(233, 68, 128, 0.3)',
                         }}
                       >
                         {e.status}

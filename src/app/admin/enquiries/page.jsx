@@ -22,7 +22,7 @@ export default async function AdminEnquiries() {
           style={{
             fontFamily: "'Playfair Display', serif",
             fontSize: '1.4rem',
-            color: '#c9a96e',
+            color: '#e94480',
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
           }}
@@ -83,19 +83,19 @@ export default async function AdminEnquiries() {
                             ? 'rgba(76, 175, 80, 0.15)'
                             : e.status === 'rejected'
                             ? 'rgba(244, 67, 54, 0.15)'
-                            : 'rgba(201, 169, 110, 0.15)',
+                            : 'rgba(233, 68, 128, 0.15)',
                         color:
                           e.status === 'confirmed'
                             ? '#81c784'
                             : e.status === 'rejected'
                             ? '#e57373'
-                            : '#c9a96e',
+                            : '#e94480',
                         border:
                           e.status === 'confirmed'
                             ? '1px solid rgba(76, 175, 80, 0.3)'
                             : e.status === 'rejected'
                             ? '1px solid rgba(244, 67, 54, 0.3)'
-                            : '1px solid rgba(201, 169, 110, 0.3)',
+                            : '1px solid rgba(233, 68, 128, 0.3)',
                       }}
                     >
                       {e.status}

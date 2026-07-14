@@ -41,7 +41,7 @@ export default function AdminNav() {
               textTransform: 'uppercase',
               textDecoration: 'none',
               color: isActive ? '#000' : 'rgba(255,255,255,0.6)',
-              background: isActive ? '#c9a96e' : 'transparent',
+              background: isActive ? '#e94480' : 'transparent',
               transition: 'all 0.2s ease',
             }}
           >

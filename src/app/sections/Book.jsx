@@ -99,10 +99,15 @@ export default function Book() {
       id="book"
       className="section"
       style={{
-        background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.5) 20%, rgba(0,0,0,0.5) 80%, transparent)',
+        background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.6) 10%, rgba(0,0,0,0.6) 90%, transparent)',
+        paddingTop: '6rem',
+        paddingBottom: '6rem',
       }}
     >
       <div className="section-inner">
+        <div className="section-divider">
+          <span className="section-number">03</span>
+        </div>
         <h2 className="section-title">Book an Appointment</h2>
         <p className="section-subtitle">Select a date and send us an enquiry</p>
         <div className="gold-line" />
@@ -136,7 +141,7 @@ export default function Book() {
                 style={{
                   fontFamily: "'Playfair Display', serif",
                   fontSize: '1.1rem',
-                  color: '#c9a96e',
+                  color: '#e94480',
                   letterSpacing: '0.08em',
                 }}
               >
@@ -194,16 +199,16 @@ export default function Book() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       borderRadius: '6px',
-                      border: isSelected ? '1px solid #c9a96e' : '1px solid transparent',
+                      border: isSelected ? '1px solid #e94480' : '1px solid transparent',
                       background: isSelected
-                        ? 'rgba(201, 169, 110, 0.15)'
+                        ? 'rgba(233, 68, 128, 0.15)'
                         : isPast
                         ? 'transparent'
                         : day
                         ? 'rgba(255,255,255,0.03)'
                         : 'transparent',
                       color: isSelected
-                        ? '#c9a96e'
+                        ? '#e94480'
                         : isPast
                         ? 'rgba(255,255,255,0.15)'
                         : 'rgba(255,255,255,0.8)',
@@ -225,7 +230,7 @@ export default function Book() {
                   marginTop: '1rem',
                   fontFamily: "'Inter', sans-serif",
                   fontSize: '0.8rem',
-                  color: '#c9a96e',
+                  color: '#e94480',
                   textAlign: 'center',
                 }}
               >
@@ -240,7 +245,7 @@ export default function Book() {
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: '1.1rem',
-                color: '#c9a96e',
+                color: '#e94480',
                 marginBottom: '1.5rem',
                 fontWeight: 500,
               }}
@@ -260,18 +265,18 @@ export default function Book() {
                     width: '48px',
                     height: '48px',
                     borderRadius: '50%',
-                    background: 'rgba(201, 169, 110, 0.15)',
-                    border: '1px solid rgba(201, 169, 110, 0.3)',
+                    background: 'rgba(233, 68, 128, 0.15)',
+                    border: '1px solid rgba(233, 68, 128, 0.3)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     margin: '0 auto 1rem',
-                    color: '#c9a96e',
+                    color: '#e94480',
                   }}
                 >
                   &#10003;
                 </div>
-                <p style={{ color: '#c9a96e', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+                <p style={{ color: '#e94480', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
                   Enquiry sent successfully.
                 </p>
                 <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>

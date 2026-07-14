@@ -65,7 +65,7 @@ export default function AdminBlog() {
           style={{
             fontFamily: "'Playfair Display', serif",
             fontSize: '1.4rem',
-            color: '#c9a96e',
+            color: '#e94480',
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
           }}
@@ -83,7 +83,7 @@ export default function AdminBlog() {
         }}
       >
         <div className="frame-card">
-          <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#c9a96e', marginBottom: '1.25rem' }}>
+          <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#e94480', marginBottom: '1.25rem' }}>
             {editing ? 'Edit Post' : 'Add Post'}
           </h3>
           <form onSubmit={handleSubmit}>
@@ -135,7 +135,7 @@ export default function AdminBlog() {
         </div>
 
         <div className="frame-card" style={{ overflowX: 'auto' }}>
-          <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#c9a96e', marginBottom: '1.25rem' }}>
+          <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#e94480', marginBottom: '1.25rem' }}>
             Posts
           </h3>
           {items.length > 0 ? (
@@ -173,7 +173,7 @@ export default function AdminBlog() {
                       style={{
                         background: 'none',
                         border: 'none',
-                        color: '#c9a96e',
+                        color: '#e94480',
                         cursor: 'pointer',
                         fontSize: '0.75rem',
                       }}

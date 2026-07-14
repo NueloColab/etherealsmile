@@ -7,12 +7,17 @@ export default function Hattie() {
       className="section"
       style={{
         background: 'rgba(0, 0, 0, 0.6)',
-        borderTop: '1px solid rgba(201, 169, 110, 0.08)',
-        borderBottom: '1px solid rgba(201, 169, 110, 0.08)',
+        borderTop: '1px solid rgba(233, 68, 128, 0.08)',
+        borderBottom: '1px solid rgba(233, 68, 128, 0.08)',
+        paddingTop: '6rem',
+        paddingBottom: '6rem',
       }}
     >
       <div className="section-inner">
-        <h2 className="section-title">Who\u2019s Hattie</h2>
+        <div className="section-divider">
+          <span className="section-number">02</span>
+        </div>
+        <h2 className="section-title">Who&rsquo;s Hattie</h2>
         <p className="section-subtitle">The face behind the sparkle</p>
         <div className="gold-line" />
 
@@ -36,7 +41,7 @@ export default function Hattie() {
               style={{
                 borderRadius: '12px',
                 overflow: 'hidden',
-                border: '1px solid rgba(201, 169, 110, 0.15)',
+                border: '1px solid rgba(233, 68, 128, 0.15)',
               }}
             >
               <img
@@ -54,7 +59,7 @@ export default function Hattie() {
               style={{
                 borderRadius: '12px',
                 overflow: 'hidden',
-                border: '1px solid rgba(201, 169, 110, 0.15)',
+                border: '1px solid rgba(233, 68, 128, 0.15)',
               }}
             >
               <img
@@ -79,7 +84,7 @@ export default function Hattie() {
             }}
           >
             <p style={{ marginBottom: '1.25rem' }}>
-              I\u2019m Hattie Clifford, the founder and artist behind Ethereal Smile. What started as a fascination with the intersection of beauty and self-expression has grown into a passion for helping people discover a new kind of confidence, one tiny sparkle at a time.
+              I&rsquo;m Hattie Clifford, the founder and artist behind Ethereal Smile. What started as a fascination with the intersection of beauty and self-expression has grown into a passion for helping people discover a new kind of confidence, one tiny sparkle at a time.
             </p>
 
             <p style={{ marginBottom: '1.25rem' }}>
@@ -87,18 +92,18 @@ export default function Hattie() {
             </p>
 
             <p style={{ marginBottom: '1.25rem' }}>
-              Every crystal I place is chosen for its brilliance and quality. I work exclusively with Swarovski and Preciosa because I believe in using only the best. This isn\u2019t just a service; it\u2019s a collaboration between us, creating something beautiful together.
+              Every crystal I place is chosen for its brilliance and quality. I work exclusively with Swarovski and Preciosa because I believe in using only the best. This isn&rsquo;t just a service; it&rsquo;s a collaboration between us, creating something beautiful together.
             </p>
 
             <p
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontStyle: 'italic',
-                color: '#c9a96e',
+                color: '#e94480',
                 fontSize: '1rem',
               }}
             >
-              Your smile is the canvas. Let\u2019s make it ethereal.
+              Your smile is the canvas. Let&rsquo;s make it ethereal.
             </p>
           </div>
         </div>
