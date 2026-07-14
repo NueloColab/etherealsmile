@@ -1,6 +1,7 @@
 import { db } from '../../../lib/db'
 import { dbAdmin } from '../../../lib/db-admin'
 import { bookings } from '../../../lib/schema'
+import { eq, desc } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 import { sendNewBookingNotification } from '../../../lib/email'
 
@@ -54,8 +55,8 @@ export async function GET(request) {
     const limit = parseInt(url.searchParams.get('limit') || '200')
     const sort = url.searchParams.get('sort') || '-createdAt'
 
-    // Admin read: use direct connection for fresh data
-    const result = await dbAdmin.select().from(bookings).orderBy(bookings.createdAt).limit(limit)
+    // Admin read: use direct connection for fresh data, newest first
+    const result = await dbAdmin.select().from(bookings).orderBy(desc(bookings.createdAt)).limit(limit)
 
     return NextResponse.json(result)
   } catch (err) {
