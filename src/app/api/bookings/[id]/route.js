@@ -26,8 +26,19 @@ export async function PUT(request, { params }) {
     const body = await request.json()
     const update = {}
 
-    if (body.status) update.status = body.status
+    // Customer field edits — never touch status or proposal fields
+    if (body.name !== undefined) update.name = body.name
+    if (body.email !== undefined) update.email = body.email
+    if (body.phone !== undefined) update.phone = body.phone
+    if (body.date !== undefined) update.date = body.date ? new Date(body.date) : null
+    if (body.timeSlot !== undefined) update.timeSlot = body.timeSlot
+    if (body.service !== undefined) update.service = body.service
+    if (body.price !== undefined) update.price = body.price
+    if (body.message !== undefined) update.message = body.message
     if (body.notes !== undefined) update.notes = body.notes
+
+    // Status changes — existing logic, untouched
+    if (body.status) update.status = body.status
     if (body.status === 'confirmed' && !body.confirmedAt) {
       update.confirmedAt = new Date()
     }
@@ -37,7 +48,7 @@ export async function PUT(request, { params }) {
       update.proposedDate = new Date(body.proposedDate)
       update.proposedTime = body.proposedTime || null
       update.proposalToken = randomBytes(32).toString('hex')
-      update.proposalExpiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000) // 48 hours
+      update.proposalExpiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000)
     }
 
     await db.update(bookings).set(update).where(eq(bookings.id, Number(id)))
@@ -89,5 +100,22 @@ export async function PUT(request, { params }) {
   } catch (err) {
     console.error('Booking PUT error:', err)
     return NextResponse.json({ error: 'Failed to update booking' }, { status: 500 })
+  }
+}
+
+export async function DELETE(request, { params }) {
+  try {
+    const bookingRows = await db.select().from(bookings)
+      .where(eq(bookings.id, Number(params.id)))
+
+    if (!bookingRows[0]) {
+      return NextResponse.json({ error: 'Booking not found' }, { status: 404 })
+    }
+
+    await db.delete(bookings).where(eq(bookings.id, Number(params.id)))
+    return NextResponse.json({ success: true, deleted: bookingRows[0].name })
+  } catch (err) {
+    console.error('Booking DELETE error:', err)
+    return NextResponse.json({ error: 'Failed to delete booking' }, { status: 500 })
   }
 }

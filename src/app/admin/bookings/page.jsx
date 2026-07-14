@@ -17,7 +17,8 @@ export default function BookingsPage() {
   const [filter, setFilter] = useState('all')
   const [view, setView] = useState('calendar') // 'calendar' or 'list'
 
-  useEffect(() => {
+  function fetchBookings() {
+    setLoading(true)
     fetch('/api/bookings?limit=200&sort=-createdAt')
       .then(r => r.json())
       .then(data => {
@@ -25,6 +26,17 @@ export default function BookingsPage() {
         setLoading(false)
       })
       .catch(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    fetchBookings()
+  }, [])
+
+  // Re-fetch when page regains focus (e.g. after editing a booking detail)
+  useEffect(() => {
+    function onFocus() { fetchBookings() }
+    window.addEventListener('focus', onFocus)
+    return () => window.removeEventListener('focus', onFocus)
   }, [])
 
   const filtered = filter === 'all' ? bookings : bookings.filter(b => b.status === filter)
