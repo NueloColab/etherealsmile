@@ -5,7 +5,7 @@ import AdminNav from '../../../components/AdminNav'
 
 export default function AdminBlog() {
   const [items, setItems] = useState([])
-  const [form, setForm] = useState({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', status: 'draft' })
+  const [form, setForm] = useState({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', images: '', status: 'draft' })
   const [editing, setEditing] = useState(null)
   const [loading, setLoading] = useState(false)
 
@@ -25,14 +25,14 @@ export default function AdminBlog() {
     const url = editing ? `/api/blog-posts/${editing}` : '/api/blog-posts'
     const method = editing ? 'PUT' : 'POST'
     const payload = editing
-      ? { ...form }
-      : { ...form, publishedAt: form.status === 'published' ? new Date().toISOString() : null }
+      ? { ...form, images: form.images ? form.images.split(',').map((s) => s.trim()).filter(Boolean) : [] }
+      : { ...form, images: form.images ? form.images.split(',').map((s) => s.trim()).filter(Boolean) : [], publishedAt: form.status === 'published' ? new Date().toISOString() : null }
     await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     })
-    setForm({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', status: 'draft' })
+    setForm({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', images: '', status: 'draft' })
     setEditing(null)
     setLoading(false)
     fetchItems()
@@ -52,6 +52,7 @@ export default function AdminBlog() {
       content: item.content,
       excerpt: item.excerpt || '',
       imageUrl: item.imageUrl || '',
+      images: Array.isArray(item.images) ? item.images.join(', ') : (item.images || ''),
       status: item.status,
     })
   }
@@ -100,6 +101,15 @@ export default function AdminBlog() {
               <input value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} placeholder="https://..." />
             </div>
             <div className="form-group">
+              <label>Additional Images (comma-separated URLs)</label>
+              <textarea
+                rows={2}
+                value={form.images}
+                onChange={(e) => setForm({ ...form, images: e.target.value })}
+                placeholder="https://example.com/img1.jpg, https://example.com/img2.jpg..."
+              />
+            </div>
+            <div className="form-group">
               <label>Excerpt</label>
               <textarea rows={2} value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} placeholder="Short summary..." />
             </div>
@@ -124,7 +134,7 @@ export default function AdminBlog() {
                   className="btn btn-outline"
                   onClick={() => {
                     setEditing(null)
-                    setForm({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', status: 'draft' })
+                    setForm({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', images: '', status: 'draft' })
                   }}
                 >
                   Cancel

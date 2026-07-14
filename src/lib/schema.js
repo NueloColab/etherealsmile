@@ -48,6 +48,7 @@ export const blogPosts = pgTable('blog_posts', {
   content: text('content').notNull(),
   excerpt: text('excerpt'),
   imageUrl: text('image_url'),
+  images: jsonb('images').notNull().default('[]'),
   status: postStatusEnum('status').notNull().default('draft'),
   publishedAt: timestamp('published_at', { mode: 'date' }),
   createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
