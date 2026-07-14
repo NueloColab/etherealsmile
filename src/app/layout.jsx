@@ -3,6 +3,7 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Starfield from '../components/Starfield'
 import ScrollReveal from '../components/ScrollReveal'
+import Providers from '../components/Providers'
 
 export const metadata = {
   title: 'Ethereal Smile | Swarovski \u0026 Preciosa Crystal Tooth Gems',
@@ -43,10 +44,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <Starfield />
-        <Header />
-        <ScrollReveal>{children}</ScrollReveal>
-        <Footer />
+        <Providers>
+          <Starfield />
+          <Header />
+          <ScrollReveal>{children}</ScrollReveal>
+          <Footer />
+        </Providers>
       </body>
     </html>
   )
