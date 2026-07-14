@@ -9,6 +9,8 @@ export default function ScrollReveal({ children }) {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-visible')
+            // Once visible, no need to keep observing
+            observer.unobserve(entry.target)
           }
         })
       },
@@ -16,11 +18,35 @@ export default function ScrollReveal({ children }) {
     )
 
     const selectors = ['.reveal', '.reveal-left', '.reveal-right', '.reveal-scale']
-    selectors.forEach((selector) => {
-      document.querySelectorAll(selector).forEach((el) => observer.observe(el))
+
+    // Observe all existing elements
+    function observeAll() {
+      selectors.forEach((selector) => {
+        document.querySelectorAll(selector).forEach((el) => {
+          if (!el.classList.contains('is-visible')) {
+            observer.observe(el)
+          }
+        })
+      })
+    }
+
+    // Initial observation
+    observeAll()
+
+    // Re-observe when DOM changes (for dynamically loaded content)
+    const mutationObserver = new MutationObserver(() => {
+      observeAll()
     })
 
-    return () => observer.disconnect()
+    mutationObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+    })
+
+    return () => {
+      observer.disconnect()
+      mutationObserver.disconnect()
+    }
   }, [])
 
   return <>{children}</>

@@ -34,8 +34,8 @@ export default function Journal() {
       }}
     >
       <div className="section-inner">
-        <h2 className="section-title reveal">{heading}</h2>
-        <p className="section-subtitle reveal reveal-delay-1">Tips, trends, and aftercare wisdom</p>
+        <h2 className="section-title">{heading}</h2>
+        <p className="section-subtitle">Tips, trends, and aftercare wisdom</p>
 
         {loading ? (
           <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', marginTop: '3rem' }}>Loading journal...</p>
@@ -58,7 +58,7 @@ export default function Journal() {
                 }}
               >
                 <article
-                  className="journal-card reveal reveal-scale"
+                  className="journal-card"
                   style={{
                     display: 'flex',
                     flexDirection: 'column',

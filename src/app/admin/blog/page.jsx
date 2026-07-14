@@ -6,7 +6,7 @@ import CloudinaryUpload from '../../../components/CloudinaryUpload'
 
 export default function AdminBlog() {
   const [items, setItems] = useState([])
-  const [form, setForm] = useState({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', images: '', status: 'draft' })
+  const [form, setForm] = useState({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', images: [], status: 'draft' })
   const [editing, setEditing] = useState(null)
   const [loading, setLoading] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -38,15 +38,15 @@ export default function AdminBlog() {
     const url = editing ? `/api/blog-posts/${editing}` : '/api/blog-posts'
     const method = editing ? 'PUT' : 'POST'
     const payload = editing
-      ? { ...form, images: form.images ? form.images.split(',').map((s) => s.trim()).filter(Boolean) : [] }
-      : { ...form, images: form.images ? form.images.split(',').map((s) => s.trim()).filter(Boolean) : [], publishedAt: form.status === 'published' ? new Date().toISOString() : null }
+      ? { ...form, images: form.images || [] }
+      : { ...form, images: form.images || [], publishedAt: form.status === 'published' ? new Date().toISOString() : null }
     const res = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     })
     if (res.ok) {
-      setForm({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', images: '', status: 'draft' })
+      setForm({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', images: [], status: 'draft' })
       setEditing(null)
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
@@ -69,9 +69,19 @@ export default function AdminBlog() {
       content: item.content,
       excerpt: item.excerpt || '',
       imageUrl: item.imageUrl || '',
-      images: Array.isArray(item.images) ? item.images.join(', ') : (item.images || ''),
+      images: Array.isArray(item.images) ? item.images : [],
       status: item.status,
     })
+  }
+
+  async function handleAddImage(url) {
+    setForm({ ...form, images: [...(form.images || []), url] })
+  }
+
+  function handleRemoveImage(index) {
+    const newImages = [...(form.images || [])]
+    newImages.splice(index, 1)
+    setForm({ ...form, images: newImages })
   }
 
   return (
@@ -105,6 +115,33 @@ export default function AdminBlog() {
               currentUrl={form.imageUrl}
               onUpload={(url) => setForm({ ...form, imageUrl: url })}
             />
+            {/* Additional images / video */}
+            <div>
+              <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem' }}>
+                Additional Images / Video
+              </label>
+              {(form.images || []).length > 0 && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                  {(form.images || []).map((img, i) => (
+                    <div key={i} style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)', aspectRatio: '1' }}>
+                      {img.includes('/video/') || img.endsWith('.mp4') ? (
+                        <div style={{ width: '100%', height: '100%', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e94480" strokeWidth="2"><polygon points="5 3 19 12 5 21 5 3" /></svg>
+                        </div>
+                      ) : (
+                        <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      )}
+                      <button type="button" onClick={() => handleRemoveImage(i)} style={{ position: 'absolute', top: '4px', right: '4px', background: 'rgba(239,68,68,0.9)', color: '#fff', border: 'none', borderRadius: '4px', padding: '2px 6px', fontSize: '0.65rem', cursor: 'pointer' }}>X</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <CloudinaryUpload
+                label=""
+                currentUrl=""
+                onUpload={handleAddImage}
+              />
+            </div>
             <div>
               <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem' }}>Excerpt</label>
               <textarea rows={2} value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} style={{ ...inputStyle, resize: 'vertical' }} placeholder="Short summary..." />
@@ -129,7 +166,7 @@ export default function AdminBlog() {
                 {loading ? 'Saving...' : saved ? 'Saved!' : editing ? 'Update' : 'Add Post'}
               </button>
               {editing && (
-                <button type="button" onClick={() => { setEditing(null); setForm({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', images: '', status: 'draft' }) }} style={resetButtonStyle}>
+                <button type="button" onClick={() => { setEditing(null); setForm({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', images: [], status: 'draft' }) }} style={resetButtonStyle}>
                   Cancel
                 </button>
               )}
