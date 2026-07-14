@@ -2,6 +2,8 @@ import { dbAdmin as db } from '../../../../lib/db-admin'
 import { consentRecords, consentDocuments, clients, bookings } from '../../../../lib/schema'
 import { eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
+import { generateConsentPdf } from '../../../../lib/generateConsentPdf'
+import { uploadConsentPdf } from '../../../../lib/uploadConsentPdf'
 
 export async function GET(request, { params }) {
   try {
@@ -132,7 +134,6 @@ export async function POST(request, { params }) {
     let signedPdfUrl = null
     let pdfBuffer = null
     try {
-      const { generateConsentPdf } = await import('../../../../lib/generateConsentPdf')
       pdfBuffer = await generateConsentPdf({
         documentType: doc?.documentType || 'consent',
         documentTitle: doc?.title || 'Consent Form',
@@ -148,7 +149,6 @@ export async function POST(request, { params }) {
       })
 
       // Upload to Cloudinary
-      const { uploadConsentPdf } = await import('../../../../lib/uploadConsentPdf')
       const uploadResult = await uploadConsentPdf(pdfBuffer, 'consent-record-' + record.id)
       signedPdfUrl = uploadResult.url
       console.log('Consent PDF uploaded:', signedPdfUrl)
