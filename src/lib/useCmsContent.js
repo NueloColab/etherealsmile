@@ -1,0 +1,72 @@
+'use client'
+
+import { useState, useEffect, useCallback } from 'react'
+
+export function useCmsContent(key) {
+  const [content, setContent] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    if (!key) return
+    setLoading(true)
+    fetch(`/api/cms?key=${key}`)
+      .then((r) => r.json())
+      .then((data) => {
+        setContent(data)
+        setLoading(false)
+      })
+      .catch((err) => {
+        setError(err.message)
+        setLoading(false)
+      })
+  }, [key])
+
+  const save = useCallback(
+    async (newContent) => {
+      setSaving(true)
+      setError(null)
+      try {
+        const res = await fetch('/api/cms', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key, content: newContent }),
+        })
+        if (!res.ok) throw new Error('Save failed')
+        setContent(newContent)
+        setSaving(false)
+        return true
+      } catch (err) {
+        setError(err.message)
+        setSaving(false)
+        return false
+      }
+    },
+    [key]
+  )
+
+  return { content, setContent, loading, saving, error, save }
+}
+
+export function useAllCmsContent() {
+  const [content, setContent] = useState({})
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    setLoading(true)
+    fetch('/api/cms')
+      .then((r) => r.json())
+      .then((data) => {
+        setContent(data)
+        setLoading(false)
+      })
+      .catch((err) => {
+        setError(err.message)
+        setLoading(false)
+      })
+  }, [])
+
+  return { content, loading, error }
+}
