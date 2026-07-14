@@ -16,8 +16,13 @@ export async function GET() {
 export async function POST(request) {
   try {
     const body = await request.json()
-    await db.insert(galleryItems).values(body)
-    return NextResponse.json({ success: true }, { status: 201 })
+    const result = await db.insert(galleryItems).values({
+      type: 'image',
+      url: body.imageUrl || body.url,
+      caption: body.caption || null,
+      sortOrder: body.order || body.sortOrder || 0,
+    }).returning()
+    return NextResponse.json(result[0], { status: 201 })
   } catch (err) {
     console.error('Gallery POST error:', err)
     return NextResponse.json({ error: 'Failed to add item' }, { status: 500 })

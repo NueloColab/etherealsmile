@@ -16,8 +16,16 @@ export async function GET() {
 export async function POST(request) {
   try {
     const body = await request.json()
-    await db.insert(services).values(body)
-    return NextResponse.json({ success: true }, { status: 201 })
+    const result = await db.insert(services).values({
+      name: body.name,
+      description: body.description || null,
+      price: body.price || null,
+      duration: body.duration || null,
+      image: body.image || null,
+      sortOrder: body.sortOrder || 0,
+      active: body.active !== undefined ? body.active : true,
+    }).returning()
+    return NextResponse.json(result[0], { status: 201 })
   } catch (err) {
     console.error('Services POST error:', err)
     return NextResponse.json({ error: 'Failed to create service' }, { status: 500 })
