@@ -1,4 +1,4 @@
-import { db } from '../../../lib/db-admin'
+import { dbAdmin as db } from '../../../lib/db-admin'
 import { consentRecords, consentDocuments, clients } from '../../../lib/schema'
 import { eq, desc } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
