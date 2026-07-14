@@ -86,13 +86,13 @@ export default function Header() {
             }}
           >
             <img
-              src="/ethereal-logo.png"
+              src="/ethereal-logo.jpg"
               alt="Ethereal Smile"
               style={{
                 height: '100px',
                 width: 'auto',
                 display: 'block',
-                filter: 'drop-shadow(0 0 8px rgba(233,68,128,0.3))',
+                borderRadius: '16px',
               }}
             />
           </Link>
@@ -278,13 +278,13 @@ export default function Header() {
 
         {/* Logo in overlay */}
         <img
-          src="/ethereal-logo.png"
+          src="/ethereal-logo.jpg"
           alt="Ethereal Smile"
           style={{
             height: '140px',
             width: 'auto',
             marginBottom: '1rem',
-            filter: 'drop-shadow(0 0 8px rgba(233,68,128,0.3))',
+            borderRadius: '16px',
             opacity: menuOpen ? 1 : 0,
             transform: menuOpen ? 'translateY(0)' : 'translateY(20px)',
             transition: 'opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s',
