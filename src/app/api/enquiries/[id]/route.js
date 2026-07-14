@@ -38,6 +38,8 @@ export async function PUT(request, { params }) {
         name: enquiry.name,
         date: enquiry.preferredDate,
         time: enquiry.preferredTime,
+        service: enquiry.service,
+        price: enquiry.price,
       })
     }
 
@@ -49,6 +51,8 @@ export async function PUT(request, { params }) {
         originalTime: enquiry.preferredTime,
         proposedDate: enquiry.proposedDate,
         proposedTime: enquiry.proposedTime,
+        service: enquiry.service,
+        price: enquiry.price,
         token: enquiry.proposalToken,
       })
     }

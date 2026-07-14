@@ -12,7 +12,36 @@ function getResend() {
   return resend
 }
 
-export async function sendConfirmationEmail({ to, name, date, time }) {
+const emailStyles = `
+  .email-wrapper { background: #000000; margin: 0; padding: 0; }
+  .email-container { max-width: 600px; margin: 0 auto; background: #000000; border: 1px solid rgba(233, 68, 128, 0.25); border-radius: 16px; overflow: hidden; }
+  .email-header { text-align: center; padding: 2.5rem 1.5rem 1.5rem; background: linear-gradient(180deg, rgba(233,68,128,0.08) 0%, transparent 100%); }
+  .email-logo { width: 120px; height: auto; border-radius: 10px; display: block; margin: 0 auto 1rem; }
+  .email-title { font-family: 'Pirata One', 'Playfair Display', Georgia, serif; font-size: 1.8rem; color: #e94480; letter-spacing: 0.1em; text-transform: uppercase; margin: 0; text-shadow: 0 0 20px rgba(233, 68, 128, 0.3); }
+  .email-subtitle { font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-size: 0.9rem; color: rgba(255,255,255,0.6); letter-spacing: 0.06em; margin: 0.5rem 0 0; }
+  .email-body { padding: 1.5rem 2rem; }
+  .email-text { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.95rem; color: rgba(255,255,255,0.8); line-height: 1.7; margin: 0 0 1.5rem; }
+  .email-box { background: rgba(233, 68, 128, 0.06); border: 1px solid rgba(233, 68, 128, 0.2); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; }
+  .email-box-label { font-family: 'Inter', sans-serif; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin: 0 0 0.5rem; }
+  .email-box-value { font-family: 'Pirata One', 'Playfair Display', serif; font-size: 1.15rem; color: #e94480; margin: 0; letter-spacing: 0.05em; }
+  .email-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(233,68,128,0.3), transparent); margin: 1.5rem 0; }
+  .email-button { display: inline-block; padding: 0.875rem 2rem; border-radius: 50px; text-decoration: none; font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; text-align: center; }
+  .email-button-accept { background: rgba(76, 175, 80, 0.15); color: #81c784; border: 1px solid rgba(76, 175, 80, 0.4); }
+  .email-button-reject { background: rgba(244, 67, 54, 0.08); color: #e57373; border: 1px solid rgba(244, 67, 54, 0.3); }
+  .email-footer { text-align: center; padding: 1.5rem 2rem; border-top: 1px solid rgba(255,255,255,0.05); }
+  .email-footer-text { font-family: 'Inter', sans-serif; font-size: 0.75rem; color: rgba(255,255,255,0.35); line-height: 1.6; margin: 0; }
+  .sparkle { color: #e94480; font-size: 0.7rem; opacity: 0.6; }
+  @media only screen and (max-width: 480px) {
+    .email-body { padding: 1.5rem 1.25rem; }
+    .email-title { font-size: 1.4rem; }
+  }
+`
+
+function sparkles() {
+  return `<span class="sparkle">&#10022;</span> <span class="sparkle">&#10022;</span> <span class="sparkle">&#10022;</span>`
+}
+
+export async function sendConfirmationEmail({ to, name, date, time, service, price }) {
   const client = getResend()
   if (!client) return { success: false, skipped: true }
 
@@ -31,23 +60,68 @@ export async function sendConfirmationEmail({ to, name, date, time }) {
       to,
       subject: 'Your Ethereal Smile Booking is Confirmed',
       html: `
-        <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 2rem; background: #000; color: #fff; border: 1px solid rgba(233,68,128,0.2); border-radius: 12px;">
-          <h1 style="font-family: 'Pirata One', cursive; color: #e94480; font-size: 1.8rem; text-align: center; margin-bottom: 1.5rem;">Ethereal Smile</h1>
-          
-          <p style="color: rgba(255,255,255,0.8); font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem;">
-            Hi ${name},<br/><br/>
-            Your booking has been <strong style="color: #e94480;">confirmed</strong>. We look forward to seeing you.
-          </p>
-          
-          <div style="background: rgba(233,68,128,0.08); border: 1px solid rgba(233,68,128,0.2); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
-            <p style="margin: 0; color: rgba(255,255,255,0.6); font-size: 0.85rem;"><strong style="color: #e94480;">Date:</strong> ${formattedDate}</p>
-            <p style="margin: 0.5rem 0 0; color: rgba(255,255,255,0.6); font-size: 0.85rem;"><strong style="color: #e94480;">Time:</strong> ${time || 'TBC'}</p>
-          </div>
-          
-          <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem; text-align: center; margin-top: 2rem;">
-            If you need to reschedule, please reply to this email or contact us at hattie@etherealsmile.co.uk
-          </p>
-        </div>
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+          <style>${emailStyles}</style>
+        </head>
+        <body class="email-wrapper">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr><td align="center" style="padding: 2rem 1rem;">
+
+              <div class="email-container">
+                <div class="email-header">
+                  <img src="${SITE_URL}/hero-logo-card.png" alt="Ethereal Smile" class="email-logo" />
+                  <h1 class="email-title">Ethereal Smile</h1>
+                  <p class="email-subtitle">${sparkles()} Your booking is confirmed ${sparkles()}</p>
+                </div>
+
+                <div class="email-body">
+                  <p class="email-text">
+                    Hi ${name},<br /><br />
+                    Your appointment has been <strong style="color: #e94480;">confirmed</strong>. Hattie is looking forward to creating your sparkle.
+                  </p>
+
+                  <div class="email-box">
+                    <p class="email-box-label">Date</p>
+                    <p class="email-box-value">${formattedDate}</p>
+                  </div>
+
+                  <div class="email-box">
+                    <p class="email-box-label">Time</p>
+                    <p class="email-box-value">${time || 'TBC'}</p>
+                  </div>
+
+                  ${service ? `
+                  <div class="email-box">
+                    <p class="email-box-label">Service</p>
+                    <p class="email-box-value">${service}${price ? ` <span style="font-size: 0.85rem; opacity: 0.7;">(${price})</span>` : ''}</p>
+                  </div>
+                  ` : ''}
+
+                  <div class="email-divider"></div>
+
+                  <p class="email-text" style="font-size: 0.85rem; color: rgba(255,255,255,0.5); text-align: center;">
+                    If you need to reschedule, reply to this email or contact <a href="mailto:hattie@etherealsmile.co.uk" style="color: #e94480;">hattie@etherealsmile.co.uk</a>
+                  </p>
+                </div>
+
+                <div class="email-footer">
+                  <p class="email-footer-text">
+                    Ethereal Smile by Hattie Clifford<br />
+                    Genuine Swarovski &amp; Preciosa Crystal Tooth Gems<br />
+                    <a href="${SITE_URL}" style="color: #e94480; text-decoration: none;">${SITE_URL.replace('https://', '')}</a>
+                  </p>
+                </div>
+              </div>
+
+            </td></tr>
+          </table>
+        </body>
+        </html>
       `,
     })
     return { success: true }
@@ -57,7 +131,7 @@ export async function sendConfirmationEmail({ to, name, date, time }) {
   }
 }
 
-export async function sendAlternativeProposalEmail({ to, name, originalDate, originalTime, proposedDate, proposedTime, token }) {
+export async function sendAlternativeProposalEmail({ to, name, originalDate, originalTime, proposedDate, proposedTime, service, price, token }) {
   const client = getResend()
   if (!client) return { success: false, skipped: true }
 
@@ -88,32 +162,83 @@ export async function sendAlternativeProposalEmail({ to, name, originalDate, ori
       to,
       subject: 'Alternative Booking Proposal — Ethereal Smile',
       html: `
-        <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 2rem; background: #000; color: #fff; border: 1px solid rgba(233,68,128,0.2); border-radius: 12px;">
-          <h1 style="font-family: 'Pirata One', cursive; color: #e94480; font-size: 1.8rem; text-align: center; margin-bottom: 1.5rem;">Ethereal Smile</h1>
-          
-          <p style="color: rgba(255,255,255,0.8); font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem;">
-            Hi ${name},<br/><br/>
-            Unfortunately your preferred slot is not available. We'd like to propose an alternative:
-          </p>
-          
-          <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 1.25rem; margin-bottom: 1rem;">
-            <p style="margin: 0; color: rgba(255,255,255,0.5); font-size: 0.85rem;">Your request: <strong>${formattedOriginal} at ${originalTime || 'TBC'}</strong></p>
-          </div>
-          
-          <div style="background: rgba(233,68,128,0.08); border: 1px solid rgba(233,68,128,0.2); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
-            <p style="margin: 0; color: #e94480; font-size: 0.9rem; font-weight: 600;">Proposed alternative:</p>
-            <p style="margin: 0.5rem 0 0; color: rgba(255,255,255,0.8); font-size: 1rem;"><strong>${formattedProposed} at ${proposedTime}</strong></p>
-          </div>
-          
-          <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
-            <a href="${acceptUrl}" style="flex: 1; display: block; text-align: center; padding: 0.875rem; background: rgba(76,175,80,0.2); color: #81c784; text-decoration: none; border-radius: 8px; border: 1px solid rgba(76,175,80,0.4); font-weight: 500;">Accept Proposal</a>
-            <a href="${rejectUrl}" style="flex: 1; display: block; text-align: center; padding: 0.875rem; background: rgba(244,67,54,0.1); color: #e57373; text-decoration: none; border-radius: 8px; border: 1px solid rgba(244,67,54,0.3); font-weight: 500;">Decline</a>
-          </div>
-          
-          <p style="color: rgba(255,255,255,0.4); font-size: 0.75rem; text-align: center;">
-            This proposal expires in 48 hours. If you have questions, reply to this email.
-          </p>
-        </div>
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+          <style>${emailStyles}</style>
+        </head>
+        <body class="email-wrapper">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr><td align="center" style="padding: 2rem 1rem;">
+
+              <div class="email-container">
+                <div class="email-header">
+                  <img src="${SITE_URL}/hero-logo-card.png" alt="Ethereal Smile" class="email-logo" />
+                  <h1 class="email-title">Ethereal Smile</h1>
+                  <p class="email-subtitle">${sparkles()} Alternative Proposal ${sparkles()}</p>
+                </div>
+
+                <div class="email-body">
+                  <p class="email-text">
+                    Hi ${name},<br /><br />
+                    Unfortunately your preferred slot is no longer available. Hattie would love to see you and has proposed an alternative.
+                  </p>
+
+                  <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem;">
+                    <p class="email-box-label">Your Original Request</p>
+                    <p style="margin: 0.5rem 0 0; font-family: 'Inter', sans-serif; font-size: 0.9rem; color: rgba(255,255,255,0.6);">
+                      <strong style="color: rgba(255,255,255,0.85);">${formattedOriginal}</strong> at ${originalTime || 'TBC'}
+                    </p>
+                  </div>
+
+                  <div class="email-box" style="border-color: rgba(233, 68, 128, 0.35); background: rgba(233, 68, 128, 0.1);">
+                    <p class="email-box-label" style="color: #e94480;">Proposed Alternative</p>
+                    <p class="email-box-value">${formattedProposed}</p>
+                    <p style="margin: 0.25rem 0 0; font-family: 'Inter', sans-serif; font-size: 1rem; color: #e94480;">at ${proposedTime}</p>
+                  </div>
+
+                  ${service ? `
+                  <div class="email-box">
+                    <p class="email-box-label">Service</p>
+                    <p class="email-box-value">${service}${price ? ` <span style="font-size: 0.85rem; opacity: 0.7;">(${price})</span>` : ''}</p>
+                  </div>
+                  ` : ''}
+
+                  <div class="email-divider"></div>
+
+                  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 1.5rem;">
+                    <tr>
+                      <td width="48%" valign="top">
+                        <a href="${acceptUrl}" class="email-button email-button-accept" style="display: block; width: 100%; box-sizing: border-box;">Accept Proposal</a>
+                      </td>
+                      <td width="4%"></td>
+                      <td width="48%" valign="top">
+                        <a href="${rejectUrl}" class="email-button email-button-reject" style="display: block; width: 100%; box-sizing: border-box;">Decline</a>
+                      </td>
+                    </tr>
+                  </table>
+
+                  <p class="email-text" style="font-size: 0.8rem; color: rgba(255,255,255,0.4); text-align: center;">
+                    This proposal expires in 48 hours. Questions? Reply to this email.
+                  </p>
+                </div>
+
+                <div class="email-footer">
+                  <p class="email-footer-text">
+                    Ethereal Smile by Hattie Clifford<br />
+                    Genuine Swarovski &amp; Preciosa Crystal Tooth Gems<br />
+                    <a href="${SITE_URL}" style="color: #e94480; text-decoration: none;">${SITE_URL.replace('https://', '')}</a>
+                  </p>
+                </div>
+              </div>
+
+            </td></tr>
+          </table>
+        </body>
+        </html>
       `,
     })
     return { success: true }
