@@ -5,4 +5,5 @@ const nextConfig = {
   },
   serverExternalPackages: ['pdfkit'],
 }
+
 module.exports = nextConfig
