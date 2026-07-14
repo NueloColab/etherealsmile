@@ -56,7 +56,6 @@ export async function PUT(request, { params }) {
     // Capture original isMinor before update for mismatch detection
     const before_items = await db.select({ isMinor: bookings.isMinor, status: bookings.status, consentSentAt: bookings.consentSentAt }).from(bookings).where(eq(bookings.id, Number(id)))
     const before = before_items[0]
-    console.log('[BOOKING_PUT] before:', JSON.stringify(before), 'body.isMinor:', body.isMinor)
 
     await db.update(bookings).set(update).where(eq(bookings.id, Number(id)))
 
