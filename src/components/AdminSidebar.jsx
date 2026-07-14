@@ -19,13 +19,13 @@ const bottomMenuItems = [
   { label: 'Back to Site', href: '/', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3' },
 ]
 
-export default function AdminSidebar({ isOpen, onClose }) {
+export default function AdminSidebar({ isOpen, onClose, isMobile }) {
   const pathname = usePathname()
 
   return (
     <>
-      {/* Mobile overlay */}
-      {isOpen && (
+      {/* Mobile overlay - only shows when sidebar is open on mobile */}
+      {isMobile && isOpen && (
         <div
           onClick={onClose}
           style={{
@@ -41,7 +41,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
       <aside
         style={{
           position: 'fixed',
-          left: isOpen ? 0 : undefined,
+          left: 0,
           top: 0,
           bottom: 0,
           width: '260px',

@@ -65,7 +65,7 @@ export default function AdminLayout({ children }) {
   // Authenticated layout: sidebar + content area
   return (
     <div style={{ minHeight: '100vh', background: '#0a0e17', color: '#ffffff', fontFamily: "'Inter', sans-serif" }}>
-      <AdminSidebar isOpen={sidebarOpen || !isMobile} onClose={() => setSidebarOpen(false)} />
+      <AdminSidebar isOpen={sidebarOpen || !isMobile} onClose={() => setSidebarOpen(false)} isMobile={isMobile} />
 
       {/* Main content area */}
       <div style={{
