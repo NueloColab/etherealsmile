@@ -7,7 +7,6 @@ import Services from './sections/Services'
 import Gallery from './sections/Gallery'
 import Journal from './sections/Journal'
 import Contact from './sections/Contact'
-import Review from './sections/Review'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,7 +22,6 @@ export default function Home() {
       <Gallery />
       <Journal />
       <Contact />
-      <Review />
     </main>
   )
 }
