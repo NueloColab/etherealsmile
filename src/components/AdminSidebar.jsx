@@ -23,7 +23,7 @@ export default function AdminSidebar() {
       <div className="px-6 pt-8 pb-6">
         <Link href="/admin">
           <img
-            src="/hero-logo-card.png"
+            src="/ethereal-logo.jpg"
             alt="Ethereal Smile"
             className="h-12 w-auto opacity-90"
           />

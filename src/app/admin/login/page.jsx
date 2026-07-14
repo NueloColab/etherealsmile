@@ -75,7 +75,7 @@ export default function AdminLogin() {
       >
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <img
-            src="/hero-logo-card.png"
+            src="/ethereal-logo.jpg"
             alt="Ethereal Smile"
             style={{
               height: '64px',
