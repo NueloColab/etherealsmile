@@ -9,6 +9,14 @@ const MONTHS = [
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
+const TIME_SLOTS = [
+  '10:00',
+  '11:30',
+  '13:00',
+  '14:30',
+  '16:00',
+]
+
 function getCalendarDays(year, month) {
   const firstDay = new Date(year, month, 1).getDay()
   const daysInMonth = new Date(year, month + 1, 0).getDate()
@@ -34,6 +42,7 @@ export default function Book() {
   const [year, setYear] = useState(today.getFullYear())
   const [month, setMonth] = useState(today.getMonth())
   const [selectedDate, setSelectedDate] = useState(null)
+  const [selectedTime, setSelectedTime] = useState(null)
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' })
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -62,9 +71,9 @@ export default function Book() {
   function selectDate(day) {
     if (!day || isDateInPast(year, month, day)) return
     setSelectedDate(new Date(year, month, day))
+    setSelectedTime(null)
     setSubmitted(false)
     setError(null)
-    // Smooth scroll to form on mobile
     setTimeout(() => {
       const formCard = document.querySelector('#book-form-card')
       if (formCard && window.innerWidth < 768) {
@@ -79,6 +88,10 @@ export default function Book() {
       setError('Please select a preferred date from the calendar.')
       return
     }
+    if (!selectedTime) {
+      setError('Please select a preferred time slot.')
+      return
+    }
     setLoading(true)
     setError(null)
     try {
@@ -88,12 +101,14 @@ export default function Book() {
         body: JSON.stringify({
           ...form,
           preferredDate: selectedDate.toISOString(),
+          preferredTime: selectedTime,
         }),
       })
       if (!res.ok) throw new Error('Something went wrong. Please try again.')
       setSubmitted(true)
       setForm({ name: '', email: '', phone: '', message: '' })
       setSelectedDate(null)
+      setSelectedTime(null)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -272,28 +287,86 @@ export default function Book() {
             </h3>
 
             {selectedDate && (
-              <p
-                style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '0.8rem',
-                  color: '#e94480',
-                  marginBottom: '1.25rem',
-                  padding: '0.5rem 0.75rem',
-                  background: 'rgba(233, 68, 128, 0.08)',
-                  borderRadius: '6px',
-                  border: '1px solid rgba(233, 68, 128, 0.15)',
-                }}
-              >
-                <span style={{ opacity: 0.7 }}>Preferred date:</span>{' '}
-                <strong>
-                  {selectedDate.toLocaleDateString('en-GB', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </strong>
-              </p>
+              <>
+                <p
+                  style={{
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: '0.8rem',
+                    color: '#e94480',
+                    marginBottom: '0.75rem',
+                    padding: '0.5rem 0.75rem',
+                    background: 'rgba(233, 68, 128, 0.08)',
+                    borderRadius: '6px',
+                    border: '1px solid rgba(233, 68, 128, 0.15)',
+                  }}
+                >
+                  <span style={{ opacity: 0.7 }}>Preferred date:</span>{' '}
+                  <strong>
+                    {selectedDate.toLocaleDateString('en-GB', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </strong>
+                </p>
+
+                {/* Time slots */}
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: '0.7rem',
+                      letterSpacing: '0.12em',
+                      textTransform: 'uppercase',
+                      color: 'rgba(255,255,255,0.5)',
+                      marginBottom: '0.5rem',
+                    }}
+                  >
+                    Preferred Time
+                  </label>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(3, 1fr)',
+                      gap: '0.5rem',
+                    }}
+                  >
+                    {TIME_SLOTS.map((time) => {
+                      const isSelected = selectedTime === time
+                      return (
+                        <button
+                          key={time}
+                          type="button"
+                          onClick={() => setSelectedTime(time)}
+                          style={{
+                            padding: '0.6rem 0',
+                            borderRadius: '6px',
+                            border: isSelected
+                              ? '1px solid #e94480'
+                              : '1px solid rgba(255,255,255,0.1)',
+                            background: isSelected
+                              ? 'rgba(233, 68, 128, 0.15)'
+                              : 'rgba(255,255,255,0.03)',
+                            color: isSelected ? '#e94480' : 'rgba(255,255,255,0.7)',
+                            fontFamily: "'Inter', sans-serif",
+                            fontSize: '0.8rem',
+                            fontWeight: isSelected ? 500 : 400,
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                            boxShadow: isSelected
+                              ? '0 0 10px rgba(233, 68, 128, 0.2)'
+                              : 'none',
+                          }}
+                        >
+                          {time}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              </>
             )}
 
             {submitted ? (
