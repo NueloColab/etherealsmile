@@ -57,6 +57,8 @@ export default function Hero() {
             borderRadius: '14px',
             display: 'block',
             boxShadow: '0 0 60px rgba(201, 169, 110, 0.15)',
+            outline: '3px solid #000000',
+            outlineOffset: '-1px',
           }}
         />
       </div>
