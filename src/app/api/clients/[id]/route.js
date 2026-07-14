@@ -43,6 +43,9 @@ export async function PUT(request, { params }) {
 
     await db.update(clients).set(update).where(eq(clients.id, Number(params.id)))
     const updated = await db.select().from(clients).where(eq(clients.id, Number(params.id)))
+    if (!updated[0]) {
+      return NextResponse.json({ error: 'Client not found' }, { status: 404 })
+    }
     return NextResponse.json(updated[0])
   } catch (err) {
     // Handle unique violation on email (Drizzle wraps Postgres error in e.cause)

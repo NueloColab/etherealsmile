@@ -23,6 +23,7 @@ export default function ClientDetailPage() {
   const router = useRouter()
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [notFound, setNotFound] = useState(false)
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
   const [editForm, setEditForm] = useState({})
@@ -30,20 +31,33 @@ export default function ClientDetailPage() {
 
   useEffect(() => {
     fetch(`/api/clients/${params.id}`)
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) {
+          setNotFound(true)
+          setLoading(false)
+          return null
+        }
+        return r.json()
+      })
       .then(data => {
-        setData(data)
+        if (data) setData(data)
         setLoading(false)
       })
-      .catch(() => setLoading(false))
+      .catch(() => {
+        setNotFound(true)
+        setLoading(false)
+      })
   }, [params.id])
 
   if (loading) {
     return <div style={{ padding: '2rem', color: 'rgba(255,255,255,0.4)' }}>Loading client...</div>
   }
 
-  if (!data) {
-    return <div style={{ padding: '2rem', color: 'rgba(255,255,255,0.4)' }}>Client not found.</div>
+  if (notFound || !data || data.error) {
+    return <div style={{ padding: '2rem', color: 'rgba(255,255,255,0.4)' }}>
+      <Link href="/admin/clients" style={{ fontSize: '0.75rem', color: '#e94480', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>&larr; Clients</Link>
+      <p style={{ marginTop: '1rem', fontSize: '0.95rem' }}>Client not found.</p>
+    </div>
   }
 
   const { bookings: clientBookings, ...client } = data

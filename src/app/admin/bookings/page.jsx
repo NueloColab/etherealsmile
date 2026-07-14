@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import BookingCalendar from './BookingCalendar'
 
 const STATUS_STYLES = {
@@ -12,6 +12,7 @@ const STATUS_STYLES = {
 }
 
 export default function BookingsPage() {
+  const router = useRouter()
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
@@ -20,12 +21,18 @@ export default function BookingsPage() {
   function fetchBookings() {
     setLoading(true)
     fetch('/api/bookings?limit=200&sort=-createdAt')
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error('Failed to load')
+        return r.json()
+      })
       .then(data => {
         setBookings(data || [])
         setLoading(false)
       })
-      .catch(() => setLoading(false))
+      .catch(() => {
+        setBookings([])
+        setLoading(false)
+      })
   }
 
   useEffect(() => {
@@ -146,7 +153,10 @@ export default function BookingsPage() {
                 const status = booking.status || 'pending'
                 const style = STATUS_STYLES[status] || STATUS_STYLES.pending
                 return (
-                  <tr key={booking.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                  <tr key={booking.id} onClick={() => router.push(`/admin/bookings/${booking.id}`)} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', cursor: 'pointer', transition: 'background 0.15s ease' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                  >
                     <td style={{ padding: '0.75rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.8)' }}>
                       {booking.date ? new Date(booking.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '-'}
                       {booking.timeSlot && <span style={{ display: 'block', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>{booking.timeSlot}</span>}
@@ -164,10 +174,8 @@ export default function BookingsPage() {
                         {status}
                       </span>
                     </td>
-                    <td style={{ padding: '0.75rem' }}>
-                      <Link href={`/admin/bookings/${booking.id}`} style={{ color: '#e94480', fontSize: '0.75rem', textDecoration: 'none', letterSpacing: '0.05em' }}>
-                        View &rarr;
-                      </Link>
+                    <td style={{ padding: '0.75rem', color: '#e94480', fontSize: '0.75rem', letterSpacing: '0.05em' }}>
+                      View &rarr;
                     </td>
                   </tr>
                 )

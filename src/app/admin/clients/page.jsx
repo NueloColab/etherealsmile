@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 const SOURCE_LABELS = {
   booking_confirmed: 'Booking',
@@ -11,29 +11,41 @@ const SOURCE_LABELS = {
 }
 
 export default function ClientsPage() {
+  const router = useRouter()
   const [clients, setClients] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     fetch('/api/clients')
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error('Failed to load')
+        return r.json()
+      })
       .then(data => {
         setClients(data || [])
         setLoading(false)
       })
-      .catch(() => setLoading(false))
+      .catch(() => {
+        setError('Failed to load clients')
+        setLoading(false)
+      })
   }, [])
 
   if (loading) {
     return <div style={{ padding: '2rem', color: 'rgba(255,255,255,0.4)' }}>Loading clients...</div>
   }
 
+  if (error) {
+    return <div style={{ padding: '2rem', color: 'rgba(255,255,255,0.4)' }}>{error}</div>
+  }
+
   return (
     <div style={{ padding: '2.5rem 2rem', maxWidth: '1100px' }}>
       <div style={{ marginBottom: '2rem' }}>
-        <Link href="/admin" style={{ fontSize: '0.75rem', color: '#e94480', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+        <button onClick={() => router.push('/admin')} style={{ fontSize: '0.75rem', color: '#e94480', textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
           &larr; Dashboard
-        </Link>
+        </button>
         <h1 style={{ fontFamily: "'Pirata One', 'Playfair Display', cursive", fontSize: '1.8rem', color: '#e94480', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: '0.5rem' }}>
           Clients
         </h1>
@@ -58,11 +70,12 @@ export default function ClientsPage() {
             </thead>
             <tbody>
               {clients.map(client => (
-                <tr key={client.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                  <td style={{ padding: '0.75rem' }}>
-                    <Link href={`/admin/clients/${client.id}`} style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.85rem', textDecoration: 'none' }}>
-                      {client.name}
-                    </Link>
+                <tr key={client.id} onClick={() => router.push(`/admin/clients/${client.id}`)} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', cursor: 'pointer', transition: 'background 0.15s ease' }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                  <td style={{ padding: '0.75rem', color: 'rgba(255,255,255,0.85)', fontSize: '0.85rem' }}>
+                    {client.name}
                   </td>
                   <td style={{ padding: '0.75rem', color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem' }}>
                     {client.email}
