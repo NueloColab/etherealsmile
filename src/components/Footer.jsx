@@ -45,7 +45,7 @@ export default function Footer() {
       style={{
         position: 'relative',
         zIndex: 1,
-        borderTop: '1px solid rgba(233, 68, 128, 0.15)',
+        background: '#e94480',
         padding: '4rem 1.5rem 2.5rem',
       }}
     >
@@ -76,7 +76,7 @@ export default function Footer() {
             style={{
               fontFamily: "'Inter', sans-serif",
               fontSize: '0.75rem',
-              color: 'rgba(255,255,255,0.4)',
+              color: 'rgba(255,255,255,0.85)',
               lineHeight: 1.6,
               marginBottom: '1.5rem',
             }}
@@ -87,7 +87,7 @@ export default function Footer() {
             style={{
               fontFamily: "'Inter', sans-serif",
               fontSize: '0.65rem',
-              color: 'rgba(233,68,128,0.5)',
+              color: 'rgba(255,255,255,0.7)',
               letterSpacing: '0.15em',
               textTransform: 'uppercase',
             }}
@@ -101,11 +101,10 @@ export default function Footer() {
           <p
             style={{
               fontFamily: "'Pirata One', 'Playfair Display', cursive",
-              fontSize: '1rem',
-              color: '#e94480',
+              fontSize: '1.1rem',
+              color: 'white',
               letterSpacing: '0.1em',
               marginBottom: '1.5rem',
-              textShadow: '0 0 12px rgba(233,68,128,0.3)',
             }}
           >
             Follow Us
@@ -132,25 +131,24 @@ export default function Footer() {
                   width: '56px',
                   height: '56px',
                   borderRadius: '14px',
-                  border: '1.5px solid rgba(233, 68, 128, 0.35)',
+                  border: '1.5px solid rgba(255,255,255,0.4)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#e94480',
-                  background: 'rgba(233, 68, 128, 0.06)',
-                  backdropFilter: 'blur(8px)',
+                  color: 'white',
+                  background: 'rgba(0,0,0,0.1)',
                   transition: 'all 0.35s cubic-bezier(0.16,1,0.3,1)',
                   cursor: 'pointer',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(233, 68, 128, 0.2)'
-                  e.currentTarget.style.borderColor = 'rgba(233, 68, 128, 0.8)'
+                  e.currentTarget.style.background = 'rgba(0,0,0,0.25)'
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.8)'
                   e.currentTarget.style.transform = 'translateY(-4px) scale(1.08)'
-                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(233, 68, 128, 0.2)'
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.15)'
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(233, 68, 128, 0.06)'
-                  e.currentTarget.style.borderColor = 'rgba(233, 68, 128, 0.35)'
+                  e.currentTarget.style.background = 'rgba(0,0,0,0.1)'
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.4)'
                   e.currentTarget.style.transform = 'translateY(0) scale(1)'
                   e.currentTarget.style.boxShadow = 'none'
                 }}
@@ -174,14 +172,14 @@ export default function Footer() {
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontSize: '0.7rem',
-                color: 'rgba(255,255,255,0.5)',
+                color: 'rgba(255,255,255,0.7)',
                 textDecoration: 'none',
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
                 transition: 'color 0.3s',
               }}
-              onMouseEnter={(e) => (e.target.style.color = '#e94480')}
-              onMouseLeave={(e) => (e.target.style.color = 'rgba(255,255,255,0.5)')}
+              onMouseEnter={(e) => (e.target.style.color = 'white')}
+              onMouseLeave={(e) => (e.target.style.color = 'rgba(255,255,255,0.7)')}
             >
               Email Us
             </a>
@@ -192,14 +190,14 @@ export default function Footer() {
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontSize: '0.7rem',
-                color: 'rgba(255,255,255,0.5)',
+                color: 'rgba(255,255,255,0.7)',
                 textDecoration: 'none',
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
                 transition: 'color 0.3s',
               }}
-              onMouseEnter={(e) => (e.target.style.color = '#e94480')}
-              onMouseLeave={(e) => (e.target.style.color = 'rgba(255,255,255,0.5)')}
+              onMouseEnter={(e) => (e.target.style.color = 'white')}
+              onMouseLeave={(e) => (e.target.style.color = 'rgba(255,255,255,0.7)')}
             >
               Instagram
             </a>
@@ -210,14 +208,14 @@ export default function Footer() {
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontSize: '0.7rem',
-                color: 'rgba(255,255,255,0.5)',
+                color: 'rgba(255,255,255,0.7)',
                 textDecoration: 'none',
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
                 transition: 'color 0.3s',
               }}
-              onMouseEnter={(e) => (e.target.style.color = '#e94480')}
-              onMouseLeave={(e) => (e.target.style.color = 'rgba(255,255,255,0.5)')}
+              onMouseEnter={(e) => (e.target.style.color = 'white')}
+              onMouseLeave={(e) => (e.target.style.color = 'rgba(255,255,255,0.7)')}
             >
               TikTok
             </a>
@@ -226,14 +224,14 @@ export default function Footer() {
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontSize: '0.65rem',
-                color: 'rgba(255,255,255,0.2)',
+                color: 'rgba(255,255,255,0.4)',
                 textDecoration: 'none',
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
                 transition: 'color 0.3s',
               }}
-              onMouseEnter={(e) => (e.target.style.color = 'rgba(233,68,128,0.5)')}
-              onMouseLeave={(e) => (e.target.style.color = 'rgba(255,255,255,0.2)')}
+              onMouseEnter={(e) => (e.target.style.color = 'rgba(255,255,255,0.7)')}
+              onMouseLeave={(e) => (e.target.style.color = 'rgba(255,255,255,0.4)')}
             >
               Admin
             </Link>
@@ -247,7 +245,7 @@ export default function Footer() {
           maxWidth: '1000px',
           margin: '3rem auto 0',
           paddingTop: '1.5rem',
-          borderTop: '1px solid rgba(233,68,128,0.1)',
+          borderTop: '1px solid rgba(255,255,255,0.2)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -259,7 +257,7 @@ export default function Footer() {
           style={{
             fontFamily: "'Inter', sans-serif",
             fontSize: '0.6rem',
-            color: 'rgba(255,255,255,0.2)',
+            color: 'rgba(255,255,255,0.6)',
             letterSpacing: '0.2em',
             textTransform: 'uppercase',
           }}
@@ -270,7 +268,7 @@ export default function Footer() {
           style={{
             fontFamily: "'Inter', sans-serif",
             fontSize: '0.6rem',
-            color: 'rgba(255,255,255,0.2)',
+            color: 'rgba(255,255,255,0.6)',
             letterSpacing: '0.2em',
             textTransform: 'uppercase',
           }}
