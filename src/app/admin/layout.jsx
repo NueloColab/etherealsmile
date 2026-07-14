@@ -147,6 +147,24 @@ export default function AdminLayout({ children }) {
             margin-left: 0 !important;
           }
         }
+        @media (max-width: 768px) {
+          /* Reduce padding on mobile */
+          main {
+            padding: 1rem !important;
+          }
+          /* Make tables horizontally scrollable */
+          table {
+            min-width: 640px !important;
+          }
+          /* Stack two-column grids */
+          div[style*="grid-template-columns: 1fr 1fr"] {
+            grid-template-columns: 1fr !important;
+          }
+          /* Reduce heading sizes */
+          h1 {
+            font-size: 1.4rem !important;
+          }
+        }
       `}</style>
     </div>
   )

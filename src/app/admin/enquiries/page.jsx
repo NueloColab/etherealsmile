@@ -19,7 +19,7 @@ export default async function AdminEnquiries() {
 
       <div style={{ overflowX: 'auto' }}>
         {items.length > 0 ? (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
+          <table style={{ width: '100%', minWidth: '640px', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
                 {['ID', 'Name', 'Email', 'Service', 'Date', 'Time', 'Status', 'Submitted'].map((h) => (

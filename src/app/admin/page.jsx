@@ -98,7 +98,7 @@ export default async function AdminDashboard() {
 
         {recentEnquiries.length > 0 ? (
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+            <table style={{ width: '100%', minWidth: '640px', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
                   {['Name', 'Email', 'Service', 'Date', 'Status'].map((h) => (

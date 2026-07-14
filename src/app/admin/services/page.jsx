@@ -54,7 +54,7 @@ export default function AdminServices() {
         </h1>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+      <div className="admin-two-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
         {/* Add/Edit form */}
         <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '1.5rem' }}>
           <h3 style={{ fontFamily: "'Pirata One', 'Playfair Display', cursive", fontSize: '1.1rem', color: '#e94480', marginBottom: '1.25rem' }}>
@@ -146,6 +146,13 @@ export default function AdminServices() {
           )}
         </div>
       </div>
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .admin-two-col {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   )
 }

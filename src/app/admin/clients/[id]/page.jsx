@@ -165,7 +165,7 @@ export default function ClientDetailPage() {
 
       {/* Client info card */}
       <div style={{ padding: '1.5rem', background: 'rgba(233,68,128,0.04)', border: '1px solid rgba(233,68,128,0.12)', borderRadius: '12px', marginBottom: '2rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+        <div className="admin-client-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
           <div>
             <span style={labelStyle}>Email</span>
             {editing ? (

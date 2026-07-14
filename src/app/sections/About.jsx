@@ -24,7 +24,7 @@ export default function About() {
       }}
     >
       <div className="section-inner">
-        <div
+        <div className="about-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
@@ -130,6 +130,18 @@ export default function About() {
           </div>
         </div>
       </div>
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .about-grid {
+            grid-template-columns: 1fr !important;
+            gap: 2rem !important;
+          }
+          #about {
+            padding-top: 3rem !important;
+            padding-bottom: 3rem !important;
+          }
+        }
+      `}</style>
     </section>
   )
 }

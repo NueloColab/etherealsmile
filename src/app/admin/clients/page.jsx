@@ -60,7 +60,7 @@ export default function ClientsPage() {
         </div>
       ) : (
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <table style={{ width: '100%', minWidth: '640px', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                 {['Name', 'Email', 'Phone', 'Bookings', 'Source', 'Consent', 'Created'].map(h => (
