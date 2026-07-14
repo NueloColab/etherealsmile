@@ -23,9 +23,9 @@ export default function AdminSidebar() {
       <div className="px-6 pt-8 pb-6">
         <Link href="/admin">
           <img
-            src="/ethereal-logo.jpg"
+            src="/ethereal-logo.png"
             alt="Ethereal Smile"
-            className="h-12 w-auto opacity-90"
+            className="h-16 w-auto"
           />
         </Link>
         <p className="text-[0.65rem] text-white/30 tracking-[0.15em] uppercase mt-2">

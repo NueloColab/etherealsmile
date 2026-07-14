@@ -75,10 +75,10 @@ export default function AdminLogin() {
       >
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <img
-            src="/ethereal-logo.jpg"
+            src="/ethereal-logo.png"
             alt="Ethereal Smile"
             style={{
-              height: '64px',
+              height: '80px',
               width: 'auto',
               display: 'block',
               margin: '0 auto 1rem',

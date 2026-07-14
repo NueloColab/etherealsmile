@@ -86,12 +86,11 @@ export default function Header() {
             }}
           >
             <img
-              src="/ethereal-logo.jpg"
+              src="/ethereal-logo.png"
               alt="Ethereal Smile"
               style={{
-                height: '52px',
+                height: '72px',
                 width: 'auto',
-                borderRadius: '8px',
                 display: 'block',
               }}
             />
@@ -278,12 +277,11 @@ export default function Header() {
 
         {/* Logo in overlay */}
         <img
-          src="/ethereal-logo.jpg"
+          src="/ethereal-logo.png"
           alt="Ethereal Smile"
           style={{
-            height: '80px',
+            height: '110px',
             width: 'auto',
-            borderRadius: '10px',
             marginBottom: '1rem',
             opacity: menuOpen ? 1 : 0,
             transform: menuOpen ? 'translateY(0)' : 'translateY(20px)',

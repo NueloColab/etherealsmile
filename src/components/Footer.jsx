@@ -23,12 +23,11 @@ export default function Footer() {
       >
         <div>
           <img
-            src="/ethereal-logo.jpg"
+            src="/ethereal-logo.png"
             alt="Ethereal Smile"
             style={{
-              height: '28px',
+              height: '48px',
               width: 'auto',
-              borderRadius: '4px',
               display: 'block',
               marginBottom: '0.5rem',
             }}
