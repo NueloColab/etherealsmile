@@ -11,7 +11,6 @@ export default function AdminLayout({ children }) {
   const [checking, setChecking] = useState(true)
 
   useEffect(() => {
-    // Skip auth check on login page
     if (pathname === '/admin/login') {
       setChecking(false)
       return
@@ -23,11 +22,11 @@ export default function AdminLayout({ children }) {
         if (session?.user) {
           setAuthed(true)
         } else {
-          router.push('/admin/login')
+          router.replace('/admin/login')
         }
       })
       .catch(() => {
-        router.push('/admin/login')
+        router.replace('/admin/login')
       })
       .finally(() => {
         setChecking(false)
@@ -43,9 +42,15 @@ export default function AdminLayout({ children }) {
     )
   }
 
-  // Still checking auth: show nothing (prevents flash)
+  // Checking auth or not authenticated: show minimal spinner
   if (checking || !authed) {
-    return null
+    return (
+      <div style={{ minHeight: '100vh', background: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: '32px', height: '32px', border: '2px solid rgba(233,68,128,0.3)', borderTopColor: '#e94480', borderRadius: '50%', animation: 'eth-admin-spin 0.8s linear infinite' }}>
+          <style>{`@keyframes eth-admin-spin { to { transform: rotate(360deg) } }`}</style>
+        </div>
+      </div>
+    )
   }
 
   // Authenticated: show sidebar + content
