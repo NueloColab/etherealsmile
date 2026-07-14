@@ -63,7 +63,7 @@ export default function Footer() {
         {/* Left: Logo + tagline + Powered by */}
         <div style={{ textAlign: 'center' }}>
           <img
-            src="/ethereal-logo.png"
+            src="/ethereal-logo-transparent.png"
             alt="Ethereal Smile"
             style={{
               height: '120px',

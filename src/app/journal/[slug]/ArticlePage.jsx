@@ -24,9 +24,10 @@ export default function ArticlePage({ post, extraImages, relatedPosts }) {
   const paragraphs = post.content ? post.content.split('\n\n').filter(Boolean) : []
 
   return (
-    <article style={{ position: 'relative', zIndex: 1 }}>
+    <article style={{ position: 'relative', zIndex: 1, background: '#000000', minHeight: '100vh' }}>
       {/* Hero */}
       <div
+        className="article-hero"
         style={{
           position: 'relative',
           width: '100%',
@@ -67,9 +68,10 @@ export default function ArticlePage({ post, extraImages, relatedPosts }) {
           }}
         />
 
-        {/* Back button */}
+        {/* Back button — sticky on mobile, absolute on desktop */}
         <Link
           href="/#journal"
+          className="article-back-btn"
           style={{
             position: 'absolute',
             top: '1.5rem',
@@ -86,9 +88,9 @@ export default function ArticlePage({ post, extraImages, relatedPosts }) {
             gap: '0.5rem',
             transition: 'color 0.3s ease',
             padding: '0.5rem 1rem',
-            background: 'rgba(0,0,0,0.4)',
+            background: 'rgba(0,0,0,0.6)',
             borderRadius: '50px',
-            border: '1px solid rgba(233,68,128,0.2)',
+            border: '1px solid rgba(233,68,128,0.3)',
           }}
           onMouseEnter={(e) => (e.currentTarget.style.color = '#e94480')}
           onMouseLeave={(e) => (e.currentTarget.style.color = '#e8d4b8')}
@@ -101,6 +103,7 @@ export default function ArticlePage({ post, extraImages, relatedPosts }) {
 
         {/* Title block */}
         <div
+          className="article-hero-title"
           style={{
             position: 'absolute',
             bottom: 0,
@@ -151,6 +154,7 @@ export default function ArticlePage({ post, extraImages, relatedPosts }) {
 
       {/* Body content */}
       <div
+        className="article-body"
         style={{
           maxWidth: '720px',
           margin: '0 auto',
@@ -159,8 +163,35 @@ export default function ArticlePage({ post, extraImages, relatedPosts }) {
           fontSize: '1rem',
           lineHeight: 1.7,
           color: 'rgba(255,255,255,0.8)',
+          background: '#000000',
         }}
       >
+        {/* Mobile back button (visible when scrolled past hero) */}
+        <div className="article-mobile-back" style={{ marginBottom: '2rem', display: 'none' }}>
+          <Link
+            href="/#journal"
+            style={{
+              color: '#e8d4b8',
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '0.75rem',
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.5rem 1rem',
+              background: 'rgba(0,0,0,0.6)',
+              borderRadius: '50px',
+              border: '1px solid rgba(233,68,128,0.3)',
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+            Back to Journal
+          </Link>
+        </div>
         {paragraphs.map((para, i) => (
           <div key={i}>
             <p style={{ marginBottom: '2rem' }}>{para}</p>
@@ -294,6 +325,7 @@ export default function ArticlePage({ post, extraImages, relatedPosts }) {
       {/* Related articles */}
       {relatedPosts.length > 0 && (
         <div
+          className="article-related"
           style={{
             maxWidth: '1200px',
             margin: '0 auto',
@@ -513,6 +545,32 @@ export default function ArticlePage({ post, extraImages, relatedPosts }) {
           </div>
         </div>
       )}
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .article-mobile-back {
+            display: block !important;
+          }
+          .article-back-btn {
+            top: 1rem !important;
+            left: 1rem !important;
+            padding: 0.4rem 0.75rem !important;
+            font-size: 0.7rem !important;
+          }
+          .article-hero {
+            height: 45vh !important;
+            min-height: 300px !important;
+          }
+          .article-hero-title {
+            padding: 1.5rem !important;
+          }
+          .article-body {
+            padding: 2rem 1rem !important;
+          }
+          .article-related {
+            padding: 2.5rem 1rem !important;
+          }
+        }
+      `}</style>
     </article>
   )
 }
