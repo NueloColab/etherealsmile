@@ -1,42 +1,28 @@
-import { getServerSession } from 'next-auth/next'
-import { authOptions } from '../../api/auth/[...nextauth]/route'
-import { redirect } from 'next/navigation'
 import { db } from '../../../lib/db'
 import { enquiries } from '../../../lib/schema'
 import { sql } from 'drizzle-orm'
 import Link from 'next/link'
-import AdminNav from '../../../components/AdminNav'
 
 export default async function AdminEnquiries() {
-  const session = await getServerSession(authOptions)
-  if (!session) redirect('/admin/login')
-
   const items = await db.select().from(enquiries).orderBy(sql`${enquiries.createdAt} desc`)
 
   return (
-    <div style={{ padding: '2rem 1.5rem', maxWidth: '1200px', margin: '0 auto' }}>
-      <AdminNav />
-
-      <div style={{ marginBottom: '1.5rem' }}>
-        <h1
-          style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: '1.4rem',
-            color: '#e94480',
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-          }}
-        >
+    <div style={{ padding: '2.5rem 2rem', maxWidth: '1100px' }}>
+      <div style={{ marginBottom: '2rem' }}>
+        <h1 style={{ fontFamily: "'Pirata One', 'Playfair Display', cursive", fontSize: '1.8rem', color: '#e94480', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
           Enquiries
         </h1>
+        <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)' }}>
+          {items.length} enquiry{items.length !== 1 ? 'ies' : 'y'} received
+        </p>
       </div>
 
-      <div className="frame-card" style={{ overflowX: 'auto' }}>
+      <div style={{ overflowX: 'auto' }}>
         {items.length > 0 ? (
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                {['ID', 'Name', 'Email', 'Phone', 'Service', 'Preferred Date', 'Preferred Time', 'Status', 'Submitted'].map((h) => (
+                {['ID', 'Name', 'Email', 'Service', 'Date', 'Time', 'Status', 'Submitted'].map((h) => (
                   <th
                     key={h}
                     style={{
@@ -60,7 +46,6 @@ export default async function AdminEnquiries() {
                   key={e.id}
                   style={{
                     borderBottom: '1px solid rgba(255,255,255,0.04)',
-                    cursor: 'pointer',
                     transition: 'background 0.2s ease',
                   }}
                 >
@@ -75,7 +60,6 @@ export default async function AdminEnquiries() {
                     </Link>
                   </td>
                   <td style={{ padding: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>{e.email}</td>
-                  <td style={{ padding: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>{e.phone || '-'}</td>
                   <td style={{ padding: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>
                     {e.service || '-'}
                     {e.price && <span style={{ opacity: 0.6, marginLeft: '4px' }}>({e.price})</span>}

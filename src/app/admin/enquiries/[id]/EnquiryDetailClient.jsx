@@ -83,7 +83,7 @@ export default function EnquiryDetailClient({ enquiry }) {
   }
 
   const statusColors = {
-    pending: { bg: 'rgba(233, 68, 128, 0.15)', color: '#c9a96e', border: 'rgba(233, 68, 128, 0.3)' },
+    pending: { bg: 'rgba(233, 68, 128, 0.15)', color: '#e94480', border: 'rgba(233, 68, 128, 0.3)' },
     confirmed: { bg: 'rgba(76, 175, 80, 0.15)', color: '#81c784', border: 'rgba(76, 175, 80, 0.3)' },
     rejected: { bg: 'rgba(244, 67, 54, 0.15)', color: '#e57373', border: 'rgba(244, 67, 54, 0.3)' },
     cancelled: { bg: 'rgba(255, 152, 0, 0.15)', color: '#ffb74d', border: 'rgba(255, 152, 0, 0.3)' },
