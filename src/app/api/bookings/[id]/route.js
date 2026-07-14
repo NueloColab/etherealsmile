@@ -56,13 +56,14 @@ export async function PUT(request, { params }) {
     // Capture original isMinor before update for mismatch detection
     const before_items = await db.select({ isMinor: bookings.isMinor, status: bookings.status, consentSentAt: bookings.consentSentAt }).from(bookings).where(eq(bookings.id, Number(id)))
     const before = before_items[0]
+    console.log('[BOOKING_PUT] before:', JSON.stringify(before), 'body.isMinor:', body.isMinor)
 
     await db.update(bookings).set(update).where(eq(bookings.id, Number(id)))
 
     // If isMinor changed on a confirmed booking that already had consent sent, flag the mismatch
     if (body.isMinor !== undefined && before && body.isMinor !== (before.isMinor || false)) {
       if (before.status === 'confirmed' && before.consentSentAt) {
-        const prevPack = !body.isMinor ? 'adult' : 'guardian'
+        const prevPack = before.isMinor ? 'guardian' : 'adult'
         const newPack = body.isMinor ? 'guardian' : 'adult'
         await db.update(bookings).set({
           consentSendError: `Minor status changed after consent sent. Originally sent as ${prevPack} pack. Current: ${newPack} pack. Manual resend required.`,
