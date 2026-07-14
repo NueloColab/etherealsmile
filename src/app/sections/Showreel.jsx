@@ -6,8 +6,6 @@ export default function Showreel() {
   const videoRef = useRef(null)
   const sectionRef = useRef(null)
   const [inView, setInView] = useState(false)
-  const [videoLoaded, setVideoLoaded] = useState(false)
-  const [videoError, setVideoError] = useState(false)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -25,9 +23,7 @@ export default function Showreel() {
   useEffect(() => {
     const video = videoRef.current
     if (!video || !inView) return
-    video.play().catch(() => {
-      setVideoError(true)
-    })
+    video.play().catch(() => {})
   }, [inView])
 
   return (
@@ -43,43 +39,28 @@ export default function Showreel() {
         background: '#0a0a0a',
       }}
     >
-      {/* Fallback image — always visible until video loads */}
-      <div
+      <video
+        ref={videoRef}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        poster="/hattie-working.jpg"
         style={{
           position: 'absolute',
-          inset: 0,
-          backgroundImage: 'url(/hattie-working.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          opacity: videoLoaded && !videoError ? 0 : 1,
-          transition: 'opacity 1s ease',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
         }}
-      />
-
-      {/* Video */}
-      {!videoError && (
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          loop
-          playsInline
-          src="/showreel.mp4?v=1"
-          poster="/hattie-working.jpg"
-          onLoadedData={() => setVideoLoaded(true)}
-          onError={() => setVideoError(true)}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            opacity: videoLoaded ? 1 : 0,
-            transition: 'opacity 1s ease',
-          }}
+      >
+        <source
+          src="https://videos.pexels.com/video-files/3209828/3209828-uhd_2560_1440_25fps.mp4"
+          type="video/mp4"
         />
-      )}
+      </video>
 
       {/* Very light overlay */}
       <div
