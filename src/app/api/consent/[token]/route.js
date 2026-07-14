@@ -134,6 +134,7 @@ export async function POST(request, { params }) {
     let signedPdfUrl = null
     let pdfBuffer = null
     try {
+      console.log('[CONSENT] Starting PDF generation for record', record.id)
       pdfBuffer = await generateConsentPdf({
         documentType: doc?.documentType || 'consent',
         documentTitle: doc?.title || 'Consent Form',
@@ -156,7 +157,7 @@ export async function POST(request, { params }) {
       // Update record with PDF URL
       await db.update(consentRecords).set({ signedPdfUrl: signedPdfUrl }).where(eq(consentRecords.id, record.id))
     } catch (pdfErr) {
-      console.error('PDF generation/upload failed (emails still sent without attachment):', pdfErr.message)
+      console.error('PDF generation/upload failed:', pdfErr)
     }
 
     // SEND EMAILS
