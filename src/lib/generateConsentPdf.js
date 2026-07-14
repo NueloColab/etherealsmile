@@ -64,8 +64,10 @@ export function generateConsentPdf({ documentType, documentTitle, documentVersio
     y += 3.5
     doc.setFontSize(9)
     doc.setTextColor(TEXT_DARK)
-    doc.text(value || 'Not provided', margin, y)
-    y += 5
+    const safeValue = (value || 'Not provided').replace(/[()]/g, function(m) { return '\\' + m })
+    const lines = doc.splitTextToSize(safeValue, contentWidth)
+    doc.text(lines, margin, y)
+    y += Math.max(lines.length * 4.5, 5)
   }
 
   function addCheckbox(label, checked) {
@@ -81,7 +83,8 @@ export function generateConsentPdf({ documentType, documentTitle, documentVersio
     }
     doc.setFontSize(8.5)
     doc.setTextColor(TEXT_DARK)
-    doc.text(label, margin + 5.5, y + 0.5)
+    const safeLabel = label.replace(/[()]/g, function(m) { return '\\' + m })
+    doc.text(safeLabel, margin + 5.5, y + 0.5)
     y += 5
   }
 
@@ -168,6 +171,7 @@ export function generateConsentPdf({ documentType, documentTitle, documentVersio
     checkPage(60)
     addSectionTitle('Medical History')
     addField('Allergies', responses.allergies || 'None stated')
+    addField('Current Medications', responses.currentMedications || 'None stated')
 
     const conditions = responses.medicalConditions || {}
     Object.keys(MEDICAL_LABELS).forEach(function(key) {
@@ -176,6 +180,9 @@ export function generateConsentPdf({ documentType, documentTitle, documentVersio
     })
     checkPage(6)
     addCheckbox('Vomiting, diarrhoea, or infection in last 48 hours', !!responses.illnessInLast48h)
+
+    addField('Dental Issues', responses.dentalIssues || 'None stated')
+    addField('Previous Tooth Gems', responses.previousToothGems || 'None')
 
     checkPage(30)
     addSectionTitle('Declaration & Consent')
