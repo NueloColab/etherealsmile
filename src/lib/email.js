@@ -248,7 +248,7 @@ export async function sendAlternativeProposalEmail({ to, name, originalDate, ori
   }
 }
 
-export async function sendNewEnquiryNotification({ name, email, phone, preferredDate, preferredTime, service, price, message }) {
+export async function sendNewBookingNotification({ name, email, phone, preferredDate, preferredTime, service, price, message }) {
   const client = getResend()
   if (!client) return { success: false, skipped: true }
 

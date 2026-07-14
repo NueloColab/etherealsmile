@@ -6,9 +6,10 @@ import { useCmsContent } from '../../../lib/useCmsContent'
 const sections = [
   { key: 'home', label: 'Hero', path: '/admin/cms/home' },
   { key: 'about', label: 'About', path: '/admin/cms/home-about' },
+  { key: 'showreel', label: 'Showreel', path: '/admin/cms/home-showreel' },
   { key: 'hattie', label: "Who's Hattie", path: '/admin/cms/home-hattie' },
-  { key: 'book', label: 'Book', path: '/admin/cms/home-book' },
   { key: 'services', label: 'Services', path: '/admin/cms/home-services' },
+  { key: 'book', label: 'Book', path: '/admin/cms/home-book' },
   { key: 'gallery', label: 'Gallery', path: '/admin/cms/home-gallery' },
   { key: 'journal', label: 'Journal', path: '/admin/cms/home-journal' },
   { key: 'contact', label: 'Contact', path: '/admin/cms/home-contact' },

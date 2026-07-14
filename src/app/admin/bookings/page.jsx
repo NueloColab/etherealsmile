@@ -16,20 +16,13 @@ export default function BookingsPage() {
   const [filter, setFilter] = useState('all')
 
   useEffect(() => {
-    Promise.all([
-      fetch('/api/enquiries?limit=200&sort=-createdAt').then(r => r.json()),
-      fetch('/api/bookings').then(r => r.json()).catch(() => []),
-    ]).then(([enquiriesData, bookingsData]) => {
-      const enquiries = enquiriesData || []
-      // Merge confirmed bookings with their enquiry data
-      const allBookings = enquiries.map(e => ({
-        ...e,
-        type: 'enquiry',
-        status: e.status,
-      }))
-      setBookings(allBookings)
-      setLoading(false)
-    }).catch(() => setLoading(false))
+    fetch('/api/bookings?limit=200&sort=-createdAt')
+      .then(r => r.json())
+      .then(data => {
+        setBookings(data || [])
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
   }, [])
 
   const filtered = filter === 'all' ? bookings : bookings.filter(b => b.status === filter)
@@ -102,8 +95,8 @@ export default function BookingsPage() {
                 return (
                   <tr key={booking.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                     <td style={{ padding: '0.75rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.8)' }}>
-                      {booking.preferredDate ? new Date(booking.preferredDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '-'}
-                      {booking.preferredTime && <span style={{ display: 'block', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>{booking.preferredTime}</span>}
+                      {booking.date ? new Date(booking.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '-'}
+                      {booking.timeSlot && <span style={{ display: 'block', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>{booking.timeSlot}</span>}
                     </td>
                     <td style={{ padding: '0.75rem' }}>
                       <div style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.85rem' }}>{booking.name}</div>
@@ -111,6 +104,7 @@ export default function BookingsPage() {
                     </td>
                     <td style={{ padding: '0.75rem', color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem' }}>
                       {booking.service || '-'}
+                      {booking.price && <span style={{ color: 'rgba(255,255,255,0.35)', marginLeft: '0.5rem' }}>({booking.price})</span>}
                     </td>
                     <td style={{ padding: '0.75rem' }}>
                       <span style={{ padding: '0.25rem 0.6rem', borderRadius: '4px', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', background: style.bg, color: style.color, border: `1px solid ${style.border}` }}>
@@ -118,7 +112,7 @@ export default function BookingsPage() {
                       </span>
                     </td>
                     <td style={{ padding: '0.75rem' }}>
-                      <Link href={`/admin/enquiries/${booking.id}`} style={{ color: '#e94480', fontSize: '0.75rem', textDecoration: 'none', letterSpacing: '0.05em' }}>
+                      <Link href={`/admin/bookings/${booking.id}`} style={{ color: '#e94480', fontSize: '0.75rem', textDecoration: 'none', letterSpacing: '0.05em' }}>
                         View &rarr;
                       </Link>
                     </td>

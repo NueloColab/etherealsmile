@@ -59,6 +59,14 @@ const defaultContent = {
     linkText: 'Leave a Review',
     reviewUrl: 'https://www.google.com/search?q=ethereal+smile+reviews',
   },
+  showreel: {
+    heading: 'The Art of the Sparkle',
+    type: 'video',
+    videoUrl: '/showreel.mp4',
+    posterImage: '/hattie-working.jpg',
+    fallbackImage: '/hattie-working.jpg',
+    overlayText: 'The Art of the Sparkle',
+  },
 }
 
 export async function POST() {

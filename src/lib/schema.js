@@ -37,7 +37,13 @@ export const bookings = pgTable('bookings', {
   service: varchar('service', { length: 255 }),
   status: bookingStatusEnum('status').notNull().default('pending'),
   price: varchar('price', { length: 50 }),
+  message: text('message'),
   notes: text('notes'),
+  proposedDate: timestamp('proposed_date', { mode: 'date' }),
+  proposedTime: varchar('proposed_time', { length: 50 }),
+  proposalToken: varchar('proposal_token', { length: 255 }).unique(),
+  proposalExpiresAt: timestamp('proposal_expires_at', { mode: 'date' }),
+  confirmedAt: timestamp('confirmed_at', { mode: 'date' }),
   createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
 })
 

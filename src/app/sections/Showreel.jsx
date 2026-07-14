@@ -1,11 +1,20 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { useCmsContent } from '../../lib/useCmsContent'
 
 export default function Showreel() {
   const videoRef = useRef(null)
   const sectionRef = useRef(null)
   const [inView, setInView] = useState(false)
+
+  const { content } = useCmsContent('showreel')
+
+  const type = content?.type || 'video'
+  const videoUrl = content?.videoUrl || '/showreel.mp4'
+  const posterImage = content?.posterImage || '/hattie-working.jpg'
+  const fallbackImage = content?.fallbackImage || '/hattie-working.jpg'
+  const overlayText = content?.overlayText || 'The Art of the Sparkle'
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -22,9 +31,9 @@ export default function Showreel() {
 
   useEffect(() => {
     const video = videoRef.current
-    if (!video || !inView) return
+    if (!video || !inView || type !== 'video') return
     video.play().catch(() => {})
-  }, [inView])
+  }, [inView, type])
 
   return (
     <section
@@ -39,29 +48,44 @@ export default function Showreel() {
         background: '#0a0a0a',
       }}
     >
-      <video
-        ref={videoRef}
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        poster="/hattie-working.jpg"
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-        }}
-      >
-        <source
-          src="/showreel.mp4"
-          type="video/mp4"
+      {/* Video mode */}
+      {type === 'video' && (
+        <video
+          ref={videoRef}
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          poster={posterImage}
+          src={videoUrl}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
         />
-      </video>
+      )}
 
-      {/* Very light overlay */}
+      {/* Image mode */}
+      {type === 'image' && (
+        <img
+          src={fallbackImage}
+          alt={overlayText}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+        />
+      )}
+
+      {/* Light overlay */}
       <div
         style={{
           position: 'absolute',
@@ -93,7 +117,7 @@ export default function Showreel() {
             opacity: 0.95,
           }}
         >
-          The Art of the Sparkle
+          {overlayText}
         </p>
       </div>
     </section>
