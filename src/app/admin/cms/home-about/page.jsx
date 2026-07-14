@@ -6,7 +6,7 @@ import CloudinaryUpload from '../../../../components/CloudinaryUpload'
 import Link from 'next/link'
 
 export default function AboutEditor() {
-  const { content, loading, saving, save } = useCmsContent('about')
+  const { content, loading, saving, saved, save } = useCmsContent('about')
   const [form, setForm] = useState(null)
 
   if (loading) return <p style={{ padding: '2rem', color: 'rgba(255,255,255,0.4)' }}>Loading...</p>
@@ -106,7 +106,7 @@ function SaveButtons({ saving, form, data, onSave, onReset }) {
         disabled={saving}
         style={saveButtonStyle}
       >
-        {saving ? 'Saving...' : 'Save Changes'}
+        {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Changes'}
       </button>
 
       {form && (

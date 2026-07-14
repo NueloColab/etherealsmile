@@ -6,6 +6,7 @@ export function useCmsContent(key) {
   const [content, setContent] = useState(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
   const [error, setError] = useState(null)
 
   useEffect(() => {
@@ -27,6 +28,7 @@ export function useCmsContent(key) {
     async (newContent) => {
       setSaving(true)
       setError(null)
+      setSaved(false)
       try {
         const res = await fetch('/api/cms', {
           method: 'PUT',
@@ -35,7 +37,10 @@ export function useCmsContent(key) {
         })
         if (!res.ok) throw new Error('Save failed')
         setContent(newContent)
+        setSaved(true)
         setSaving(false)
+        // Auto-clear the saved state after 3 seconds
+        setTimeout(() => setSaved(false), 3000)
         return true
       } catch (err) {
         setError(err.message)
@@ -46,7 +51,7 @@ export function useCmsContent(key) {
     [key]
   )
 
-  return { content, setContent, loading, saving, error, save }
+  return { content, setContent, loading, saving, saved, error, save }
 }
 
 export function useAllCmsContent() {

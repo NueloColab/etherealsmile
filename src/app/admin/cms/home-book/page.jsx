@@ -5,7 +5,7 @@ import { useCmsContent } from '../../../../lib/useCmsContent'
 import Link from 'next/link'
 
 export default function BookEditor() {
-  const { content, loading, saving, save } = useCmsContent('book')
+  const { content, loading, saving, saved, save } = useCmsContent('book')
   const [form, setForm] = useState(null)
 
   if (loading) return <p style={{ padding: '2rem', color: 'rgba(255,255,255,0.4)' }}>Loading...</p>
@@ -64,7 +64,7 @@ function Textarea({ label, value, onChange }) {
 function SaveButtons({ saving, form, data, onSave, onReset }) {
   return (
     <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-      <button onClick={() => onSave(form || data)} disabled={saving} style={saveButtonStyle}>{saving ? 'Saving...' : 'Save Changes'}</button>
+      <button onClick={() => onSave(form || data)} disabled={saving} style={saveButtonStyle}>{saving ? 'Saving...' : saved ? 'Saved!' : 'Save Changes'}</button>
       {form && <button onClick={onReset} style={resetButtonStyle}>Reset</button>}
     </div>
   )

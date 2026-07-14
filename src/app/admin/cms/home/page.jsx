@@ -6,7 +6,7 @@ import CloudinaryUpload from '../../../../components/CloudinaryUpload'
 import Link from 'next/link'
 
 export default function HeroEditor() {
-  const { content, loading, saving, save } = useCmsContent('home')
+  const { content, loading, saving, saved, save } = useCmsContent('home')
   const [form, setForm] = useState(null)
 
   if (loading) return <p style={{ padding: '2rem', color: 'rgba(255,255,255,0.4)' }}>Loading...</p>
@@ -159,7 +159,7 @@ export default function HeroEditor() {
               opacity: saving ? 0.7 : 1,
             }}
           >
-            {saving ? 'Saving...' : 'Save Changes'}
+            {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Changes'}
           </button>
 
           {form && (
