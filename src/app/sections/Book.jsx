@@ -64,6 +64,13 @@ export default function Book() {
     setSelectedDate(new Date(year, month, day))
     setSubmitted(false)
     setError(null)
+    // Smooth scroll to form on mobile
+    setTimeout(() => {
+      const formCard = document.querySelector('#book-form-card')
+      if (formCard && window.innerWidth < 768) {
+        formCard.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    }, 100)
   }
 
   async function handleSubmit(e) {
@@ -197,7 +204,7 @@ export default function Book() {
                       borderRadius: '6px',
                       border: isSelected ? '1px solid #e94480' : '1px solid transparent',
                       background: isSelected
-                        ? 'rgba(233, 68, 128, 0.15)'
+                        ? 'rgba(233, 68, 128, 0.25)'
                         : isPast
                         ? 'transparent'
                         : day
@@ -210,8 +217,10 @@ export default function Book() {
                         : 'rgba(255,255,255,0.8)',
                       fontFamily: "'Inter', sans-serif",
                       fontSize: '0.8rem',
+                      fontWeight: isSelected ? 600 : 400,
                       cursor: day && !isPast ? 'pointer' : 'default',
                       transition: 'all 0.2s ease',
+                      boxShadow: isSelected ? '0 0 12px rgba(233, 68, 128, 0.3)' : 'none',
                     }}
                   >
                     {day || ''}
@@ -236,18 +245,56 @@ export default function Book() {
           </div>
 
           {/* Form */}
-          <div className="frame-card reveal reveal-scale reveal-delay-2">
+          <div
+            className="frame-card reveal reveal-scale reveal-delay-2"
+            id="book-form-card"
+            style={{
+              border: selectedDate
+                ? '1px solid rgba(233, 68, 128, 0.4)'
+                : '1px solid rgba(255, 255, 255, 0.06)',
+              boxShadow: selectedDate
+                ? '0 0 30px rgba(233, 68, 128, 0.15), inset 0 0 20px rgba(233, 68, 128, 0.05)'
+                : 'none',
+              transition: 'border-color 0.4s ease, box-shadow 0.4s ease',
+            }}
+          >
             <h3
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: '1.1rem',
                 color: '#e94480',
-                marginBottom: '1.5rem',
+                marginBottom: selectedDate ? '0.5rem' : '1.5rem',
                 fontWeight: 500,
+                transition: 'margin-bottom 0.3s ease',
               }}
             >
               Send an Enquiry
             </h3>
+
+            {selectedDate && (
+              <p
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '0.8rem',
+                  color: '#e94480',
+                  marginBottom: '1.25rem',
+                  padding: '0.5rem 0.75rem',
+                  background: 'rgba(233, 68, 128, 0.08)',
+                  borderRadius: '6px',
+                  border: '1px solid rgba(233, 68, 128, 0.15)',
+                }}
+              >
+                <span style={{ opacity: 0.7 }}>Preferred date:</span>{' '}
+                <strong>
+                  {selectedDate.toLocaleDateString('en-GB', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </strong>
+              </p>
+            )}
 
             {submitted ? (
               <div
