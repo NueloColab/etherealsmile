@@ -112,9 +112,9 @@ export default function Header() {
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
                 style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '0.8rem',
-                  letterSpacing: '0.14em',
+                  fontFamily: "'Pirata One', 'Playfair Display', cursive",
+                  fontSize: '0.9rem',
+                  letterSpacing: '0.12em',
                   textTransform: 'uppercase',
                   color: 'rgba(255,255,255,0.85)',
                   textDecoration: 'none',
@@ -299,7 +299,7 @@ export default function Header() {
             onClick={(e) => handleNavClick(e, link.href)}
             style={{
               display: 'block',
-              fontFamily: "'Playfair Display', serif",
+              fontFamily: "'Pirata One', 'Playfair Display', cursive",
               fontSize: 'clamp(1.8rem, 5vw, 2.6rem)',
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
