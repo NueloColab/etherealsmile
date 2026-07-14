@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useCmsContent } from '../../../../lib/useCmsContent'
 import Link from 'next/link'
+import CloudinaryUpload from '../../../../components/CloudinaryUpload'
 
 export default function ShowreelCmsPage() {
   const { content, loading, saving, save, error } = useCmsContent('showreel')
@@ -165,7 +166,7 @@ export default function ShowreelCmsPage() {
           />
         </div>
 
-        {/* Video fields */}
+        {/* Video mode */}
         {current.type === 'video' && (
           <>
             <div>
@@ -206,79 +207,21 @@ export default function ShowreelCmsPage() {
               </p>
             </div>
 
-            <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '0.65rem',
-                  letterSpacing: '0.15em',
-                  textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.5)',
-                  marginBottom: '0.5rem',
-                }}
-              >
-                Poster Image (fallback before video loads)
-              </label>
-              <input
-                type="text"
-                value={current.posterImage || ''}
-                onChange={(e) => update('posterImage', e.target.value)}
-                placeholder="/hattie-working.jpg"
-                style={{
-                  width: '100%',
-                  padding: '0.75rem 1rem',
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: '8px',
-                  color: '#fff',
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '0.85rem',
-                  outline: 'none',
-                  transition: 'border-color 0.3s',
-                }}
-                onFocus={(e) => (e.target.style.borderColor = 'rgba(233,68,128,0.5)')}
-                onBlur={(e) => (e.target.style.borderColor = 'rgba(255,255,255,0.1)')}
-              />
-            </div>
+            <CloudinaryUpload
+              label="Poster Image"
+              currentUrl={current.posterImage || ''}
+              onUpload={(url) => update('posterImage', url)}
+            />
           </>
         )}
 
-        {/* Image fields */}
+        {/* Image mode */}
         {current.type === 'image' && (
-          <div>
-            <label
-              style={{
-                display: 'block',
-                fontSize: '0.65rem',
-                letterSpacing: '0.15em',
-                textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.5)',
-                marginBottom: '0.5rem',
-              }}
-            >
-              Image URL
-            </label>
-            <input
-              type="text"
-              value={current.fallbackImage || ''}
-              onChange={(e) => update('fallbackImage', e.target.value)}
-              placeholder="/hattie-working.jpg"
-              style={{
-                width: '100%',
-                padding: '0.75rem 1rem',
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '8px',
-                color: '#fff',
-                fontFamily: "'Inter', sans-serif",
-                fontSize: '0.85rem',
-                outline: 'none',
-                transition: 'border-color 0.3s',
-              }}
-              onFocus={(e) => (e.target.style.borderColor = 'rgba(233,68,128,0.5)')}
-              onBlur={(e) => (e.target.style.borderColor = 'rgba(255,255,255,0.1)')}
-            />
-          </div>
+          <CloudinaryUpload
+            label="Image"
+            currentUrl={current.fallbackImage || ''}
+            onUpload={(url) => update('fallbackImage', url)}
+          />
         )}
 
         {/* Preview */}
