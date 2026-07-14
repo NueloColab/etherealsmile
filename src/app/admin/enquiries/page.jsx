@@ -22,7 +22,7 @@ export default async function AdminEnquiries() {
           style={{
             fontFamily: "'Playfair Display', serif",
             fontSize: '1.4rem',
-            color: '#e94480',
+            color: '#c9a96e',
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
           }}
@@ -89,7 +89,7 @@ export default async function AdminEnquiries() {
                             ? '#81c784'
                             : e.status === 'rejected'
                             ? '#e57373'
-                            : '#e94480',
+                            : '#c9a96e',
                         border:
                           e.status === 'confirmed'
                             ? '1px solid rgba(76, 175, 80, 0.3)'

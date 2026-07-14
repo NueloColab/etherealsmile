@@ -99,7 +99,7 @@ export default function Hattie() {
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontStyle: 'italic',
-                color: '#e94480',
+                color: '#c9a96e',
                 fontSize: '1rem',
               }}
             >

@@ -62,7 +62,7 @@ export default function Contact() {
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: '1.1rem',
-                color: '#e94480',
+                color: '#c9a96e',
                 marginBottom: '1.5rem',
                 fontWeight: 500,
               }}
@@ -144,7 +144,7 @@ export default function Contact() {
               >
                 Bookings
               </p>
-              <a href="#book" style={{ fontSize: '0.85rem', color: '#e94480', textDecoration: 'none' }}>
+              <a href="#book" style={{ fontSize: '0.85rem', color: '#c9a96e', textDecoration: 'none' }}>
                 Use our enquiry calendar &rarr;
               </a>
             </div>
@@ -155,7 +155,7 @@ export default function Contact() {
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: '1.1rem',
-                color: '#e94480',
+                color: '#c9a96e',
                 marginBottom: '1.5rem',
                 fontWeight: 500,
               }}
@@ -176,12 +176,12 @@ export default function Contact() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     margin: '0 auto 1rem',
-                    color: '#e94480',
+                    color: '#c9a96e',
                   }}
                 >
                   &#10003;
                 </div>
-                <p style={{ color: '#e94480', fontSize: '0.9rem' }}>Message sent. We'll be in touch soon.</p>
+                <p style={{ color: '#c9a96e', fontSize: '0.9rem' }}>Message sent. We'll be in touch soon.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit}>

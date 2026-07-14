@@ -48,7 +48,7 @@ export default function AdminGallery() {
           style={{
             fontFamily: "'Playfair Display', serif",
             fontSize: '1.4rem',
-            color: '#e94480',
+            color: '#c9a96e',
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
           }}
@@ -58,7 +58,7 @@ export default function AdminGallery() {
       </div>
 
       <div className="frame-card" style={{ maxWidth: '500px', marginBottom: '2rem' }}>
-        <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#e94480', marginBottom: '1.25rem' }}>
+        <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#c9a96e', marginBottom: '1.25rem' }}>
           Add Image
         </h3>
         <form onSubmit={handleAdd}>

@@ -25,7 +25,7 @@ export default function Review() {
             style={{
               fontFamily: "'Playfair Display', serif",
               fontSize: '1.3rem',
-              color: '#e94480',
+              color: '#c9a96e',
               marginBottom: '0.75rem',
               fontWeight: 500,
             }}

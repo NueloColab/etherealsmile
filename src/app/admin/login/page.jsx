@@ -57,7 +57,7 @@ export default function AdminLogin() {
             style={{
               fontFamily: "'Playfair Display', serif",
               fontSize: '1.4rem',
-              color: '#e94480',
+              color: '#c9a96e',
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
               marginBottom: '0.5rem',

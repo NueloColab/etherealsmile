@@ -35,7 +35,7 @@ export default async function JournalPost({ params }) {
           fontSize: '0.7rem',
           letterSpacing: '0.12em',
           textTransform: 'uppercase',
-          color: '#e94480',
+          color: '#c9a96e',
           textDecoration: 'none',
           marginBottom: '2rem',
         }}

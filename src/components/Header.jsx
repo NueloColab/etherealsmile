@@ -44,7 +44,7 @@ export default function Header() {
         zIndex: 100,
         transition: 'background 0.4s ease, border-color 0.4s ease',
         background: scrolled ? 'rgba(0, 0, 0, 0.85)' : 'transparent',
-        borderBottom: scrolled ? '1px solid rgba(233, 68, 128, 0.2)' : '1px solid transparent',
+        borderBottom: scrolled ? '1px solid rgba(201, 169, 110, 0.2)' : '1px solid transparent',
         backdropFilter: scrolled ? 'blur(8px)' : 'none',
       }}
     >
@@ -56,7 +56,7 @@ export default function Header() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          height: '56px',
+          height: '64px',
         }}
       >
         <Link
@@ -71,9 +71,9 @@ export default function Header() {
             src="/brand-card-2.png?v=3"
             alt="Ethereal Smile"
             style={{
-              height: '32px',
+              height: '44px',
               width: 'auto',
-              borderRadius: '4px',
+              borderRadius: '6px',
               display: 'block',
             }}
           />
@@ -100,7 +100,7 @@ export default function Header() {
                 textDecoration: 'none',
                 transition: 'color 0.3s ease',
               }}
-              onMouseEnter={(e) => (e.target.style.color = '#e94480')}
+              onMouseEnter={(e) => (e.target.style.color = '#c9a96e')}
               onMouseLeave={(e) => (e.target.style.color = 'rgba(255,255,255,0.8)')}
             >
               {link.label}
@@ -116,7 +116,7 @@ export default function Header() {
             position: 'relative',
             background: 'none',
             border: 'none',
-            color: '#e94480',
+            color: '#c9a96e',
             cursor: 'pointer',
             width: '44px',
             height: '44px',
@@ -126,13 +126,13 @@ export default function Header() {
             padding: 0,
           }}
         >
-          {/* Pink pulsating circle */}
+          {/* Gold pulsating circle */}
           <span
             style={{
               position: 'absolute',
               inset: 0,
               borderRadius: '50%',
-              border: '1.5px solid #e94480',
+              border: '1.5px solid #c9a96e',
               animation: 'menuPulse 2s ease-in-out infinite',
               opacity: 0.6,
             }}
@@ -142,14 +142,14 @@ export default function Header() {
               position: 'absolute',
               inset: 0,
               borderRadius: '50%',
-              border: '1.5px solid #e94480',
+              border: '1.5px solid #c9a96e',
               animation: 'menuPulse 2s ease-in-out infinite',
               animationDelay: '0.6s',
               opacity: 0.3,
             }}
           />
 
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e94480" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'relative', zIndex: 1 }}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'relative', zIndex: 1 }}>
             {menuOpen ? (
               <>
                 <line x1="18" y1="6" x2="6" y2="18" />
@@ -166,14 +166,14 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Full-screen pink mobile overlay */}
+      {/* Full-screen dark mobile overlay */}
       <div
         className="mobile-nav"
         style={{
           position: 'fixed',
           inset: 0,
           zIndex: 99,
-          background: '#e94480',
+          background: 'rgba(0, 0, 0, 0.95)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -191,7 +191,7 @@ export default function Header() {
             top: 0,
             left: 0,
             width: '100%',
-            height: '56px',
+            height: '64px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -201,7 +201,7 @@ export default function Header() {
             src="/brand-card-2.png?v=3"
             alt="Ethereal Smile"
             style={{
-              height: '28px',
+              height: '40px',
               width: 'auto',
               borderRadius: '4px',
               display: 'block',

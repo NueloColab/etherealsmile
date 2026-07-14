@@ -22,7 +22,7 @@ export default async function AdminDashboard() {
           style={{
             fontFamily: "'Playfair Display', serif",
             fontSize: '1.5rem',
-            color: '#e94480',
+            color: '#c9a96e',
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
           }}
@@ -62,7 +62,7 @@ export default async function AdminDashboard() {
                 style={{
                   fontFamily: "'Playfair Display', serif",
                   fontSize: '2rem',
-                  color: '#e94480',
+                  color: '#c9a96e',
                   marginBottom: '0.25rem',
                 }}
               >
@@ -98,7 +98,7 @@ export default async function AdminDashboard() {
             style={{
               fontFamily: "'Playfair Display', serif",
               fontSize: '1.1rem',
-              color: '#e94480',
+              color: '#c9a96e',
               fontWeight: 500,
             }}
           >
@@ -108,7 +108,7 @@ export default async function AdminDashboard() {
             href="/admin/enquiries"
             style={{
               fontSize: '0.7rem',
-              color: '#e94480',
+              color: '#c9a96e',
               textDecoration: 'none',
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
@@ -173,7 +173,7 @@ export default async function AdminDashboard() {
                               ? '#81c784'
                               : e.status === 'rejected'
                               ? '#e57373'
-                              : '#e94480',
+                              : '#c9a96e',
                           border:
                             e.status === 'confirmed'
                               ? '1px solid rgba(76, 175, 80, 0.3)'

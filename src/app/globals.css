@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap');
 
 :root {
-  --pink: #e94480;
+  --gold: #c9a96e;
   --pink-glow: rgba(233, 68, 128, 0.3);
   --pink-faint: rgba(233, 68, 128, 0.1);
 }

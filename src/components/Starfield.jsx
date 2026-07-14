@@ -18,7 +18,7 @@ export default function Starfield() {
         opacity: 0.15 + Math.random() * 0.7, // more subtle
         speed: 0.0001 + Math.random() * 0.0003,
         phase: Math.random() * Math.PI * 2,
-        isPink: i % 6 === 0,                 // pink stars instead of gold
+        isGold: i % 6 === 0,                 // gold stars instead of gold
         twinkleSpeed: 1.5 + Math.random() * 2.5,
       })
     }
@@ -61,8 +61,8 @@ export default function Starfield() {
         const s = star.size
         ctx.globalAlpha = alpha
 
-        if (star.isPink) {
-          ctx.fillStyle = '#e94480'
+        if (star.isGold) {
+          ctx.fillStyle = '#c9a96e'
         } else {
           ctx.fillStyle = '#ffffff'
         }
@@ -80,7 +80,7 @@ export default function Starfield() {
           // Tiny cross sparkle for the brightest ones
           const half = Math.max(1, s * 0.35)
           ctx.lineWidth = 0.6
-          ctx.strokeStyle = star.isPink ? '#e94480' : '#ffffff'
+          ctx.strokeStyle = star.isGold ? '#c9a96e' : '#ffffff'
           ctx.beginPath()
           ctx.moveTo(sx - half, sy)
           ctx.lineTo(sx + half, sy)

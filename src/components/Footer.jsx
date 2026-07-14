@@ -71,7 +71,7 @@ export default function Footer() {
               marginBottom: '0.4rem',
               transition: 'color 0.3s',
             }}
-            onMouseEnter={(e) => (e.target.style.color = '#e94480')}
+            onMouseEnter={(e) => (e.target.style.color = '#c9a96e')}
             onMouseLeave={(e) => (e.target.style.color = 'rgba(255,255,255,0.5)')}
           >
             Instagram
@@ -88,7 +88,7 @@ export default function Footer() {
               textDecoration: 'none',
               transition: 'color 0.3s',
             }}
-            onMouseEnter={(e) => (e.target.style.color = '#e94480')}
+            onMouseEnter={(e) => (e.target.style.color = '#c9a96e')}
             onMouseLeave={(e) => (e.target.style.color = 'rgba(255,255,255,0.5)')}
           >
             TikTok
@@ -119,7 +119,7 @@ export default function Footer() {
               marginBottom: '0.4rem',
               transition: 'color 0.3s',
             }}
-            onMouseEnter={(e) => (e.target.style.color = '#e94480')}
+            onMouseEnter={(e) => (e.target.style.color = '#c9a96e')}
             onMouseLeave={(e) => (e.target.style.color = 'rgba(255,255,255,0.5)')}
           >
             Email Us
@@ -135,7 +135,7 @@ export default function Footer() {
               marginTop: '1rem',
               transition: 'color 0.3s',
             }}
-            onMouseEnter={(e) => (e.target.style.color = '#e94480')}
+            onMouseEnter={(e) => (e.target.style.color = '#c9a96e')}
             onMouseLeave={(e) => (e.target.style.color = 'rgba(255,255,255,0.25)')}
           >
             Admin

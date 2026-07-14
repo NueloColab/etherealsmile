@@ -50,7 +50,7 @@ export default function AdminServices() {
           style={{
             fontFamily: "'Playfair Display', serif",
             fontSize: '1.4rem',
-            color: '#e94480',
+            color: '#c9a96e',
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
           }}
@@ -68,7 +68,7 @@ export default function AdminServices() {
         }}
       >
         <div className="frame-card">
-          <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#e94480', marginBottom: '1.25rem' }}>
+          <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#c9a96e', marginBottom: '1.25rem' }}>
             {editing ? 'Edit Service' : 'Add Service'}
           </h3>
           <form onSubmit={handleSubmit}>
@@ -127,7 +127,7 @@ export default function AdminServices() {
         </div>
 
         <div className="frame-card" style={{ overflowX: 'auto' }}>
-          <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#e94480', marginBottom: '1.25rem' }}>
+          <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#c9a96e', marginBottom: '1.25rem' }}>
             Current Services
           </h3>
           {items.length > 0 ? (
@@ -186,7 +186,7 @@ export default function AdminServices() {
                         style={{
                           background: 'none',
                           border: 'none',
-                          color: '#e94480',
+                          color: '#c9a96e',
                           cursor: 'pointer',
                           fontSize: '0.75rem',
                           marginRight: '0.75rem',

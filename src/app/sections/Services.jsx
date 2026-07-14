@@ -47,7 +47,7 @@ export default async function Services() {
                     style={{
                       fontFamily: "'Playfair Display', serif",
                       fontSize: '1.1rem',
-                      color: '#e94480',
+                      color: '#c9a96e',
                       marginBottom: '0.5rem',
                       fontWeight: 500,
                     }}

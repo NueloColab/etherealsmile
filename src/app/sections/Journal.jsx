@@ -77,7 +77,7 @@ export default async function Journal() {
                       style={{
                         fontFamily: "'Playfair Display', serif",
                         fontSize: '1.05rem',
-                        color: '#e94480',
+                        color: '#c9a96e',
                         marginBottom: '0.5rem',
                         fontWeight: 500,
                       }}

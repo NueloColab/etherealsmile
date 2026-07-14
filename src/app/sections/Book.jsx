@@ -141,7 +141,7 @@ export default function Book() {
                 style={{
                   fontFamily: "'Playfair Display', serif",
                   fontSize: '1.1rem',
-                  color: '#e94480',
+                  color: '#c9a96e',
                   letterSpacing: '0.08em',
                 }}
               >
@@ -199,7 +199,7 @@ export default function Book() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       borderRadius: '6px',
-                      border: isSelected ? '1px solid #e94480' : '1px solid transparent',
+                      border: isSelected ? '1px solid #c9a96e' : '1px solid transparent',
                       background: isSelected
                         ? 'rgba(233, 68, 128, 0.15)'
                         : isPast
@@ -208,7 +208,7 @@ export default function Book() {
                         ? 'rgba(255,255,255,0.03)'
                         : 'transparent',
                       color: isSelected
-                        ? '#e94480'
+                        ? '#c9a96e'
                         : isPast
                         ? 'rgba(255,255,255,0.15)'
                         : 'rgba(255,255,255,0.8)',
@@ -230,7 +230,7 @@ export default function Book() {
                   marginTop: '1rem',
                   fontFamily: "'Inter', sans-serif",
                   fontSize: '0.8rem',
-                  color: '#e94480',
+                  color: '#c9a96e',
                   textAlign: 'center',
                 }}
               >
@@ -245,7 +245,7 @@ export default function Book() {
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: '1.1rem',
-                color: '#e94480',
+                color: '#c9a96e',
                 marginBottom: '1.5rem',
                 fontWeight: 500,
               }}
@@ -271,12 +271,12 @@ export default function Book() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     margin: '0 auto 1rem',
-                    color: '#e94480',
+                    color: '#c9a96e',
                   }}
                 >
                   &#10003;
                 </div>
-                <p style={{ color: '#e94480', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+                <p style={{ color: '#c9a96e', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
                   Enquiry sent successfully.
                 </p>
                 <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>

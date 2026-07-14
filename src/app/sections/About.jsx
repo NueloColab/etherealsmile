@@ -32,7 +32,7 @@ export default function About() {
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: '1.2rem',
-                color: '#e94480',
+                color: '#c9a96e',
                 marginBottom: '1rem',
                 fontWeight: 500,
               }}
@@ -56,7 +56,7 @@ export default function About() {
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: '1.2rem',
-                color: '#e94480',
+                color: '#c9a96e',
                 marginBottom: '1rem',
                 fontWeight: 500,
               }}
@@ -80,7 +80,7 @@ export default function About() {
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: '1.2rem',
-                color: '#e94480',
+                color: '#c9a96e',
                 marginBottom: '1rem',
                 fontWeight: 500,
               }}

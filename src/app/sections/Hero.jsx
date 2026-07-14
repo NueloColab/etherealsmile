@@ -39,9 +39,9 @@ export default function Hero() {
       <div
         ref={logoRef}
         style={{
-          maxWidth: '340px',
-          width: '100%',
-          marginBottom: '2rem',
+          maxWidth: '520px',
+          width: '90%',
+          marginBottom: '1.5rem',
           transition: 'transform 0.1s linear, opacity 0.1s linear',
           willChange: 'transform, opacity',
         }}
@@ -52,9 +52,9 @@ export default function Hero() {
           style={{
             width: '100%',
             height: 'auto',
-            borderRadius: '10px',
+            borderRadius: '12px',
             display: 'block',
-            boxShadow: '0 0 50px rgba(233, 68, 128, 0.2)',
+            boxShadow: '0 0 60px rgba(201, 169, 110, 0.15)',
           }}
         />
       </div>
@@ -70,7 +70,7 @@ export default function Hero() {
           textAlign: 'center',
           lineHeight: 1.2,
           color: '#ffffff',
-          marginBottom: '0.75rem',
+          marginBottom: '1.5rem',
           animationDelay: '0.2s',
           opacity: 0,
         }}
@@ -78,28 +78,11 @@ export default function Hero() {
         Ethereal Smile
       </h1>
 
-      <p
-        className="animate-fadeInUp"
-        style={{
-          fontFamily: "'Playfair Display', serif",
-          fontStyle: 'italic',
-          fontSize: 'clamp(0.8rem, 1.6vw, 1rem)',
-          color: '#e94480',
-          textAlign: 'center',
-          letterSpacing: '0.06em',
-          marginBottom: '2.5rem',
-          animationDelay: '0.4s',
-          opacity: 0,
-        }}
-      >
-        Genuine Swarovski & Preciosa Crystal Tooth Gems
-      </p>
-
       <a
         href="#book"
         className="btn btn-primary animate-fadeInUp"
         style={{
-          animationDelay: '0.6s',
+          animationDelay: '0.4s',
           opacity: 0,
         }}
       >
