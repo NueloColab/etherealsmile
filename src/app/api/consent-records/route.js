@@ -1,6 +1,6 @@
 import { dbAdmin as db } from '../../../lib/db-admin'
 import { consentRecords, consentDocuments, clients } from '../../../lib/schema'
-import { eq, desc } from 'drizzle-orm'
+import { eq, desc, and, isNull, inArray } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 import { randomBytes } from 'crypto'
 
@@ -32,8 +32,17 @@ export async function GET(request) {
     .from(consentRecords)
     .leftJoin(consentDocuments, eq(consentRecords.documentId, consentDocuments.id))
 
+    // Apply filters
+    const conditions = []
     if (clientId) {
-      query = query.where(eq(consentRecords.clientId, Number(clientId)))
+      conditions.push(eq(consentRecords.clientId, Number(clientId)))
+    }
+    if (bookingId) {
+      conditions.push(eq(consentRecords.bookingId, Number(bookingId)))
+    }
+
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions))
     }
 
     const records = await query.orderBy(desc(consentRecords.createdAt))
@@ -60,6 +69,32 @@ export async function POST(request) {
     const doc = docs.find(d => d.active)
     if (!doc) {
       return NextResponse.json({ error: 'Document type not found or inactive' }, { status: 404 })
+    }
+
+    // Duplicate guard: block if a live (sent/viewed) record exists for this client+booking+document
+    // For records with no booking, match on bookingId IS NULL
+    const duplicateConditions = [
+      eq(consentRecords.clientId, Number(clientId)),
+      eq(consentRecords.documentId, doc.id),
+      inArray(consentRecords.status, ['sent', 'viewed']),
+    ]
+
+    if (bookingId) {
+      duplicateConditions.push(eq(consentRecords.bookingId, Number(bookingId)))
+    } else {
+      duplicateConditions.push(isNull(consentRecords.bookingId))
+    }
+
+    const existing = await db.select({ id: consentRecords.id, status: consentRecords.status })
+      .from(consentRecords)
+      .where(and(...duplicateConditions))
+
+    if (existing.length > 0) {
+      return NextResponse.json({
+        error: 'A live consent record already exists for this document',
+        existingId: existing[0].id,
+        existingStatus: existing[0].status,
+      }, { status: 409 })
     }
 
     // Get client info for email

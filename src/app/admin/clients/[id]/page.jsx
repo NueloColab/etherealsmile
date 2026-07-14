@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
+import ConsentRecordsPanel from '../../../../components/ConsentRecordsPanel'
 
 const STATUS_STYLES = {
   pending: { bg: 'rgba(233,68,128,0.1)', color: '#e94480', border: 'rgba(233,68,128,0.2)' },
@@ -233,6 +234,9 @@ export default function ClientDetailPage() {
           )}
         </div>
       </div>
+
+      {/* Consent Records */}
+      <ConsentRecordsPanel scope="client" targetId={client.id} />
 
       {/* Booking history */}
       <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: '0.8rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: '1rem' }}>

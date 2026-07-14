@@ -151,8 +151,8 @@ export async function POST(request, { params }) {
 
       // Upload to Cloudinary
       const uploadResult = await uploadConsentPdf(pdfBuffer, 'consent-record-' + record.id)
-      signedPdfUrl = uploadResult.url
-      console.log('Consent PDF uploaded:', signedPdfUrl)
+      signedPdfUrl = uploadResult.publicId
+      console.log('Consent PDF uploaded, publicId:', signedPdfUrl)
 
       // Update record with PDF URL
       await db.update(consentRecords).set({ signedPdfUrl: signedPdfUrl }).where(eq(consentRecords.id, record.id))

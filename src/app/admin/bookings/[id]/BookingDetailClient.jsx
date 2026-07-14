@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import ConsentRecordsPanel from '../../../../components/ConsentRecordsPanel'
 
 const STATUS_STYLES = {
   pending: { bg: 'rgba(233,68,128,0.1)', color: '#e94480', border: 'rgba(233,68,128,0.2)' },
@@ -391,6 +392,9 @@ export default function BookingDetailClient({ booking: initialBooking }) {
           <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Add internal notes..." rows={3} style={{ ...inputStyle, resize: 'vertical' }} />
         </div>
       )}
+
+      {/* Consent Records Panel */}
+      <ConsentRecordsPanel scope="booking" targetId={booking.id} />
 
       {/* Metadata */}
       <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.05em' }}>
