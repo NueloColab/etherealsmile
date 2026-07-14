@@ -509,6 +509,7 @@ export default function Book() {
                   <label>Phone</label>
                   <input
                     type="tel"
+                    required
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                     placeholder="+44 7..."

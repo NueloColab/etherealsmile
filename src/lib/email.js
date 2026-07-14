@@ -247,3 +247,102 @@ export async function sendAlternativeProposalEmail({ to, name, originalDate, ori
     return { success: false, error: err.message }
   }
 }
+
+export async function sendNewEnquiryNotification({ name, email, phone, preferredDate, preferredTime, service, price, message }) {
+  const client = getResend()
+  if (!client) return { success: false, skipped: true }
+
+  try {
+    const result = await client.emails.send({
+      from: FROM,
+      to: 'hattie@etherealsmile.co.uk',
+      subject: `New Enquiry from ${name}`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+          <style>${emailStyles}</style>
+        </head>
+        <body class="email-wrapper">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr><td align="center" style="padding: 2rem 1rem;">
+
+              <div class="email-container">
+                <div class="email-header">
+                  <img src="${SITE_URL}/hero-logo-card.png" alt="Ethereal Smile" class="email-logo" />
+                  <h1 class="email-title">New Enquiry</h1>
+                  <p class="email-subtitle">${sparkles()} Someone wants to book ${sparkles()}</p>
+                </div>
+
+                <div class="email-body">
+                  <div class="email-box">
+                    <p class="email-box-label">Name</p>
+                    <p class="email-box-value">${name}</p>
+                  </div>
+
+                  <div class="email-box">
+                    <p class="email-box-label">Email</p>
+                    <p class="email-box-value">${email}</p>
+                  </div>
+
+                  <div class="email-box">
+                    <p class="email-box-label">Phone</p>
+                    <p class="email-box-value">${phone}</p>
+                  </div>
+
+                  <div class="email-box">
+                    <p class="email-box-label">Preferred Date</p>
+                    <p class="email-box-value">${preferredDate}</p>
+                  </div>
+
+                  <div class="email-box">
+                    <p class="email-box-label">Preferred Time</p>
+                    <p class="email-box-value">${preferredTime}</p>
+                  </div>
+
+                  ${service !== 'Not specified' ? `
+                  <div class="email-box">
+                    <p class="email-box-label">Service</p>
+                    <p class="email-box-value">${service}${price !== 'Not specified' ? ` <span style="font-size: 0.85rem; opacity: 0.7;">(${price})</span>` : ''}</p>
+                  </div>
+                  ` : ''}
+
+                  ${message !== 'None' ? `
+                  <div class="email-box">
+                    <p class="email-box-label">Message</p>
+                    <p style="margin: 0; font-family: 'Inter', sans-serif; font-size: 0.9rem; color: rgba(255,255,255,0.8); line-height: 1.6;">${message.replace(/\n/g, '<br/>')}</p>
+                  </div>
+                  ` : ''}
+
+                  <div class="email-divider"></div>
+
+                  <div style="text-align: center;">
+                    <a href="${SITE_URL}/admin/bookings" class="email-button email-button-accept" style="display: inline-block; padding: 0.875rem 2rem; border-radius: 50px; text-decoration: none; font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; background: rgba(233, 68, 128, 0.15); color: #e94480; border: 1px solid rgba(233, 68, 128, 0.4);">
+                      View in Admin
+                    </a>
+                  </div>
+                </div>
+
+                <div class="email-footer">
+                  <p class="email-footer-text">
+                    Ethereal Smile by Hattie Clifford<br />
+                    <a href="${SITE_URL}" style="color: #e94480; text-decoration: none;">${SITE_URL.replace('https://', '')}</a>
+                  </p>
+                </div>
+              </div>
+
+            </td></tr>
+          </table>
+        </body>
+        </html>
+      `,
+    })
+    return { success: true, id: result?.id || null }
+  } catch (err) {
+    console.error('New enquiry notification failed:', err)
+    return { success: false, error: err.message }
+  }
+}
