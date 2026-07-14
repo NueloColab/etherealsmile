@@ -37,7 +37,7 @@ export default function BookEditor() {
           />
         </div>
 
-        <SaveButtons saving={saving} form={form} data={data} onSave={save} onReset={() => setForm(null)} />
+        <SaveButtons saving={saving} saved={saved} form={form} data={data} onSave={save} onReset={() => setForm(null)} />
       </div>
     </div>
   )
@@ -61,7 +61,7 @@ function Textarea({ label, value, onChange }) {
   )
 }
 
-function SaveButtons({ saving, form, data, onSave, onReset }) {
+function SaveButtons({ saving, saved, form, data, onSave, onReset }) {
   return (
     <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
       <button onClick={() => onSave(form || data)} disabled={saving} style={saveButtonStyle}>{saving ? 'Saving...' : saved ? 'Saved!' : 'Save Changes'}</button>

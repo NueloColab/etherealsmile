@@ -29,7 +29,7 @@ export default function ContactEditor() {
         <Input label="Instagram URL" value={data.instagram || ''} onChange={(v) => setForm({ ...data, instagram: v })} />
         <Input label="TikTok URL" value={data.tiktok || ''} onChange={(v) => setForm({ ...data, tiktok: v })} />
 
-        <SaveButtons saving={saving} form={form} data={data} onSave={save} onReset={() => setForm(null)} />
+        <SaveButtons saving={saving} saved={saved} form={form} data={data} onSave={save} onReset={() => setForm(null)} />
       </div>
     </div>
   )
@@ -44,7 +44,7 @@ function Input({ label, value, onChange }) {
   )
 }
 
-function SaveButtons({ saving, form, data, onSave, onReset }) {
+function SaveButtons({ saving, saved, form, data, onSave, onReset }) {
   return (
     <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
       <button onClick={() => onSave(form || data)} disabled={saving} style={saveButtonStyle}>{saving ? 'Saving...' : saved ? 'Saved!' : 'Save Changes'}</button>
