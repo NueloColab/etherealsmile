@@ -39,9 +39,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <head>
-        <script src="https://upload-widget.cloudinary.com/v2.0/global/all.js" async></script>
-      </head>
+      <head />
       <body style={{ background: '#000', color: '#fff', margin: 0 }}>
         <LayoutWrapper>{children}</LayoutWrapper>
       </body>
