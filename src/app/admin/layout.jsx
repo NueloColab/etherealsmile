@@ -9,6 +9,7 @@ export default function AdminLayout({ children }) {
   const pathname = usePathname()
   const [authed, setAuthed] = useState(false)
   const [checking, setChecking] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
     if (pathname === '/admin/login') {
@@ -33,7 +34,7 @@ export default function AdminLayout({ children }) {
       })
   }, [pathname, router])
 
-  // Login page: no sidebar, no auth needed
+  // Login page: no sidebar, no header
   if (pathname === '/admin/login') {
     return (
       <div style={{ minHeight: '100vh', background: '#000000', color: '#ffffff' }}>
@@ -42,7 +43,7 @@ export default function AdminLayout({ children }) {
     )
   }
 
-  // Checking auth or not authenticated: show minimal spinner
+  // Checking auth: show spinner
   if (checking || !authed) {
     return (
       <div style={{ minHeight: '100vh', background: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -53,21 +54,91 @@ export default function AdminLayout({ children }) {
     )
   }
 
-  // Authenticated: show sidebar + content
+  // Authenticated layout
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#000000' }}>
-      <AdminSidebar />
-      <main
-        style={{
-          flex: 1,
-          marginLeft: '260px',
-          minHeight: '100vh',
-          background: '#000000',
-          color: '#ffffff',
-        }}
+    <div style={{ minHeight: '100vh', background: '#0a0e17', color: '#ffffff' }}>
+      <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+
+      {/* Main content area */}
+      <div style={{
+        marginLeft: '260px',
+        minHeight: '100vh',
+        background: '#0a0e17',
+      }}
+      className="admin-main-content"
       >
-        {children}
-      </main>
+        {/* Top header bar */}
+        <header style={{
+          height: '56px',
+          borderBottom: '1px solid rgba(233,68,128,0.1)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 1.5rem',
+          background: '#0a0e17',
+          position: 'sticky',
+          top: 0,
+          zIndex: 30,
+        }}>
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setSidebarOpen(true)}
+            style={{
+              display: 'none',
+              background: 'none',
+              border: 'none',
+              color: '#e94480',
+              cursor: 'pointer',
+              padding: '0.5rem',
+            }}
+            className="admin-menu-btn"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+
+          <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+            Admin Portal
+          </div>
+
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              fontSize: '0.7rem',
+              color: 'rgba(255,255,255,0.4)',
+              textDecoration: 'none',
+              padding: '0.4rem 1rem',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '50px',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            View Site &rarr;
+          </a>
+        </header>
+
+        {/* Page content */}
+        <main>
+          {children}
+        </main>
+      </div>
+
+      {/* Responsive styles */}
+      <style>{`
+        @media (max-width: 1023px) {
+          .admin-main-content {
+            margin-left: 0 !important;
+          }
+          .admin-menu-btn {
+            display: block !important;
+          }
+        }
+      `}</style>
     </div>
   )
 }
