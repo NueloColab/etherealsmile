@@ -206,7 +206,7 @@ export default function BookingDetailClient({ booking: initialBooking }) {
 
       {/* Booking Details */}
       <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '1.5rem', marginBottom: '2rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+        <div className="admin-booking-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
           <div>
             <label style={labelStyle}>Customer</label>
             {editing ? (
@@ -306,7 +306,7 @@ export default function BookingDetailClient({ booking: initialBooking }) {
               <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', marginBottom: '1rem' }}>
                 Propose an alternative date and time to the customer. They will receive an email with accept/decline links valid for 48 hours.
               </p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="admin-booking-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
                   <label style={labelStyle}>Alternative Date</label>
                   <input type="date" value={altDate} onChange={(e) => setAltDate(e.target.value)} style={inputStyle} />
@@ -338,6 +338,13 @@ export default function BookingDetailClient({ booking: initialBooking }) {
         {booking.confirmedAt && <div>Confirmed: {new Date(booking.confirmedAt).toLocaleString('en-GB')}</div>}
         {booking.proposalToken && <div>Proposal sent (token: {booking.proposalToken.substring(0, 8)}...)</div>}
       </div>
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .admin-booking-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   )
 }

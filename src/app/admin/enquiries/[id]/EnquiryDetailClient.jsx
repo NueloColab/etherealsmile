@@ -235,7 +235,7 @@ export default function EnquiryDetailClient({ enquiry }) {
               Propose an alternative date and time to the customer.
             </p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <div className="admin-enquiry-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem' }}>
                   Alternative Date
@@ -330,6 +330,13 @@ export default function EnquiryDetailClient({ enquiry }) {
           {loading ? 'Saving...' : 'Save Notes'}
         </button>
       </div>
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .admin-enquiry-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   )
 }

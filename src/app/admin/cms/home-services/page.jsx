@@ -56,7 +56,7 @@ export default function ServicesEditor() {
               marginBottom: '1rem',
             }}
           >
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="admin-cms-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <Input label="Name" value={service.name || ''} onChange={(v) => updateService(i, 'name', v)} />
               <Input label="Price" value={service.price || ''} onChange={(v) => updateService(i, 'price', v)} />
             </div>
@@ -119,6 +119,13 @@ export default function ServicesEditor() {
       </div>
 
       <SaveButtons saving={saving} saved={saved} form={form} data={data} onSave={save} onReset={() => setForm(null)} />
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .admin-cms-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   )
 }

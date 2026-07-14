@@ -270,6 +270,13 @@ export default function ClientDetailPage() {
           })}
         </div>
       )}
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .admin-client-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   )
 }

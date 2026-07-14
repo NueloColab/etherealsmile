@@ -98,7 +98,7 @@ export default function AdminBlog() {
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
         {/* Edit/Add form */}
         <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '14px', padding: '1.75rem' }}>
           <h3 style={{ fontSize: '0.85rem', color: '#e94480', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.5rem', fontWeight: 600 }}>
@@ -149,7 +149,7 @@ export default function AdminBlog() {
               <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem' }}>Excerpt</label>
               <textarea rows={2} value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} style={{ ...inputStyle, resize: 'vertical' }} placeholder="Short summary..." />
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="admin-blog-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem' }}>Video URL</label>
                 <input value={form.videoUrl} onChange={(e) => setForm({ ...form, videoUrl: e.target.value })} style={inputStyle} placeholder="/videos/article.mp4" />
@@ -220,6 +220,13 @@ export default function AdminBlog() {
           )}
         </div>
       </div>
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .admin-blog-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   )
 }
