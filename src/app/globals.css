@@ -474,6 +474,21 @@ label {
   min-width: calc(50% - 1rem);
 }
 
+/* ═══ Services Grid ═══ */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  max-width: 1000px;
+  margin: 3rem auto 0;
+}
+
+@media (max-width: 768px) {
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Mobile adjustments */
 @media (max-width: 768px) {
   .journal-slide {

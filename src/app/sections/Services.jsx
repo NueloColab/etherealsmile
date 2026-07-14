@@ -20,21 +20,28 @@ export default async function Services() {
         <h2 className="section-title reveal">Services &amp; Price List</h2>
         <p className="section-subtitle reveal reveal-delay-1">Luxury crystal options, priced with transparency</p>
 
-        <div
-          style={{
-            maxWidth: '720px',
-            margin: '3rem auto 0',
-          }}
-        >
+        <div className="services-grid">
           {items.length > 0 ? (
             items.map((item, i) => (
               <div
                 key={item.id}
                 className="reveal"
                 style={{
-                  borderBottom: '1px solid rgba(255,255,255,0.06)',
-                  padding: '1.75rem 0',
-                  transition: 'border-color 0.3s ease',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: '16px',
+                  padding: '1.5rem',
+                  background: 'rgba(0,0,0,0.3)',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(233,68,128,0.25)'
+                  e.currentTarget.style.boxShadow = '0 4px 24px rgba(233,68,128,0.08)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
+                  e.currentTarget.style.boxShadow = 'none'
                 }}
               >
                 <div
@@ -117,6 +124,7 @@ export default async function Services() {
               style={{
                 textAlign: 'center',
                 padding: '3rem',
+                gridColumn: '1 / -1',
               }}
             >
               <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem' }}>
