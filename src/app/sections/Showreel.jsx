@@ -47,6 +47,7 @@ export default function Showreel() {
         muted
         loop
         playsInline
+        src="/showreel.mp4"
         style={{
           position: 'absolute',
           top: 0,
@@ -54,38 +55,19 @@ export default function Showreel() {
           width: '100%',
           height: '100%',
           objectFit: 'cover',
-          opacity: 0.85,
         }}
-      >
-        <source src="/showreel.mp4" type="video/mp4" />
-      </video>
+      />
 
-      {/* Fallback image if video not available */}
+      {/* Dark overlay for text readability */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: 'url(/hattie-working.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          opacity: 0,
-          transition: 'opacity 0.5s ease',
-        }}
-        onError={(e) => {
-          e.currentTarget.style.opacity = '1'
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.4))',
         }}
       />
 
-      {/* Dark overlay */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.5))',
-        }}
-      />
-
-      {/* Optional centered text */}
+      {/* Centered text */}
       <div
         style={{
           position: 'absolute',
@@ -93,8 +75,6 @@ export default function Showreel() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          flexDirection: 'column',
-          gap: '1rem',
         }}
       >
         <p
