@@ -346,3 +346,183 @@ export async function sendNewBookingNotification({ name, email, phone, preferred
     return { success: false, error: err.message }
   }
 }
+
+export async function sendConsentRequestEmail({ to, name, documentType, documentTitle, pdfUrl, token }) {
+  const client = getResend()
+  if (!client) return { success: false, skipped: true }
+
+  const consentUrl = `${SITE_URL}/consent/${token}`
+  const docTypeLabel = {
+    consent: 'Consent Form',
+    consultation: 'Consultation Form',
+    guardian_consent: 'Guardian Consent Form',
+    aftercare: 'Aftercare Information',
+  }[documentType] || documentTitle
+
+  try {
+    const result = await client.emails.send({
+      from: FROM,
+      to,
+      subject: `Action Required: Please sign your ${docTypeLabel} — Ethereal Smile`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+          <style>${emailStyles}</style>
+        </head>
+        <body class="email-wrapper">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr><td align="center" style="padding: 2rem 1rem;">
+
+              <div class="email-container">
+                <div class="email-header">
+                  <img src="${SITE_URL}/hero-logo-card.png" alt="Ethereal Smile" class="email-logo" />
+                  <h1 class="email-title">Ethereal Smile</h1>
+                  <p class="email-subtitle">${sparkles()} ${docTypeLabel} ${sparkles()}</p>
+                </div>
+
+                <div class="email-body">
+                  <p class="email-text">
+                    Hi ${name},<br /><br />
+                    Before your appointment, we need you to review and sign your <strong style="color: #e94480;">${docTypeLabel}</strong>. This is a legal requirement for your safety and ensures we have all the information we need to provide you with the best care.
+                  </p>
+
+                  <div class="email-box" style="border-color: rgba(233, 68, 128, 0.35); background: rgba(233, 68, 128, 0.1);">
+                    <p class="email-box-label" style="color: #e94480;">What you need to do</p>
+                    <p style="margin: 0.5rem 0 0; font-family: 'Inter', sans-serif; font-size: 0.95rem; color: rgba(255,255,255,0.8); line-height: 1.7;">
+                      1. Click the button below to open your form<br />
+                      2. Read the document carefully<br />
+                      3. Fill in the required information<br />
+                      4. Sign and submit
+                    </p>
+                  </div>
+
+                  ${documentType === 'guardian_consent' ? `
+                  <div class="email-box">
+                    <p class="email-box-label">Important</p>
+                    <p style="margin: 0.5rem 0 0; font-family: 'Inter', sans-serif; font-size: 0.9rem; color: rgba(255,255,255,0.7); line-height: 1.6;">
+                      As a parent or guardian, you will also need to complete a medical consultation form on behalf of the young person. Both forms will be presented together.
+                    </p>
+                  </div>
+                  ` : ''}
+
+                  <div style="text-align: center; margin: 2rem 0;">
+                    <a href="${consentUrl}" class="email-button" style="display: inline-block; background: rgba(233, 68, 128, 0.15); color: #e94480; border: 1px solid rgba(233, 68, 128, 0.4); padding: 0.875rem 2.5rem; border-radius: 50px; text-decoration: none; font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase;">
+                      Review &amp; Sign Your Form
+                    </a>
+                  </div>
+
+                  <div style="text-align: center; margin: 1rem 0;">
+                    <a href="${pdfUrl}" style="font-family: 'Inter', sans-serif; font-size: 0.8rem; color: rgba(255,255,255,0.4); text-decoration: underline;">Download PDF copy</a>
+                  </div>
+
+                  <div class="email-divider"></div>
+
+                  <p class="email-text" style="font-size: 0.8rem; color: rgba(255,255,255,0.4); text-align: center;">
+                    This link expires in 7 days. If you have any questions, contact <a href="mailto:hattie@etherealsmile.co.uk" style="color: #e94480;">hattie@etherealsmile.co.uk</a>
+                  </p>
+                </div>
+
+                <div class="email-footer">
+                  <p class="email-footer-text">
+                    Ethereal Smile by Hattie Clifford<br />
+                    Genuine Swarovski &amp; Preciosa Crystal Tooth Gems<br />
+                    <a href="${SITE_URL}" style="color: #e94480; text-decoration: none;">${SITE_URL.replace('https://', '')}</a>
+                  </p>
+                </div>
+              </div>
+
+            </td></tr>
+          </table>
+        </body>
+        </html>
+      `,
+    })
+    return { success: true, id: result?.data?.id || result?.id || null }
+  } catch (err) {
+    console.error('Consent request email failed:', err)
+    return { success: false, error: err.message }
+  }
+}
+
+export async function sendConsentSignedNotification({ clientName, clientEmail, documentType, signatoryName, signatoryRelationship }) {
+  const client = getResend()
+  if (!client) return { success: false, skipped: true }
+
+  const docTypeLabel = {
+    consent: 'Consent Form',
+    consultation: 'Consultation Form',
+    guardian_consent: 'Guardian Consent Form',
+    aftercare: 'Aftercare Form',
+  }[documentType] || documentType
+
+  try {
+    const result = await client.emails.send({
+      from: FROM,
+      to: 'hattie@etherealsmile.co.uk',
+      subject: `Consent Signed: ${docTypeLabel} by ${signatoryName}`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <style>${emailStyles}</style>
+        </head>
+        <body class="email-wrapper">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr><td align="center" style="padding: 2rem 1rem;">
+
+              <div class="email-container">
+                <div class="email-header">
+                  <img src="${SITE_URL}/hero-logo-card.png" alt="Ethereal Smile" class="email-logo" />
+                  <h1 class="email-title">Consent Signed</h1>
+                </div>
+
+                <div class="email-body">
+                  <p class="email-text">
+                    <strong style="color: #4ade80;">${signatoryName}</strong> has signed the <strong style="color: #e94480;">${docTypeLabel}</strong> for <strong>${clientName}</strong>.
+                  </p>
+
+                  <div class="email-box">
+                    <p class="email-box-label">Signed By</p>
+                    <p class="email-box-value">${signatoryName} <span style="font-size: 0.75rem; opacity: 0.6;">(${signatoryRelationship})</span></p>
+                  </div>
+
+                  <div class="email-box">
+                    <p class="email-box-label">Client</p>
+                    <p class="email-box-value">${clientName} <span style="font-size: 0.75rem; opacity: 0.6;">&lt;${clientEmail}&gt;</span></p>
+                  </div>
+
+                  <div class="email-divider"></div>
+
+                  <div style="text-align: center;">
+                    <a href="${SITE_URL}/admin/clients" class="email-button email-button-accept" style="display: inline-block; padding: 0.875rem 2rem; border-radius: 50px; text-decoration: none; font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase;">
+                      View in Admin
+                    </a>
+                  </div>
+                </div>
+
+                <div class="email-footer">
+                  <p class="email-footer-text">
+                    Ethereal Smile by Hattie Clifford<br />
+                    <a href="${SITE_URL}" style="color: #e94480; text-decoration: none;">${SITE_URL.replace('https://', '')}</a>
+                  </p>
+                </div>
+              </div>
+
+            </td></tr>
+          </table>
+        </body>
+        </html>
+      `,
+    })
+    return { success: true, id: result?.data?.id || result?.id || null }
+  } catch (err) {
+    console.error('Consent signed notification failed:', err)
+    return { success: false, error: err.message }
+  }
+}

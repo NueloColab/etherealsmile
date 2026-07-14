@@ -124,3 +124,32 @@ export const adminUsers = pgTable('admin_users', {
   role: varchar('role', { length: 50 }).notNull().default('admin'),
   createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
 })
+
+export const consentDocuments = pgTable('consent_documents', {
+  id: serial('id').primaryKey(),
+  documentType: varchar('document_type', { length: 50 }).notNull(),
+  version: varchar('version', { length: 10 }).notNull().default('1.0'),
+  title: varchar('title', { length: 255 }).notNull(),
+  pdfUrl: text('pdf_url').notNull(),
+  active: boolean('active').notNull().default(true),
+  createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
+})
+
+export const consentRecords = pgTable('consent_records', {
+  id: serial('id').primaryKey(),
+  clientId: integer('client_id').notNull().references(() => clients.id, { onDelete: 'cascade' }),
+  bookingId: integer('booking_id').references(() => bookings.id, { onDelete: 'set null' }),
+  documentId: integer('document_id').notNull().references(() => consentDocuments.id),
+  status: varchar('status', { length: 20 }).notNull().default('sent'),
+  acceptToken: varchar('accept_token', { length: 255 }).notNull().unique(),
+  expiresAt: timestamp('expires_at', { mode: 'date' }),
+  signatoryName: varchar('signatory_name', { length: 255 }),
+  signatoryRelationship: varchar('signatory_relationship', { length: 50 }),
+  signatoryIP: varchar('signatory_ip', { length: 50 }),
+  responses: jsonb('responses').notNull().default({}),
+  viewedAt: timestamp('viewed_at', { mode: 'date' }),
+  signedAt: timestamp('signed_at', { mode: 'date' }),
+  declinedAt: timestamp('declined_at', { mode: 'date' }),
+  sentAt: timestamp('sent_at', { mode: 'date' }).notNull().defaultNow(),
+  createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
+})
