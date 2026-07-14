@@ -12,6 +12,7 @@ export const enquiries = pgTable('enquiries', {
   email: varchar('email', { length: 255 }).notNull(),
   phone: varchar('phone', { length: 50 }),
   preferredDate: timestamp('preferred_date', { mode: 'date' }),
+  preferredTime: varchar('preferred_time', { length: 50 }),
   message: text('message'),
   status: enquiryStatusEnum('status').notNull().default('pending'),
   createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),

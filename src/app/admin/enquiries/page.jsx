@@ -22,7 +22,7 @@ export default async function AdminEnquiries() {
           style={{
             fontFamily: "'Playfair Display', serif",
             fontSize: '1.4rem',
-            color: '#c9a96e',
+            color: '#e94480',
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
           }}
@@ -36,7 +36,7 @@ export default async function AdminEnquiries() {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                {['ID', 'Name', 'Email', 'Phone', 'Preferred Date', 'Message', 'Status', 'Date'].map((h) => (
+                {['ID', 'Name', 'Email', 'Phone', 'Preferred Date', 'Preferred Time', 'Status', 'Submitted'].map((h) => (
                   <th
                     key={h}
                     style={{
@@ -56,18 +56,31 @@ export default async function AdminEnquiries() {
             </thead>
             <tbody>
               {items.map((e) => (
-                <tr key={e.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                  <td style={{ padding: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>{e.id}</td>
-                  <td style={{ padding: '0.75rem', color: 'rgba(255,255,255,0.85)' }}>{e.name}</td>
+                <tr
+                  key={e.id}
+                  style={{
+                    borderBottom: '1px solid rgba(255,255,255,0.04)',
+                    cursor: 'pointer',
+                    transition: 'background 0.2s ease',
+                  }}
+                >
+                  <td style={{ padding: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>
+                    <Link href={`/admin/enquiries/${e.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      #{e.id}
+                    </Link>
+                  </td>
+                  <td style={{ padding: '0.75rem', color: 'rgba(255,255,255,0.85)' }}>
+                    <Link href={`/admin/enquiries/${e.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      {e.name}
+                    </Link>
+                  </td>
                   <td style={{ padding: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>{e.email}</td>
                   <td style={{ padding: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>{e.phone || '-'}</td>
                   <td style={{ padding: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>
                     {e.preferredDate ? new Date(e.preferredDate).toLocaleDateString('en-GB') : '-'}
                   </td>
-                  <td style={{ padding: '0.75rem', color: 'rgba(255,255,255,0.6)', maxWidth: '200px' }}>
-                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-                      {e.message || '-'}
-                    </span>
+                  <td style={{ padding: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>
+                    {e.preferredTime || '-'}
                   </td>
                   <td style={{ padding: '0.75rem' }}>
                     <span
@@ -89,7 +102,7 @@ export default async function AdminEnquiries() {
                             ? '#81c784'
                             : e.status === 'rejected'
                             ? '#e57373'
-                            : '#c9a96e',
+                            : '#e94480',
                         border:
                           e.status === 'confirmed'
                             ? '1px solid rgba(76, 175, 80, 0.3)'
