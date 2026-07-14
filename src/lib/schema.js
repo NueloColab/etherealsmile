@@ -152,4 +152,5 @@ export const consentRecords = pgTable('consent_records', {
   declinedAt: timestamp('declined_at', { mode: 'date' }),
   sentAt: timestamp('sent_at', { mode: 'date' }).notNull().defaultNow(),
   createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
+  signedPdfUrl: text('signed_pdf_url'),
 })

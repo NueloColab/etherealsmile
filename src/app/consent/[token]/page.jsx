@@ -47,6 +47,7 @@ export default function ConsentPage() {
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [signed, setSigned] = useState(false)
+  const [signedPdfUrl, setSignedPdfUrl] = useState(null)
 
   const [fullName, setFullName] = useState('')
   const [dateOfBirth, setDateOfBirth] = useState('')
@@ -126,16 +127,24 @@ export default function ConsentPage() {
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
         </div>
         <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', color: TEXT, margin: '0 0 0.75rem' }}>Thank You</h2>
-        <p style={{ color: TEXT_SEC, fontSize: '0.95rem', lineHeight: 1.6, margin: '0 0 1rem' }}>
+        <p style={{ color: TEXT_SEC, fontSize: '0.95rem', lineHeight: 1.6, margin: '0 0 1.5rem' }}>
           Your <strong style={{ color: PINK }}>{docTitle}</strong> has been signed and submitted.
         </p>
-        {record.pdfUrl && (
-          <a href={record.pdfUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', padding: '0.65rem 1.5rem', borderRadius: '8px', background: PINK_MID, color: PINK, border: '1px solid ' + PINK_BORDER, fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.06em', textDecoration: 'none', textTransform: 'uppercase', marginBottom: '1rem' }}>
-            Download PDF Copy
-          </a>
-        )}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'center' }}>
+          {signedPdfUrl && (
+            <a href={signedPdfUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.7rem 1.5rem', borderRadius: '8px', background: PINK, color: '#fff', border: 'none', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.08em', textDecoration: 'none', textTransform: 'uppercase' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Download Signed PDF
+            </a>
+          )}
+          {record.pdfUrl && (
+            <a href={record.pdfUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.25rem', borderRadius: '8px', background: PINK_MID, color: PINK, border: '1px solid ' + PINK_BORDER, fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.06em', textDecoration: 'none', textTransform: 'uppercase' }}>
+              View Original Document
+            </a>
+          )}
+        </div>
         <p style={{ color: TEXT_TER, fontSize: '0.8rem', marginTop: '1.5rem', lineHeight: 1.5 }}>
-          A copy has been sent to your email. We look forward to seeing you.
+          A confirmation with your signed PDF has been sent to your email.
         </p>
       </div>
     )
@@ -227,6 +236,7 @@ export default function ConsentPage() {
         return
       }
       setSigned(true)
+      setSignedPdfUrl(result.data.signedPdfUrl || null)
       setSubmitting(false)
     })
     .catch(function() {

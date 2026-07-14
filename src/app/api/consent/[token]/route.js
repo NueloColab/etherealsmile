@@ -7,7 +7,6 @@ export async function GET(request, { params }) {
   try {
     const { token } = params
 
-    // Find the consent record by token
     const items = await db.select({
       id: consentRecords.id,
       clientId: consentRecords.clientId,
@@ -34,28 +33,24 @@ export async function GET(request, { params }) {
       return NextResponse.json({ error: 'Consent form not found' }, { status: 404 })
     }
 
-    // Check expiry
     if (record.expiresAt && new Date() > new Date(record.expiresAt)) {
-      // Mark as expired if not already signed
       if (record.status === 'sent' || record.status === 'viewed') {
         await db.update(consentRecords).set({ status: 'expired' }).where(eq(consentRecords.id, record.id))
       }
       return NextResponse.json({ error: 'This consent form has expired', documentType: record.documentType, title: record.documentTitle }, { status: 410 })
     }
 
-    // Mark as viewed if status is 'sent'
     if (record.status === 'sent') {
       await db.update(consentRecords).set({ status: 'viewed', viewedAt: new Date() }).where(eq(consentRecords.id, record.id))
     }
 
-    // Return safe data (no internal IDs, no IP)
     return NextResponse.json({
       id: record.id,
       documentType: record.documentType,
       documentTitle: record.documentTitle,
       documentVersion: record.documentVersion,
       pdfUrl: record.pdfUrl,
-      status: record.status === 'sent' ? 'viewed' : record.status, // Show 'viewed' to customer
+      status: record.status === 'sent' ? 'viewed' : record.status,
       expiresAt: record.expiresAt,
       responses: record.responses,
     })
@@ -71,19 +66,16 @@ export async function POST(request, { params }) {
     const body = await request.json()
     const { signatoryName, signatoryRelationship, responses, action } = body
 
-    // Find the record
     const items = await db.select().from(consentRecords).where(eq(consentRecords.acceptToken, token))
     const record = items[0]
     if (!record) {
       return NextResponse.json({ error: 'Consent form not found' }, { status: 404 })
     }
 
-    // IMMUTABILITY: once signed or declined, no changes allowed
     if (record.status === 'signed' || record.status === 'declined') {
       return NextResponse.json({ error: 'This consent form has already been signed and cannot be modified' }, { status: 403 })
     }
 
-    // Check expiry
     if (record.expiresAt && new Date() > new Date(record.expiresAt)) {
       return NextResponse.json({ error: 'This consent form has expired' }, { status: 410 })
     }
@@ -93,21 +85,18 @@ export async function POST(request, { params }) {
         status: 'declined',
         declinedAt: new Date(),
       }).where(eq(consentRecords.id, record.id))
-
       return NextResponse.json({ success: true, action: 'declined' })
     }
 
-    // Signing requires signatoryName
     if (!signatoryName || !signatoryName.trim()) {
       return NextResponse.json({ error: 'Full name is required to sign' }, { status: 400 })
     }
 
-    // Aftercare only needs read acknowledgment
     const docItems = await db.select().from(consentDocuments).where(eq(consentDocuments.id, record.documentId))
     const doc = docItems[0]
 
-    // Get client IP
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown'
+    const signedAt = new Date()
 
     // SIGN: immutable write
     await db.update(consentRecords).set({
@@ -116,14 +105,16 @@ export async function POST(request, { params }) {
       signatoryRelationship: signatoryRelationship || (doc?.documentType === 'guardian_consent' ? 'parent' : 'self'),
       signatoryIP: ip,
       responses: responses || {},
-      signedAt: new Date(),
+      signedAt: signedAt,
     }).where(eq(consentRecords.id, record.id))
 
-    // Auto-attach client if not already linked
+    // Get client info
+    const clientRows = await db.select().from(clients).where(eq(clients.id, record.clientId))
+    const client = clientRows[0]
+
+    // Auto-attach client
     try {
       const { createOrAttachClient } = await import('../../../../lib/createOrAttachClient')
-      const clientRows = await db.select().from(clients).where(eq(clients.id, record.clientId))
-      const client = clientRows[0]
       if (client && record.bookingId) {
         await createOrAttachClient({
           email: client.email,
@@ -137,39 +128,74 @@ export async function POST(request, { params }) {
       console.error('Client attach failed (non-blocking):', clientErr.message)
     }
 
-    // Send confirmation email to signer + notification to Hattie
+    // GENERATE PDF
+    let signedPdfUrl = null
+    let pdfBuffer = null
     try {
-      const clientRows = await db.select().from(clients).where(eq(clients.id, record.clientId))
-      const client = clientRows[0]
-      
-      // Confirmation to signer
+      const { generateConsentPdf } = await import('../../../../lib/generateConsentPdf')
+      pdfBuffer = await generateConsentPdf({
+        documentType: doc?.documentType || 'consent',
+        documentTitle: doc?.title || 'Consent Form',
+        documentVersion: doc?.version || '1.0',
+        pdfUrl: doc?.pdfUrl || '',
+        responses: responses || {},
+        signatoryName: signatoryName.trim(),
+        signatoryRelationship: signatoryRelationship || (doc?.documentType === 'guardian_consent' ? 'parent' : 'self'),
+        signedAt: signedAt.toISOString(),
+        signedIp: ip,
+        clientName: client?.name || '',
+        clientEmail: client?.email || '',
+      })
+
+      // Upload to Cloudinary
+      const { uploadConsentPdf } = await import('../../../../lib/uploadConsentPdf')
+      const uploadResult = await uploadConsentPdf(pdfBuffer, 'consent-record-' + record.id)
+      signedPdfUrl = uploadResult.url
+      console.log('Consent PDF uploaded:', signedPdfUrl)
+
+      // Update record with PDF URL
+      await db.update(consentRecords).set({ signedPdfUrl: signedPdfUrl }).where(eq(consentRecords.id, record.id))
+    } catch (pdfErr) {
+      console.error('PDF generation/upload failed (emails still sent without attachment):', pdfErr.message)
+    }
+
+    // SEND EMAILS
+    try {
+      const { sendConsentEmailWithAttachment } = await import('../../../../lib/email')
+
       if (client && client.email) {
-        const { sendConsentConfirmationEmail } = await import('../../../../lib/email')
-        await sendConsentConfirmationEmail({
+        // Client confirmation email with PDF attached
+        await sendConsentEmailWithAttachment({
           to: client.email,
           name: signatoryName.trim() || client.name,
           documentType: doc?.documentType || 'consent',
           documentTitle: doc?.title || 'Consent Form',
-          pdfUrl: doc?.pdfUrl || '',
-        }).catch(function(err) { console.error('Signer confirmation failed:', err.message) })
-      }
-
-      // Notification to Hattie
-      if (client) {
-        const { sendConsentSignedNotification } = await import('../../../../lib/email')
-        await sendConsentSignedNotification({
+          pdfBuffer: pdfBuffer,
+          pdfFilename: 'consent-record-' + record.id + '.pdf',
+          isHattie: false,
           clientName: client.name,
           clientEmail: client.email,
+        }).catch(function(err) { console.error('Client email failed:', err.message) })
+
+        // Hattie notification email with PDF attached
+        await sendConsentEmailWithAttachment({
+          to: 'hattie@etherealsmile.co.uk',
+          name: signatoryName.trim(),
           documentType: doc?.documentType || 'consent',
-          signatoryName: signatoryName.trim(),
+          documentTitle: doc?.title || 'Consent Form',
+          pdfBuffer: pdfBuffer,
+          pdfFilename: 'consent-record-' + record.id + '.pdf',
+          isHattie: true,
+          clientName: client.name,
+          clientEmail: client.email,
           signatoryRelationship: signatoryRelationship || 'self',
-        }).catch(function(err) { console.error('Hattie notification failed:', err.message) })
+        }).catch(function(err) { console.error('Hattie email failed:', err.message) })
       }
     } catch (emailErr) {
       console.error('Consent emails failed (non-blocking):', emailErr.message)
     }
 
-    return NextResponse.json({ success: true, action: 'signed' })
+    return NextResponse.json({ success: true, action: 'signed', signedPdfUrl: signedPdfUrl })
   } catch (err) {
     console.error('Consent token POST error:', err)
     return NextResponse.json({ error: 'Failed to process consent form' }, { status: 500 })

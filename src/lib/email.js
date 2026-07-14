@@ -601,3 +601,118 @@ export async function sendConsentConfirmationEmail({ to, name, documentType, doc
     return { success: false, error: err.message }
   }
 }
+
+export async function sendConsentEmailWithAttachment({ to, name, documentType, documentTitle, pdfBuffer, pdfFilename, isHattie, clientName, clientEmail, signatoryRelationship }) {
+  const client = getResend()
+  if (!client) return { success: false, skipped: true }
+
+  const docTypeLabel = {
+    consent: 'Consent Form',
+    consultation: 'Consultation Form',
+    guardian_consent: 'Guardian Consent Form',
+    aftercare: 'Aftercare Information',
+  }[documentType] || documentTitle
+
+  if (isHattie) {
+    // Hattie notification email with PDF attached
+    try {
+      const result = await client.emails.send({
+        from: FROM,
+        to: to,
+        subject: `${clientName} signed their ${docTypeLabel} - Ethereal Smile`,
+        html: `
+          <!DOCTYPE html>
+          <html>
+          <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><style>${emailStyles}</style></head>
+          <body class="email-wrapper">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr><td align="center" style="padding: 2rem 1rem;">
+                <div class="email-container">
+                  <div class="email-header">
+                    <img src="${SITE_URL}/hero-logo-card.png" alt="Ethereal Smile" class="email-logo" />
+                    <h1 class="email-title">Consent Signed</h1>
+                  </div>
+                  <div class="email-body">
+                    <p class="email-text"><strong style="color: #4ade80;">${name}</strong> has signed the <strong style="color: #e94480;">${docTypeLabel}</strong>${signatoryRelationship && signatoryRelationship !== 'self' ? ' as ' + signatoryRelationship : ''} for <strong>${clientName}</strong>.</p>
+                    <div class="email-box">
+                      <p class="email-box-label">Signed By</p>
+                      <p class="email-box-value">${name}${signatoryRelationship ? ' <span style="font-size: 0.75rem; opacity: 0.6;">(' + signatoryRelationship + ')</span>' : ''}</p>
+                    </div>
+                    <div class="email-box">
+                      <p class="email-box-label">Client</p>
+                      <p class="email-box-value">${clientName} <span style="font-size: 0.75rem; opacity: 0.6;">&lt;${clientEmail}&gt;</span></p>
+                    </div>
+                    <p class="email-text" style="font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-top: 1rem;">The completed consent record PDF is attached to this email. Please retain it for your records.</p>
+                    <div class="email-divider"></div>
+                    <div style="text-align: center;">
+                      <a href="${SITE_URL}/admin/clients" class="email-button email-button-accept" style="display: inline-block; padding: 0.875rem 2rem; border-radius: 50px; text-decoration: none; font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; background: rgba(76, 175, 80, 0.15); color: #81c784; border: 1px solid rgba(76, 175, 80, 0.4);">View in Admin</a>
+                    </div>
+                  </div>
+                  <div class="email-footer">
+                    <p class="email-footer-text">Ethereal Smile by Hattie Clifford<br /><a href="${SITE_URL}" style="color: #e94480; text-decoration: none;">${SITE_URL.replace('https://', '')}</a></p>
+                  </div>
+                </div>
+              </td></tr>
+            </table>
+          </body>
+          </html>
+        `,
+        attachments: pdfBuffer ? [{
+          filename: pdfFilename,
+          content_type: 'application/pdf',
+          content: pdfBuffer.toString('base64'),
+        }] : undefined,
+      })
+      return { success: true, id: result?.data?.id || result?.id || null }
+    } catch (err) {
+      console.error('Hattie consent email with attachment failed:', err)
+      return { success: false, error: err.message }
+    }
+  } else {
+    // Client confirmation email with PDF attached
+    try {
+      const result = await client.emails.send({
+        from: FROM,
+        to: to,
+        subject: `Your ${docTypeLabel} has been signed - Ethereal Smile`,
+        html: `
+          <!DOCTYPE html>
+          <html>
+          <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><style>${emailStyles}</style></head>
+          <body class="email-wrapper">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr><td align="center" style="padding: 2rem 1rem;">
+                <div class="email-container">
+                  <div class="email-header">
+                    <img src="${SITE_URL}/hero-logo-card.png" alt="Ethereal Smile" class="email-logo" />
+                    <h1 class="email-title">Ethereal Smile</h1>
+                    <p class="email-subtitle">${sparkles()} Form Signed ${sparkles()}</p>
+                  </div>
+                  <div class="email-body">
+                    <p class="email-text">Hi ${name},<br /><br />Your <strong style="color: #e94480;">${docTypeLabel}</strong> has been signed and submitted successfully.</p>
+                    <p class="email-text" style="font-size: 0.85rem; color: rgba(255,255,255,0.6);">A copy of your completed consent record is attached to this email as a PDF. Please save it for your records.</p>
+                    <div class="email-divider"></div>
+                    <p class="email-text" style="font-size: 0.75rem; color: rgba(255,255,255,0.4); text-align: center;">This is an automated confirmation. If you did not sign this form, please contact <a href="mailto:hattie@etherealsmile.co.uk" style="color: #e94480;">hattie@etherealsmile.co.uk</a> immediately.</p>
+                  </div>
+                  <div class="email-footer">
+                    <p class="email-footer-text">Ethereal Smile by Hattie Clifford<br /><a href="${SITE_URL}" style="color: #e94480; text-decoration: none;">${SITE_URL.replace('https://', '')}</a></p>
+                  </div>
+                </div>
+              </td></tr>
+            </table>
+          </body>
+          </html>
+        `,
+        attachments: pdfBuffer ? [{
+          filename: pdfFilename,
+          content_type: 'application/pdf',
+          content: pdfBuffer.toString('base64'),
+        }] : undefined,
+      })
+      return { success: true, id: result?.data?.id || result?.id || null }
+    } catch (err) {
+      console.error('Client confirmation email with attachment failed:', err)
+      return { success: false, error: err.message }
+    }
+  }
+}
