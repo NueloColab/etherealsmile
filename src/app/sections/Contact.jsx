@@ -197,7 +197,6 @@ export default function Contact() {
               </svg>
               Book Now
             </a>
-          </div>
 
           <div
             className="reveal reveal-scale reveal-delay-2"
@@ -210,7 +209,7 @@ export default function Contact() {
               textAlign: 'center',
               position: 'relative',
               overflow: 'hidden',
-              // maxWidth removed - now in column
+              maxWidth: '600px',
             }}
           >
             {/* Decorative corner stars */}
@@ -323,7 +322,6 @@ export default function Contact() {
               </svg>
               Leave a Review
             </a>
-          </div>
 
           {/* Right: Form */}
           <div className="reveal reveal-scale reveal-delay-1"
@@ -558,6 +556,7 @@ export default function Contact() {
               </form>
             )}
           </div>
+
         </div>
       </div>
     </section>
