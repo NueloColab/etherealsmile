@@ -42,32 +42,64 @@ export default function Hattie() {
           {subtitle}
         </p>
         <div
-          className="hattie-grid reveal reveal-scale"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.5fr)',
-            gap: '2rem',
+            gridTemplateColumns: '1fr 1.5fr',
+            gap: '3rem',
             marginTop: '3rem',
-            alignItems: 'start',
+            alignItems: 'center',
           }}
         >
-          {/* Left column: two stacked images */}
-          <div className="reveal reveal-scale" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <img
-              src={portraitImage}
-              alt={heading}
-              style={{ width: '100%', borderRadius: '8px', display: 'block' }}
-            />
-            {workingImage && (
+          {/* Left: Polaroid stack */}
+          <div className="reveal reveal-scale" style={{ position: 'relative', height: 'clamp(350px, 45vw, 520px)' }}>
+            {/* Portrait polaroid - slightly rotated left */}
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: '5%',
+                width: '55%',
+                background: '#fff',
+                padding: '8px 8px 32px 8px',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.2)',
+                transform: 'rotate(-4deg)',
+                transition: 'transform 0.4s ease',
+                zIndex: 3,
+              }}
+            >
               <img
-                src={workingImage}
-                alt={`${heading} at work`}
-                style={{ width: '100%', borderRadius: '8px', display: 'block' }}
+                src={portraitImage}
+                alt={heading}
+                style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover', display: 'block', borderRadius: '2px' }}
               />
+            </div>
+            {/* Working polaroid - slightly rotated right */}
+            {workingImage && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '18%',
+                  right: '0',
+                  width: '52%',
+                  background: '#fff',
+                  padding: '8px 8px 32px 8px',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.2)',
+                  transform: 'rotate(3deg)',
+                  transition: 'transform 0.4s ease',
+                  zIndex: 2,
+                }}
+              >
+                <img
+                  src={workingImage}
+                  alt={`${heading} at work`}
+                  style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover', display: 'block', borderRadius: '2px' }}
+                />
+              </div>
             )}
           </div>
-          {/* Right column: text */}
-          <div className="frame-card reveal reveal-delay-1" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+
+          {/* Right: text */}
+          <div className="reveal reveal-delay-1" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             {paragraphs.length > 0 ? (
               paragraphs.map((para, i) => (
                 <p
@@ -91,11 +123,14 @@ export default function Hattie() {
           </div>
         </div>
 
-        {/* Mobile responsive: stack on small screens */}
+        {/* Mobile responsive */}
         <style>{`
           @media (max-width: 768px) {
-            #hattie .hattie-grid {
+            #hattie .section-inner > div:last-of-type:not(.reveal) {
               grid-template-columns: 1fr !important;
+            }
+            #hattie .section-inner > div[style*="position: relative"] {
+              height: 300px !important;
             }
           }
         `}</style>

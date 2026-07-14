@@ -152,7 +152,7 @@ export default function Journal() {
                     style={{
                       display: 'flex',
                       flexDirection: 'column',
-                      borderRadius: '16px',
+                      borderRadius: '24px',
                       overflow: 'hidden',
                       border: '1px solid rgba(255,255,255,0.06)',
                       background: 'rgba(0,0,0,0.4)',
@@ -162,7 +162,7 @@ export default function Journal() {
                       boxShadow: '0 4px 24px rgba(233,68,128,0.06)',
                     }}
                   >
-                    <div style={{ position: 'relative', overflow: 'hidden', aspectRatio: '4/5', minHeight: '320px' }}>
+                    <div style={{ position: 'relative', overflow: 'hidden', aspectRatio: '16/10', minHeight: '220px' }}>
                       <img
                         src={post.imageUrl || '/hero-logo-card.png'}
                         alt={post.title}
