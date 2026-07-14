@@ -49,7 +49,7 @@ export default function Hero() {
         }}
       >
         <img
-          src="/brand-card-2.png?v=5"
+          src="/brand-card-original.png"
           alt="Ethereal Smile"
           style={{
             width: '100%',

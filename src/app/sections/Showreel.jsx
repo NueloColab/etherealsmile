@@ -41,11 +41,10 @@ export default function Showreel() {
     >
       <video
         ref={videoRef}
-        autoPlay
         muted
         loop
         playsInline
-        preload="auto"
+        preload="metadata"
         poster="/hattie-working.jpg"
         style={{
           position: 'absolute',
