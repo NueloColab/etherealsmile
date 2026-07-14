@@ -86,7 +86,7 @@ export default function Header() {
             }}
           >
             <img
-              src="/ethereal-logo-transparent.png"
+              src="/ethereal-logo.png"
               alt="Ethereal Smile"
               style={{
                 height: '100px',
@@ -278,7 +278,7 @@ export default function Header() {
 
         {/* Logo in overlay */}
         <img
-          src="/ethereal-logo-transparent.png"
+          src="/ethereal-logo.png"
           alt="Ethereal Smile"
           style={{
             height: '140px',
