@@ -15,13 +15,16 @@ const navLinks = [
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
+  const [circleMode, setCircleMode] = useState(false)
 
   useEffect(() => {
     function onScroll() {
-      setScrolled(window.scrollY > 40)
+      const y = window.scrollY
+      const heroHeight = window.innerHeight * 0.8
+      setCircleMode(y > heroHeight)
     }
     window.addEventListener('scroll', onScroll)
+    onScroll()
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
@@ -34,141 +37,205 @@ export default function Header() {
     return () => { document.body.style.overflow = '' }
   }, [menuOpen])
 
+  function handleNavClick(e, href) {
+    e.preventDefault()
+    setMenuOpen(false)
+    const el = document.querySelector(href)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   return (
-    <header
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        zIndex: 100,
-        transition: 'background 0.4s ease, border-color 0.4s ease',
-        background: scrolled ? 'rgba(0, 0, 0, 0.85)' : 'transparent',
-        borderBottom: scrolled ? '1px solid rgba(201, 169, 110, 0.2)' : '1px solid transparent',
-        backdropFilter: scrolled ? 'blur(8px)' : 'none',
-      }}
-    >
-      <div
+    <>
+      {/* === FULL HEADER BAR === */}
+      <header
         style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-          padding: '0 1.5rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          height: '64px',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          zIndex: 100,
+          transition: 'opacity 0.5s ease, transform 0.5s ease',
+          opacity: circleMode ? 0 : 1,
+          transform: circleMode ? 'translateY(-20px)' : 'translateY(0)',
+          pointerEvents: circleMode ? 'none' : 'auto',
+          background: 'rgba(0, 0, 0, 0.6)',
+          borderBottom: '1px solid rgba(201, 169, 110, 0.15)',
+          backdropFilter: 'blur(12px)',
         }}
       >
-        <Link
-          href="/"
+        <div
           style={{
+            maxWidth: '1400px',
+            margin: '0 auto',
+            padding: '0 2rem',
             display: 'flex',
             alignItems: 'center',
-            textDecoration: 'none',
+            justifyContent: 'space-between',
+            height: '72px',
           }}
         >
-          <img
-            src="/brand-card-2.png?v=3"
-            alt="Ethereal Smile"
+          {/* Logo */}
+          <Link
+            href="/"
             style={{
-              height: '44px',
-              width: 'auto',
-              borderRadius: '6px',
-              display: 'block',
+              display: 'flex',
+              alignItems: 'center',
+              textDecoration: 'none',
             }}
-          />
-        </Link>
-
-        <nav
-          style={{
-            display: 'flex',
-            gap: '1.5rem',
-            alignItems: 'center',
-          }}
-          className="desktop-nav"
-        >
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
+          >
+            <img
+              src="/brand-card-2.png?v=4"
+              alt="Ethereal Smile"
               style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: '0.7rem',
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.8)',
-                textDecoration: 'none',
-                transition: 'color 0.3s ease',
+                height: '52px',
+                width: 'auto',
+                borderRadius: '8px',
+                display: 'block',
               }}
-              onMouseEnter={(e) => (e.target.style.color = '#c9a96e')}
-              onMouseLeave={(e) => (e.target.style.color = 'rgba(255,255,255,0.8)')}
-            >
-              {link.label}
-            </a>
-          ))}
-        </nav>
+            />
+          </Link>
 
-        <button
-          className="mobile-menu-btn"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle menu"
+          {/* Desktop Nav */}
+          <nav
+            className="desktop-nav"
+            style={{
+              display: 'flex',
+              gap: '2rem',
+              alignItems: 'center',
+            }}
+          >
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={(e) => handleNavClick(e, link.href)}
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '0.8rem',
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(255,255,255,0.85)',
+                  textDecoration: 'none',
+                  transition: 'color 0.3s ease',
+                  padding: '0.5rem 0',
+                }}
+                onMouseEnter={(e) => (e.target.style.color = '#e94480')}
+                onMouseLeave={(e) => (e.target.style.color = 'rgba(255,255,255,0.85)')}
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+
+          {/* Mobile hamburger */}
+          <button
+            className="mobile-menu-btn"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#e94480',
+              cursor: 'pointer',
+              display: 'none',
+              padding: '0.5rem',
+            }}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              {menuOpen ? (
+                <>
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </>
+              ) : (
+                <>
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
+                </>
+              )}
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      {/* === PINK PULSATING CIRCLE (scroll mode) === */}
+      <button
+        onClick={() => setMenuOpen(!menuOpen)}
+        aria-label="Open menu"
+        style={{
+          position: 'fixed',
+          top: '1.5rem',
+          right: '1.5rem',
+          zIndex: 101,
+          width: '56px',
+          height: '56px',
+          borderRadius: '50%',
+          background: 'rgba(0, 0, 0, 0.7)',
+          border: '2px solid #e94480',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'opacity 0.5s ease, transform 0.5s ease, box-shadow 0.3s ease',
+          opacity: circleMode ? 1 : 0,
+          transform: circleMode ? 'scale(1)' : 'scale(0.6)',
+          pointerEvents: circleMode ? 'auto' : 'none',
+          boxShadow: '0 0 20px rgba(233, 68, 128, 0.3)',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.boxShadow = '0 0 30px rgba(233, 68, 128, 0.5)'
+          e.currentTarget.style.transform = 'scale(1.05)'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.boxShadow = '0 0 20px rgba(233, 68, 128, 0.3)'
+          e.currentTarget.style.transform = 'scale(1)'
+        }}
+      >
+        {/* Pulsating rings */}
+        <span
           style={{
-            position: 'relative',
-            background: 'none',
-            border: 'none',
-            color: '#c9a96e',
-            cursor: 'pointer',
-            width: '44px',
-            height: '44px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 0,
+            position: 'absolute',
+            inset: '-4px',
+            borderRadius: '50%',
+            border: '2px solid #e94480',
+            animation: 'eth-pulse 2s ease-out infinite',
+            opacity: 0.6,
           }}
-        >
-          {/* Gold pulsating circle */}
-          <span
-            style={{
-              position: 'absolute',
-              inset: 0,
-              borderRadius: '50%',
-              border: '1.5px solid #c9a96e',
-              animation: 'menuPulse 2s ease-in-out infinite',
-              opacity: 0.6,
-            }}
-          />
-          <span
-            style={{
-              position: 'absolute',
-              inset: 0,
-              borderRadius: '50%',
-              border: '1.5px solid #c9a96e',
-              animation: 'menuPulse 2s ease-in-out infinite',
-              animationDelay: '0.6s',
-              opacity: 0.3,
-            }}
-          />
+        />
+        <span
+          style={{
+            position: 'absolute',
+            inset: '-8px',
+            borderRadius: '50%',
+            border: '1px solid #e94480',
+            animation: 'eth-pulse 2s ease-out infinite',
+            animationDelay: '0.5s',
+            opacity: 0.3,
+          }}
+        />
 
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'relative', zIndex: 1 }}>
-            {menuOpen ? (
-              <>
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </>
-            ) : (
-              <>
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </>
-            )}
-          </svg>
-        </button>
-      </div>
+        {/* Menu icon or close icon */}
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e94480" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'relative', zIndex: 2 }}>
+          {menuOpen ? (
+            <>
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </>
+          ) : (
+            <>
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </>
+          )}
+        </svg>
+      </button>
 
-      {/* Full-screen dark mobile overlay */}
+      {/* === FULLSCREEN MENU OVERLAY === */}
       <div
-        className="mobile-nav"
         style={{
           position: 'fixed',
           inset: 0,
@@ -178,59 +245,77 @@ export default function Header() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: '2rem',
+          gap: '2.5rem',
           opacity: menuOpen ? 1 : 0,
           visibility: menuOpen ? 'visible' : 'hidden',
-          transition: 'opacity 0.4s ease, visibility 0.4s ease',
+          transition: 'opacity 0.5s ease, visibility 0.5s ease',
           padding: '6rem 2rem',
         }}
       >
-        <div
+        {/* Close button */}
+        <button
+          onClick={() => setMenuOpen(false)}
           style={{
             position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '64px',
+            top: '1.5rem',
+            right: '1.5rem',
+            width: '48px',
+            height: '48px',
+            borderRadius: '50%',
+            background: 'none',
+            border: '2px solid #e94480',
+            color: '#e94480',
+            cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            fontSize: '1.5rem',
           }}
         >
-          <img
-            src="/brand-card-2.png?v=3"
-            alt="Ethereal Smile"
-            style={{
-              height: '40px',
-              width: 'auto',
-              borderRadius: '4px',
-              display: 'block',
-            }}
-          />
-        </div>
+          &times;
+        </button>
 
+        {/* Logo in overlay */}
+        <img
+          src="/brand-card-2.png?v=4"
+          alt="Ethereal Smile"
+          style={{
+            height: '80px',
+            width: 'auto',
+            borderRadius: '10px',
+            marginBottom: '1rem',
+            opacity: menuOpen ? 1 : 0,
+            transform: menuOpen ? 'translateY(0)' : 'translateY(20px)',
+            transition: 'opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s',
+          }}
+        />
+
+        {/* Nav links */}
         {navLinks.map((link, i) => (
           <a
             key={link.href}
             href={link.href}
-            onClick={() => setMenuOpen(false)}
+            onClick={(e) => handleNavClick(e, link.href)}
             style={{
               display: 'block',
               fontFamily: "'Playfair Display', serif",
-              fontSize: 'clamp(1.6rem, 5vw, 2.4rem)',
-              letterSpacing: '0.1em',
+              fontSize: 'clamp(1.8rem, 5vw, 2.6rem)',
+              letterSpacing: '0.12em',
               textTransform: 'uppercase',
               color: '#ffffff',
               textDecoration: 'none',
               opacity: menuOpen ? 1 : 0,
-              transform: menuOpen ? 'translateY(0)' : 'translateY(12px)',
-              transition: `opacity 0.4s ease ${0.1 + i * 0.05}s, transform 0.4s ease ${0.1 + i * 0.05}s`,
+              transform: menuOpen ? 'translateY(0)' : 'translateY(20px)',
+              transition: `opacity 0.5s ease ${0.15 + i * 0.06}s, transform 0.5s ease ${0.15 + i * 0.06}s, color 0.3s ease`,
             }}
+            onMouseEnter={(e) => (e.target.style.color = '#e94480')}
+            onMouseLeave={(e) => (e.target.style.color = '#ffffff')}
           >
             {link.label}
           </a>
         ))}
 
+        {/* Bottom credit */}
         <div
           style={{
             position: 'absolute',
@@ -239,22 +324,22 @@ export default function Header() {
             right: 0,
             textAlign: 'center',
             opacity: menuOpen ? 0.5 : 0,
-            transition: 'opacity 0.4s ease 0.4s',
+            transition: 'opacity 0.5s ease 0.5s',
           }}
         >
           <p
             style={{
               fontFamily: "'Inter', sans-serif",
-              fontSize: '0.65rem',
+              fontSize: '0.7rem',
               letterSpacing: '0.2em',
               textTransform: 'uppercase',
               color: '#ffffff',
             }}
           >
-              Ethereal Smile
+            Ethereal Smile
           </p>
         </div>
       </div>
-    </header>
+    </>
   )
 }
