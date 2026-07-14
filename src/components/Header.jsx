@@ -240,7 +240,7 @@ export default function Header() {
           position: 'fixed',
           inset: 0,
           zIndex: 99,
-          background: 'rgba(0, 0, 0, 0.95)',
+          background: 'linear-gradient(180deg, #e94480 0%, #c73e6e 50%, #a8325c 100%)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -248,7 +248,7 @@ export default function Header() {
           gap: '2.5rem',
           opacity: menuOpen ? 1 : 0,
           visibility: menuOpen ? 'visible' : 'hidden',
-          transition: 'opacity 0.5s ease, visibility 0.5s ease',
+          transition: 'opacity 0.6s ease, visibility 0.6s ease',
           padding: '6rem 2rem',
         }}
       >
