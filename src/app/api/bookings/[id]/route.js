@@ -1,4 +1,4 @@
-import { db } from '../../../../lib/db'
+import { dbAdmin as db } from '../../../../lib/db-admin'
 import { bookings } from '../../../../lib/schema'
 import { eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
