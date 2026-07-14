@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useCmsContent } from '../../../../lib/useCmsContent'
+import CloudinaryUpload from '../../../../components/CloudinaryUpload'
 import Link from 'next/link'
 
 export default function HattieEditor() {
@@ -28,8 +29,8 @@ export default function HattieEditor() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         <Input label="Heading" value={data.heading || ''} onChange={(v) => setForm({ ...data, heading: v })} />
         <Textarea label="Body Text" value={data.bodyText || ''} onChange={(v) => setForm({ ...data, bodyText: v })} />
-        <Input label="Portrait Image URL" value={data.portraitImage || ''} onChange={(v) => setForm({ ...data, portraitImage: v })} placeholder="/hattie-portrait.jpg" />
-        <Input label="Working Image URL" value={data.workingImage || ''} onChange={(v) => setForm({ ...data, workingImage: v })} placeholder="/hattie-working.jpg" />
+        <CloudinaryUpload label="Portrait Image" currentUrl={data.portraitImage} onUpload={(url) => setForm({ ...data, portraitImage: url })} />
+        <CloudinaryUpload label="Working Image" currentUrl={data.workingImage} onUpload={(url) => setForm({ ...data, workingImage: url })} />
 
         <SaveButtons saving={saving} form={form} data={data} onSave={save} onReset={() => setForm(null)} />
       </div>

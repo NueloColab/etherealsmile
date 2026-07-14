@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useCmsContent } from '../../../../lib/useCmsContent'
+import CloudinaryUpload from '../../../../components/CloudinaryUpload'
 import Link from 'next/link'
 
 export default function HeroEditor() {
@@ -134,36 +135,11 @@ export default function HeroEditor() {
           />
         </div>
 
-        <div>
-          <label
-            style={{
-              display: 'block',
-              fontSize: '0.7rem',
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.5)',
-              marginBottom: '0.5rem',
-            }}
-          >
-            Background Image URL
-          </label>
-          <input
-            type="text"
-            value={data.backgroundImage || ''}
-            onChange={(e) => setForm({ ...data, backgroundImage: e.target.value })}
-            placeholder="/hero-logo-card.png"
-            style={{
-              width: '100%',
-              padding: '0.85rem 1rem',
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '8px',
-              color: '#ffffff',
-              fontSize: '0.85rem',
-              outline: 'none',
-            }}
-          />
-        </div>
+        <CloudinaryUpload
+          label="Background Image"
+          currentUrl={data.backgroundImage}
+          onUpload={(url) => setForm({ ...data, backgroundImage: url })}
+        />
 
         <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
           <button

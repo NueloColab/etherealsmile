@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useCmsContent } from '../../../../lib/useCmsContent'
+import CloudinaryUpload from '../../../../components/CloudinaryUpload'
 import Link from 'next/link'
 
 export default function AboutEditor() {
@@ -56,11 +57,10 @@ export default function AboutEditor() {
           onChange={(v) => setForm({ ...data, bodyText: v })}
         />
 
-        <Input
-          label="Image URL"
-          value={data.image || ''}
-          onChange={(v) => setForm({ ...data, image: v })}
-          placeholder="/hattie-portrait.jpg"
+        <CloudinaryUpload
+          label="Image"
+          currentUrl={data.image}
+          onUpload={(url) => setForm({ ...data, image: url })}
         />
 
         <SaveButtons saving={saving} form={form} data={data} onSave={save} onReset={() => setForm(null)} />
