@@ -11,7 +11,7 @@ export default function Review() {
     >
       <div className="section-inner">
         <div
-          className="frame-card"
+          className="frame-card reveal reveal-scale reveal-delay-2"
           style={{
             textAlign: 'center',
             maxWidth: '600px',
@@ -19,6 +19,7 @@ export default function Review() {
           }}
         >
           <h3
+            className="reveal"
             style={{
               fontFamily: "'Playfair Display', serif",
               fontSize: '1.3rem',
@@ -31,6 +32,7 @@ export default function Review() {
           </h3>
 
           <p
+            className="reveal reveal-delay-1"
             style={{
               fontFamily: "'Inter', sans-serif",
               fontSize: '0.85rem',
@@ -46,7 +48,7 @@ export default function Review() {
             href="https://www.google.com/search?q=ethereal+smile+tooth+gems"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn btn-outline"
+            className="btn btn-outline reveal reveal-delay-3"
           >
             Leave a Review on Google
           </a>

@@ -82,6 +82,7 @@ export default function Showreel() {
         }}
       >
         <p
+          className="reveal"
           style={{
             fontFamily: "'Pirata One', 'Playfair Display', cursive",
             fontSize: 'clamp(1.5rem, 4vw, 2.5rem)',

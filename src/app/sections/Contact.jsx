@@ -41,8 +41,8 @@ export default function Contact() {
       }}
     >
       <div className="section-inner">
-        <h2 className="section-title">Contact</h2>
-        <p className="section-subtitle">We'd love to hear from you</p>
+        <h2 className="section-title reveal">Contact</h2>
+        <p className="section-subtitle reveal reveal-delay-1">We'd love to hear from you</p>
 
         <div
           style={{
@@ -53,7 +53,7 @@ export default function Contact() {
             alignItems: 'start',
           }}
         >
-          <div className="frame-card">
+          <div className="frame-card reveal reveal-scale reveal-delay-2">
             <h3
               style={{
                 fontFamily: "'Playfair Display', serif",
@@ -146,7 +146,7 @@ export default function Contact() {
             </div>
           </div>
 
-          <div className="frame-card">
+          <div className="frame-card reveal reveal-scale reveal-delay-2">
             <h3
               style={{
                 fontFamily: "'Playfair Display', serif",

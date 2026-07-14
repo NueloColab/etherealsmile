@@ -105,8 +105,8 @@ export default function Book() {
       }}
     >
       <div className="section-inner">
-        <h2 className="section-title">Book an Appointment</h2>
-        <p className="section-subtitle">Select a date and send us an enquiry</p>
+        <h2 className="section-title reveal">Book an Appointment</h2>
+        <p className="section-subtitle reveal reveal-delay-1">Select a date and send us an enquiry</p>
 
         <div
           style={{
@@ -117,7 +117,7 @@ export default function Book() {
           }}
         >
           {/* Calendar */}
-          <div className="frame-card">
+          <div className="frame-card reveal reveal-scale reveal-delay-2">
             <div
               style={{
                 display: 'flex',
@@ -236,7 +236,7 @@ export default function Book() {
           </div>
 
           {/* Form */}
-          <div className="frame-card">
+          <div className="frame-card reveal reveal-scale reveal-delay-2">
             <h3
               style={{
                 fontFamily: "'Playfair Display', serif",

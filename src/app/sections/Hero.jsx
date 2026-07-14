@@ -65,7 +65,7 @@ export default function Hero() {
 
       {/* Gothic pink title */}
       <h1
-        className="animate-fadeInUp"
+        className="animate-fadeInUp reveal reveal-delay-1"
         style={{
           fontFamily: "'Pirata One', 'Playfair Display', cursive",
           fontSize: 'clamp(2rem, 6vw, 4rem)',
@@ -87,7 +87,7 @@ export default function Hero() {
       {/* Semi-transparent pill button — bigger, lower */}
       <a
         href="#book"
-        className="animate-fadeInUp"
+        className="animate-fadeInUp reveal reveal-delay-1"
         style={{
           display: 'inline-flex',
           alignItems: 'center',

@@ -2,6 +2,7 @@ import './globals.css'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Starfield from '../components/Starfield'
+import ScrollReveal from '../components/ScrollReveal'
 
 export const metadata = {
   title: 'Ethereal Smile | Swarovski \u0026 Preciosa Crystal Tooth Gems',
@@ -44,7 +45,7 @@ export default function RootLayout({ children }) {
       <body>
         <Starfield />
         <Header />
-        {children}
+        <ScrollReveal>{children}</ScrollReveal>
         <Footer />
       </body>
     </html>

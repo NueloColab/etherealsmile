@@ -52,7 +52,8 @@ export default function Hattie() {
             }}
           >
             <h2
-              style={{
+              style={
+              className="reveal reveal-right",{
                 fontFamily: "'Pirata One', 'Playfair Display', cursive",
                 fontSize: 'clamp(2rem, 5vw, 3.2rem)',
                 fontWeight: 400,

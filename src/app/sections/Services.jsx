@@ -16,8 +16,8 @@ export default async function Services() {
       }}
     >
       <div className="section-inner">
-        <h2 className="section-title">Services & Price List</h2>
-        <p className="section-subtitle">Luxury crystal options, priced with transparency</p>
+        <h2 className="section-title reveal">Services & Price List</h2>
+        <p className="section-subtitle reveal reveal-delay-1">Luxury crystal options, priced with transparency</p>
 
         <div
           style={{

@@ -22,8 +22,8 @@ export default async function Journal() {
       }}
     >
       <div className="section-inner">
-        <h2 className="section-title">Journal</h2>
-        <p className="section-subtitle">Tips, trends, and aftercare wisdom</p>
+        <h2 className="section-title reveal">Journal</h2>
+        <p className="section-subtitle reveal reveal-delay-1">Tips, trends, and aftercare wisdom</p>
 
         {posts.length > 0 ? (
           <div

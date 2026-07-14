@@ -30,8 +30,8 @@ export default function Gallery() {
       }}
     >
       <div className="section-inner">
-        <h2 className="section-title">Gallery</h2>
-        <p className="section-subtitle">See the sparkle for yourself</p>
+        <h2 className="section-title reveal">Gallery</h2>
+        <p className="section-subtitle reveal reveal-delay-1">See the sparkle for yourself</p>
 
         {loading ? (
           <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', marginTop: '3rem' }}>Loading gallery...</p>
