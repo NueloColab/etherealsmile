@@ -82,7 +82,7 @@ export default function AdminLogin() {
               width: 'auto',
               display: 'block',
               margin: '0 auto 1rem',
-              borderRadius: '16px',
+              
               filter: 'drop-shadow(0 0 12px rgba(233,68,128,0.4))',
               opacity: 0.9,
             }}

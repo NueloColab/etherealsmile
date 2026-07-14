@@ -92,7 +92,7 @@ export default function Header() {
                 height: '100px',
                 width: 'auto',
                 display: 'block',
-                borderRadius: '16px',
+                
               }}
             />
           </Link>
@@ -284,7 +284,7 @@ export default function Header() {
             height: '140px',
             width: 'auto',
             marginBottom: '1rem',
-            borderRadius: '16px',
+            
             opacity: menuOpen ? 1 : 0,
             transform: menuOpen ? 'translateY(0)' : 'translateY(20px)',
             transition: 'opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s',

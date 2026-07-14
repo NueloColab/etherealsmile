@@ -30,7 +30,7 @@ export default function Footer() {
               width: 'auto',
               display: 'block',
               marginBottom: '0.5rem',
-              borderRadius: '12px',
+              
             }}
           />
           <p
