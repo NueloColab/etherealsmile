@@ -10,9 +10,6 @@ export default function Review() {
       }}
     >
       <div className="section-inner">
-        <div className="section-divider">
-          <span className="section-number">08</span>
-        </div>
         <div
           className="frame-card"
           style={{
@@ -25,7 +22,7 @@ export default function Review() {
             style={{
               fontFamily: "'Playfair Display', serif",
               fontSize: '1.3rem',
-              color: '#c9a96e',
+              color: '#e94480',
               marginBottom: '0.75rem',
               fontWeight: 500,
             }}

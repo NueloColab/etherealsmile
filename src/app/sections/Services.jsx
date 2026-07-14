@@ -16,12 +16,8 @@ export default async function Services() {
       }}
     >
       <div className="section-inner">
-        <div className="section-divider">
-          <span className="section-number">04</span>
-        </div>
         <h2 className="section-title">Services & Price List</h2>
         <p className="section-subtitle">Luxury crystal options, priced with transparency</p>
-        <div className="gold-line" />
 
         <div
           style={{
@@ -47,7 +43,7 @@ export default async function Services() {
                     style={{
                       fontFamily: "'Playfair Display', serif",
                       fontSize: '1.1rem',
-                      color: '#c9a96e',
+                      color: '#e94480',
                       marginBottom: '0.5rem',
                       fontWeight: 500,
                     }}

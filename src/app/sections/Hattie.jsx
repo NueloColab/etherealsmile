@@ -14,20 +14,13 @@ export default function Hattie() {
       }}
     >
       <div className="section-inner">
-        <div className="section-divider">
-          <span className="section-number">02</span>
-        </div>
-        <h2 className="section-title">Who&rsquo;s Hattie</h2>
-        <p className="section-subtitle">The face behind the sparkle</p>
-        <div className="gold-line" />
-
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
             gap: '3rem',
             alignItems: 'center',
-            marginTop: '3rem',
+            marginTop: '2rem',
           }}
         >
           <div
@@ -83,6 +76,35 @@ export default function Hattie() {
               lineHeight: 1.8,
             }}
           >
+            <h2
+              style={{
+                fontFamily: "'Pirata One', 'Playfair Display', cursive",
+                fontSize: 'clamp(2rem, 5vw, 3.2rem)',
+                fontWeight: 400,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                color: '#e94480',
+                marginBottom: '0.5rem',
+                lineHeight: 1.1,
+                textShadow: '0 0 30px rgba(233, 68, 128, 0.25)',
+              }}
+            >
+              Who&rsquo;s Hattie
+            </h2>
+            <p
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                fontStyle: 'italic',
+                fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)',
+                color: '#e94480',
+                letterSpacing: '0.06em',
+                marginBottom: '2rem',
+                opacity: 0.8,
+              }}
+            >
+              The face behind the sparkle
+            </p>
+
             <p style={{ marginBottom: '1.25rem' }}>
               I&rsquo;m Hattie Clifford, the founder and artist behind Ethereal Smile. What started as a fascination with the intersection of beauty and self-expression has grown into a passion for helping people discover a new kind of confidence, one tiny sparkle at a time.
             </p>
@@ -99,8 +121,9 @@ export default function Hattie() {
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontStyle: 'italic',
-                color: '#c9a96e',
+                color: '#e94480',
                 fontSize: '1rem',
+                opacity: 0.9,
               }}
             >
               Your smile is the canvas. Let&rsquo;s make it ethereal.

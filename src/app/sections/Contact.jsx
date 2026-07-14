@@ -41,12 +41,8 @@ export default function Contact() {
       }}
     >
       <div className="section-inner">
-        <div className="section-divider">
-          <span className="section-number">07</span>
-        </div>
         <h2 className="section-title">Contact</h2>
         <p className="section-subtitle">We'd love to hear from you</p>
-        <div className="gold-line" />
 
         <div
           style={{
@@ -62,7 +58,7 @@ export default function Contact() {
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: '1.1rem',
-                color: '#c9a96e',
+                color: '#e94480',
                 marginBottom: '1.5rem',
                 fontWeight: 500,
               }}
@@ -144,7 +140,7 @@ export default function Contact() {
               >
                 Bookings
               </p>
-              <a href="#book" style={{ fontSize: '0.85rem', color: '#c9a96e', textDecoration: 'none' }}>
+              <a href="#book" style={{ fontSize: '0.85rem', color: '#e94480', textDecoration: 'none' }}>
                 Use our enquiry calendar &rarr;
               </a>
             </div>
@@ -155,7 +151,7 @@ export default function Contact() {
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: '1.1rem',
-                color: '#c9a96e',
+                color: '#e94480',
                 marginBottom: '1.5rem',
                 fontWeight: 500,
               }}
@@ -176,12 +172,12 @@ export default function Contact() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     margin: '0 auto 1rem',
-                    color: '#c9a96e',
+                    color: '#e94480',
                   }}
                 >
                   &#10003;
                 </div>
-                <p style={{ color: '#c9a96e', fontSize: '0.9rem' }}>Message sent. We'll be in touch soon.</p>
+                <p style={{ color: '#e94480', fontSize: '0.9rem' }}>Message sent. We'll be in touch soon.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit}>
