@@ -91,8 +91,8 @@ export default function About() {
             }}
           >
             <img
-              src="/brand-card-1.png"
-              alt="Ethereal Smile - Crystal Tooth Gems"
+              src="/hattie-portrait.jpg"
+              alt="Hattie Clifford - Ethereal Smile"
               style={{
                 width: '100%',
                 height: 'auto',

@@ -23,49 +23,24 @@ export default function Hattie() {
             marginTop: '2rem',
           }}
         >
+          {/* Left — Single large image */}
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '1rem',
+              borderRadius: '16px',
+              overflow: 'hidden',
+              border: '1px solid rgba(233, 68, 128, 0.2)',
+              boxShadow: '0 0 40px rgba(233, 68, 128, 0.1)',
             }}
           >
-            <div
+            <img
+              src="/hattie-working.jpg"
+              alt="Hattie Clifford at work"
               style={{
-                borderRadius: '12px',
-                overflow: 'hidden',
-                border: '1px solid rgba(233, 68, 128, 0.15)',
+                width: '100%',
+                height: 'auto',
+                display: 'block',
               }}
-            >
-              <img
-                src="/hattie-portrait.jpg"
-                alt="Hattie Clifford"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block',
-                }}
-              />
-            </div>
-            <div
-              style={{
-                borderRadius: '12px',
-                overflow: 'hidden',
-                border: '1px solid rgba(233, 68, 128, 0.15)',
-              }}
-            >
-              <img
-                src="/hattie-working.jpg"
-                alt="Hattie at work"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block',
-                }}
-              />
-            </div>
+            />
           </div>
 
           <div
