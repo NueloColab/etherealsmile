@@ -44,6 +44,7 @@ export default function BookingDetailClient({ booking: initialBooking }) {
       name: booking.name || '',
       email: booking.email || '',
       phone: booking.phone || '',
+      isMinor: booking.isMinor || false,
       date: booking.date ? new Date(booking.date).toISOString().split('T')[0] : '',
       timeSlot: booking.timeSlot || '',
       service: booking.service || '',
@@ -103,6 +104,12 @@ export default function BookingDetailClient({ booking: initialBooking }) {
   }
 
   async function confirmAsIs() {
+    // Show minor consent warning before confirming
+    if (booking.isMinor) {
+      if (!window.confirm(
+        'This is an under-18 booking.\n\nThe guardian consent pack (Guardian Consent Form + Consultation Form) will be sent to the client automatically.\n\nConfirm this booking?'
+      )) return
+    }
     setLoading(true)
     try {
       const res = await fetch(`/api/bookings/${booking.id}`, {
@@ -185,6 +192,11 @@ export default function BookingDetailClient({ booking: initialBooking }) {
           <span style={{ padding: '0.25rem 0.6rem', borderRadius: '4px', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', background: style.bg, color: style.color, border: `1px solid ${style.border}` }}>
             {status}
           </span>
+          {booking.isMinor && (
+            <span style={{ marginLeft: '0.5rem', padding: '0.25rem 0.6rem', borderRadius: '4px', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', background: 'rgba(233,68,128,0.15)', color: '#e94480', border: '1px solid rgba(233,68,128,0.4)' }}>
+              Under 18
+            </span>
+          )}
         </div>
         {!editing && (
           <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -231,7 +243,55 @@ export default function BookingDetailClient({ booking: initialBooking }) {
               <div style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.95rem' }}>{booking.phone || 'Not provided'}</div>
             )}
           </div>
-          <div>
+          {editing && (
+            <div>
+              <label style={{ ...labelStyle, display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={editForm.isMinor}
+                  onChange={(e) => {
+                    const newMinor = e.target.checked
+                    const alreadySent = booking.status === 'confirmed' && booking.consentSentAt
+                    if (alreadySent && newMinor !== booking.isMinor) {
+                      const prevPack = booking.isMinor ? 'guardian' : 'adult'
+                      const newPack = newMinor ? 'guardian' : 'adult'
+                      if (!window.confirm(
+                        `This booking already had consent forms sent as the ${prevPack} pack.\n\n` +
+                        `Changing to ${newPack} pack will NOT resend or cancel the existing forms.\n\n` +
+                        `You will need to manually send the correct pack after saving.\n\n` +
+                        `Continue anyway?`
+                      )) {
+                        return
+                      }
+                    }
+                    setEditForm({ ...editForm, isMinor: newMinor })
+                  }}
+                  style={{ accentColor: '#e94480', width: '1rem', height: '1rem' }}
+                />
+                <span>Under 18 booking</span>
+              </label>
+              {editForm.isMinor && (
+                <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', margin: '0.25rem 0 0', lineHeight: 1.4 }}>
+                  Guardian consent forms will be sent on confirmation.
+                </p>
+              )}
+              {booking.status === 'confirmed' && booking.consentSentAt && editForm.isMinor !== booking.isMinor && (
+                <p style={{ fontSize: '0.75rem', color: '#f87171', margin: '0.5rem 0 0', lineHeight: 1.4 }}>
+                  Warning: Consent forms were already sent. Changing this will NOT resend or cancel existing forms.
+                </p>
+              )}
+            </div>
+          )}
+          {!editing && booking.isMinor && (
+            <div style={{ gridColumn: '1 / -1' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 0.75rem', borderRadius: '6px', background: 'rgba(233,68,128,0.1)', border: '1px solid rgba(233,68,128,0.25)' }}>
+                <span style={{ fontSize: '0.85rem' }}>&#128123;</span>
+                <span style={{ fontSize: '0.8rem', color: '#e94480', fontWeight: 500 }}>Under 18 booking</span>
+                <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)' }}>- guardian consent pack will be sent</span>
+              </div>
+            </div>
+          )}
+              <div>
             <label style={labelStyle}>Service</label>
             {editing ? (
               <input value={editForm.service} onChange={e => setEditForm({ ...editForm, service: e.target.value })} style={inputStyle} />
@@ -291,7 +351,7 @@ export default function BookingDetailClient({ booking: initialBooking }) {
         <div style={{ marginBottom: '2rem' }}>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             <button onClick={confirmAsIs} disabled={loading} style={{ padding: '0.75rem 1.5rem', borderRadius: '50px', border: '1px solid rgba(76,175,80,0.4)', background: 'rgba(76,175,80,0.1)', color: '#81c784', fontSize: '0.75rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', cursor: loading ? 'not-allowed' : 'pointer' }}>
-              {loading ? 'Processing...' : 'Confirm Booking'}
+              {loading ? 'Processing...' : booking.isMinor ? 'Confirm (Under 18 - Guardian Pack)' : 'Confirm Booking'}
             </button>
             <button onClick={() => setShowPropose(!showPropose)} style={{ padding: '0.75rem 1.5rem', borderRadius: '50px', border: '1px solid rgba(233,68,128,0.4)', background: 'rgba(233,68,128,0.1)', color: '#e94480', fontSize: '0.75rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer' }}>
               Propose Alternative

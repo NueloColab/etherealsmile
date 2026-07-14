@@ -165,6 +165,9 @@ export default function BookingsPage() {
                     <td style={{ padding: '0.75rem' }}>
                       <div style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.85rem' }}>{booking.name}</div>
                       <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem' }}>{booking.email}</div>
+                      {booking.isMinor && (
+                        <span style={{ display: 'inline-block', marginTop: '0.25rem', padding: '0.15rem 0.4rem', borderRadius: '3px', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', background: 'rgba(233,68,128,0.15)', color: '#e94480', border: '1px solid rgba(233,68,128,0.3)' }}>U18</span>
+                      )}
                     </td>
                     <td style={{ padding: '0.75rem', color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem' }}>
                       {booking.service || '-'}

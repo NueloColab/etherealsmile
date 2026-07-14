@@ -53,7 +53,22 @@ export async function PUT(request, { params }) {
       update.proposalExpiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000)
     }
 
+    // Capture original isMinor before update for mismatch detection
+    const before_items = await db.select({ isMinor: bookings.isMinor, status: bookings.status, consentSentAt: bookings.consentSentAt }).from(bookings).where(eq(bookings.id, Number(id)))
+    const before = before_items[0]
+
     await db.update(bookings).set(update).where(eq(bookings.id, Number(id)))
+
+    // If isMinor changed on a confirmed booking that already had consent sent, flag the mismatch
+    if (body.isMinor !== undefined && before && body.isMinor !== (before.isMinor || false)) {
+      if (before.status === 'confirmed' && before.consentSentAt) {
+        const prevPack = !body.isMinor ? 'adult' : 'guardian'
+        const newPack = body.isMinor ? 'guardian' : 'adult'
+        await db.update(bookings).set({
+          consentSendError: `Minor status changed after consent sent. Originally sent as ${prevPack} pack. Current: ${newPack} pack. Manual resend required.`,
+        }).where(eq(bookings.id, Number(id)))
+      }
+    }
 
     // Fetch updated booking for emails
     const items = await db.select().from(bookings).where(eq(bookings.id, Number(id)))
