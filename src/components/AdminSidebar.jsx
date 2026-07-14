@@ -72,7 +72,7 @@ export default function AdminSidebar({ isOpen, onClose, isMobile, collapsed }) {
           }}
         >
           <img
-            src="/ethereal-logo.png"
+            src="/ethereal-logo-transparent.png"
             alt="Ethereal Smile"
             style={{ height: collapsed ? '32px' : '48px', width: 'auto', margin: '0 auto 0.5rem', display: 'block' }}
           />

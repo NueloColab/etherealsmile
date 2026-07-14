@@ -75,7 +75,7 @@ export default function AdminLogin() {
       >
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <img
-            src="/ethereal-logo.png"
+            src="/ethereal-logo-transparent.png"
             alt="Ethereal Smile"
             style={{
               height: '120px',
