@@ -4,10 +4,7 @@ import { eq } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 
-export async function generateStaticParams() {
-  const posts = await db.select({ slug: blogPosts.slug }).from(blogPosts).where(eq(blogPosts.status, 'published'))
-  return posts.map((post) => ({ slug: post.slug }))
-}
+export const dynamic = 'force-dynamic'
 
 export default async function JournalPost({ params }) {
   const { slug } = params

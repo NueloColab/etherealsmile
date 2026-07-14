@@ -3,6 +3,8 @@ import { db } from '../../lib/db'
 import { blogPosts } from '../../lib/schema'
 import { eq, desc } from 'drizzle-orm'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Journal | Ethereal Smile',
   description: 'Tips, trends, and aftercare wisdom from Ethereal Smile',
