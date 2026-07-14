@@ -16,6 +16,96 @@ const sections = [
   { key: 'review', label: 'Review', path: '/admin/cms/home-review' },
 ]
 
+function EyeIcon({ visible }) {
+  if (visible) {
+    return (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#e94480' }}>
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+    )
+  }
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'rgba(255,255,255,0.3)' }}>
+      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+      <line x1="1" y1="1" x2="23" y2="23"/>
+    </svg>
+  )
+}
+
+function SectionCard({ section }) {
+  const { content, save } = useCmsContent(section.key)
+  const isVisible = content?.isVisible !== false
+
+  const toggleVisibility = async () => {
+    const newContent = { ...(content || {}), isVisible: !isVisible }
+    await save(newContent)
+  }
+
+  return (
+    <div
+      style={{
+        background: isVisible ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.01)',
+        border: isVisible ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(255,255,255,0.03)',
+        borderRadius: '14px',
+        padding: '1.75rem 1.5rem',
+        transition: 'all 0.3s ease',
+        position: 'relative',
+        opacity: isVisible ? 1 : 0.6,
+      }}
+    >
+      {/* Visibility toggle */}
+      <button
+        onClick={toggleVisibility}
+        style={{
+          position: 'absolute',
+          top: '1rem',
+          right: '1rem',
+          background: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          padding: '0.25rem',
+          transition: 'transform 0.2s',
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.15)')}
+        onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+        title={isVisible ? 'Hide section' : 'Show section'}
+      >
+        <EyeIcon visible={isVisible} />
+      </button>
+
+      <Link href={section.path} style={{ textDecoration: 'none', display: 'block' }}>
+        <p
+          style={{
+            fontFamily: "'Pirata One', 'Playfair Display', cursive",
+            fontSize: '1.1rem',
+            color: isVisible ? '#e94480' : 'rgba(255,255,255,0.3)',
+            marginBottom: '0.5rem',
+            letterSpacing: '0.05em',
+            paddingRight: '2rem',
+          }}
+        >
+          {section.label}
+        </p>
+        <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          Edit Content
+        </p>
+        <p
+          style={{
+            fontSize: '0.65rem',
+            color: isVisible ? 'rgba(233,68,128,0.5)' : 'rgba(255,255,255,0.2)',
+            marginTop: '0.5rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+          }}
+        >
+          {isVisible ? 'Visible on site' : 'Hidden'}
+        </p>
+      </Link>
+    </div>
+  )
+}
+
 export default function CmsOverview() {
   return (
     <div style={{ padding: '2.5rem 2rem', maxWidth: '1100px' }}>
@@ -33,7 +123,7 @@ export default function CmsOverview() {
           CMS Editor
         </h1>
         <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)' }}>
-          Manage all website content from one place
+          Manage all website content and visibility from one place
         </p>
       </div>
 
@@ -45,47 +135,7 @@ export default function CmsOverview() {
         }}
       >
         {sections.map((section) => (
-          <Link
-            key={section.key}
-            href={section.path}
-            style={{ textDecoration: 'none' }}
-          >
-            <div
-              style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.06)',
-                borderRadius: '14px',
-                padding: '1.75rem 1.5rem',
-                transition: 'all 0.3s ease',
-                cursor: 'pointer',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(233, 68, 128, 0.25)'
-                e.currentTarget.style.transform = 'translateY(-3px)'
-                e.currentTarget.style.boxShadow = '0 8px 24px rgba(233, 68, 128, 0.08)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = 'none'
-              }}
-            >
-              <p
-                style={{
-                  fontFamily: "'Pirata One', 'Playfair Display', cursive",
-                  fontSize: '1.1rem',
-                  color: '#e94480',
-                  marginBottom: '0.5rem',
-                  letterSpacing: '0.05em',
-                }}
-              >
-                {section.label}
-              </p>
-              <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                Edit Content
-              </p>
-            </div>
-          </Link>
+          <SectionCard key={section.key} section={section} />
         ))}
       </div>
     </div>
