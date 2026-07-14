@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import AdminNav from '../../../components/AdminNav'
+import CloudinaryUpload from '../../../components/CloudinaryUpload'
 
 export default function AdminBlog() {
   const [items, setItems] = useState([])
   const [form, setForm] = useState({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', images: '', status: 'draft' })
   const [editing, setEditing] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [saved, setSaved] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -39,15 +40,19 @@ export default function AdminBlog() {
     const payload = editing
       ? { ...form, images: form.images ? form.images.split(',').map((s) => s.trim()).filter(Boolean) : [] }
       : { ...form, images: form.images ? form.images.split(',').map((s) => s.trim()).filter(Boolean) : [], publishedAt: form.status === 'published' ? new Date().toISOString() : null }
-    await fetch(url, {
+    const res = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     })
-    setForm({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', images: '', status: 'draft' })
-    setEditing(null)
+    if (res.ok) {
+      setForm({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', images: '', status: 'draft' })
+      setEditing(null)
+      setSaved(true)
+      setTimeout(() => setSaved(false), 3000)
+      fetchItems()
+    }
     setLoading(false)
-    fetchItems()
   }
 
   async function handleDelete(id) {
@@ -70,85 +75,61 @@ export default function AdminBlog() {
   }
 
   return (
-    <div style={{ padding: '2rem 1.5rem', maxWidth: '1200px', margin: '0 auto' }}>
-      <AdminNav />
-
-      <div style={{ marginBottom: '1.5rem' }}>
-        <h1
-          style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: '1.4rem',
-            color: '#c9a96e',
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-          }}
-        >
-          Blog
+    <div style={{ padding: '2.5rem 2rem', maxWidth: '1200px' }}>
+      <div style={{ marginBottom: '2rem' }}>
+        <h1 style={{ fontFamily: "'Pirata One', 'Playfair Display', cursive", fontSize: '1.8rem', color: '#e94480', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
+          Journal
         </h1>
+        <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)' }}>
+          Manage blog posts and articles
+        </p>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '1.5rem',
-          marginBottom: '2.5rem',
-        }}
-      >
-        <div className="frame-card">
-          <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#c9a96e', marginBottom: '1.25rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '2rem' }}>
+        {/* Edit/Add form */}
+        <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '14px', padding: '1.75rem' }}>
+          <h3 style={{ fontSize: '0.85rem', color: '#e94480', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.5rem', fontWeight: 600 }}>
             {editing ? 'Edit Post' : 'Add Post'}
           </h3>
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label>Title</label>
-              <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required />
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem' }}>Title</label>
+              <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required style={inputStyle} placeholder="Post title" />
             </div>
-            <div className="form-group">
-              <label>Slug</label>
-              <input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="auto-generated if empty" />
+            <div>
+              <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem' }}>Slug</label>
+              <input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} style={inputStyle} placeholder="Auto-generated if empty" />
             </div>
-            <div className="form-group">
-              <label>Image URL</label>
-              <input value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} placeholder="https://..." />
+            <CloudinaryUpload
+              label="Featured Image"
+              currentUrl={form.imageUrl}
+              onUpload={(url) => setForm({ ...form, imageUrl: url })}
+            />
+            <div>
+              <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem' }}>Excerpt</label>
+              <textarea rows={2} value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} style={{ ...inputStyle, resize: 'vertical' }} placeholder="Short summary..." />
             </div>
-            <div className="form-group">
-              <label>Additional Images (comma-separated URLs)</label>
-              <textarea
-                rows={2}
-                value={form.images}
-                onChange={(e) => setForm({ ...form, images: e.target.value })}
-                placeholder="https://example.com/img1.jpg, https://example.com/img2.jpg..."
-              />
+            <div>
+              <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem' }}>Content</label>
+              <textarea rows={8} value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} required style={{ ...inputStyle, resize: 'vertical' }} placeholder="Full post content..." />
             </div>
-            <div className="form-group">
-              <label>Excerpt</label>
-              <textarea rows={2} value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} placeholder="Short summary..." />
-            </div>
-            <div className="form-group">
-              <label>Content</label>
-              <textarea rows={5} value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} required placeholder="Full post content..." />
-            </div>
-            <div className="form-group">
-              <label>Status</label>
-              <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} style={{ cursor: 'pointer' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem' }}>Status</label>
+              <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} style={{ ...inputStyle, cursor: 'pointer' }}>
                 <option value="draft">Draft</option>
                 <option value="published">Published</option>
               </select>
             </div>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <button type="submit" className="btn btn-primary" disabled={loading}>
-                {loading ? 'Saving...' : editing ? 'Update' : 'Add'}
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <button type="submit" disabled={loading} style={{
+                ...saveButtonStyle,
+                background: loading ? 'rgba(233,68,128,0.5)' : saved ? '#10b981' : '#e94480',
+                opacity: loading ? 0.7 : 1,
+              }}>
+                {loading ? 'Saving...' : saved ? 'Saved!' : editing ? 'Update' : 'Add Post'}
               </button>
               {editing && (
-                <button
-                  type="button"
-                  className="btn btn-outline"
-                  onClick={() => {
-                    setEditing(null)
-                    setForm({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', images: '', status: 'draft' })
-                  }}
-                >
+                <button type="button" onClick={() => { setEditing(null); setForm({ title: '', slug: '', content: '', excerpt: '', imageUrl: '', images: '', status: 'draft' }) }} style={resetButtonStyle}>
                   Cancel
                 </button>
               )}
@@ -156,73 +137,76 @@ export default function AdminBlog() {
           </form>
         </div>
 
-        <div className="frame-card" style={{ overflowX: 'auto' }}>
-          <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#c9a96e', marginBottom: '1.25rem' }}>
-            Posts
+        {/* Posts list */}
+        <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '14px', padding: '1.75rem' }}>
+          <h3 style={{ fontSize: '0.85rem', color: '#e94480', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.5rem', fontWeight: 600 }}>
+            Posts ({items.length})
           </h3>
           {items.length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               {items.map((item) => (
-                <div
-                  key={item.id}
-                  style={{
-                    padding: '1rem',
-                    borderRadius: '8px',
-                    border: '1px solid rgba(255,255,255,0.05)',
-                    background: 'rgba(255,255,255,0.02)',
-                  }}
-                >
+                <div key={item.id} style={{ padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                    <span style={{ fontWeight: 500, color: 'rgba(255,255,255,0.85)' }}>{item.title}</span>
-                    <span
-                      style={{
-                        fontSize: '0.65rem',
-                        padding: '0.2rem 0.5rem',
-                        borderRadius: '4px',
-                        background: item.status === 'published' ? 'rgba(76,175,80,0.15)' : 'rgba(255,255,255,0.08)',
-                        color: item.status === 'published' ? '#81c784' : 'rgba(255,255,255,0.5)',
-                      }}
-                    >
+                    <span style={{ fontWeight: 500, color: 'rgba(255,255,255,0.85)', fontSize: '0.85rem' }}>{item.title}</span>
+                    <span style={{ fontSize: '0.65rem', padding: '0.2rem 0.5rem', borderRadius: '4px', background: item.status === 'published' ? 'rgba(76,175,80,0.15)' : 'rgba(255,255,255,0.08)', color: item.status === 'published' ? '#81c784' : 'rgba(255,255,255,0.5)' }}>
                       {item.status}
                     </span>
                   </div>
-                  <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.75rem' }}>
-                    /journal/{item.slug}
-                  </p>
+                  {item.imageUrl && (
+                    <div style={{ width: '100%', maxHeight: '80px', overflow: 'hidden', borderRadius: '6px', marginBottom: '0.5rem' }}>
+                      <img src={item.imageUrl} alt="" style={{ width: '100%', height: '80px', objectFit: 'cover' }} />
+                    </div>
+                  )}
+                  <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)', marginBottom: '0.75rem' }}>/journal/{item.slug}</p>
                   <div style={{ display: 'flex', gap: '0.75rem' }}>
-                    <button
-                      onClick={() => handleEdit(item)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: '#c9a96e',
-                        cursor: 'pointer',
-                        fontSize: '0.75rem',
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(item.id)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: '#e57373',
-                        cursor: 'pointer',
-                        fontSize: '0.75rem',
-                      }}
-                    >
-                      Delete
-                    </button>
+                    <button onClick={() => handleEdit(item)} style={{ background: 'none', border: 'none', color: '#e94480', cursor: 'pointer', fontSize: '0.75rem' }}>Edit</button>
+                    <button onClick={() => handleDelete(item.id)} style={{ background: 'none', border: 'none', color: '#e57373', cursor: 'pointer', fontSize: '0.75rem' }}>Delete</button>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <p style={{ color: 'rgba(255,255,255,0.4)' }}>No posts yet.</p>
+            <p style={{ color: 'rgba(255,255,255,0.4)', textAlign: 'center', padding: '2rem' }}>No posts yet.</p>
           )}
         </div>
       </div>
     </div>
   )
+}
+
+const inputStyle = {
+  width: '100%',
+  padding: '0.85rem 1rem',
+  background: 'rgba(255,255,255,0.04)',
+  border: '1px solid rgba(255,255,255,0.1)',
+  borderRadius: '8px',
+  color: '#ffffff',
+  fontSize: '0.85rem',
+  outline: 'none',
+  fontFamily: "'Inter', sans-serif",
+}
+
+const saveButtonStyle = {
+  padding: '0.85rem 2rem',
+  color: '#ffffff',
+  border: 'none',
+  borderRadius: '50px',
+  fontSize: '0.75rem',
+  fontWeight: 500,
+  letterSpacing: '0.18em',
+  textTransform: 'uppercase',
+  cursor: 'pointer',
+}
+
+const resetButtonStyle = {
+  padding: '0.85rem 2rem',
+  background: 'transparent',
+  color: 'rgba(255,255,255,0.6)',
+  border: '1px solid rgba(255,255,255,0.2)',
+  borderRadius: '50px',
+  fontSize: '0.75rem',
+  fontWeight: 500,
+  letterSpacing: '0.18em',
+  textTransform: 'uppercase',
+  cursor: 'pointer',
 }
