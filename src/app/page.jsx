@@ -8,6 +8,8 @@ import Journal from './sections/Journal'
 import Contact from './sections/Contact'
 import Review from './sections/Review'
 
+export const dynamic = 'force-dynamic'
+
 export default function Home() {
   return (
     <main style={{ position: 'relative', zIndex: 1 }}>
