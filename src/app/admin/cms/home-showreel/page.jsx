@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useCmsContent } from '../../../../lib/useCmsContent'
 import Link from 'next/link'
 import CloudinaryUpload from '../../../../components/CloudinaryUpload'
+import CloudinaryVideoUpload from '../../../../components/CloudinaryVideoUpload'
 
 export default function ShowreelCmsPage() {
   const { content, loading, saving, save, error } = useCmsContent('showreel')
@@ -169,43 +170,11 @@ export default function ShowreelCmsPage() {
         {/* Video mode */}
         {current.type === 'video' && (
           <>
-            <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '0.65rem',
-                  letterSpacing: '0.15em',
-                  textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.5)',
-                  marginBottom: '0.5rem',
-                }}
-              >
-                Video URL
-              </label>
-              <input
-                type="text"
-                value={current.videoUrl || ''}
-                onChange={(e) => update('videoUrl', e.target.value)}
-                placeholder="/showreel.mp4 or https://..."
-                style={{
-                  width: '100%',
-                  padding: '0.75rem 1rem',
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: '8px',
-                  color: '#fff',
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '0.85rem',
-                  outline: 'none',
-                  transition: 'border-color 0.3s',
-                }}
-                onFocus={(e) => (e.target.style.borderColor = 'rgba(233,68,128,0.5)')}
-                onBlur={(e) => (e.target.style.borderColor = 'rgba(255,255,255,0.1)')}
-              />
-              <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)', marginTop: '0.4rem' }}>
-                Enter a local path like /showreel.mp4 or a full URL
-              </p>
-            </div>
+            <CloudinaryVideoUpload
+              label="Video"
+              currentUrl={current.videoUrl || ''}
+              onUpload={(url) => update('videoUrl', url)}
+            />
 
             <CloudinaryUpload
               label="Poster Image"
