@@ -1,14 +1,11 @@
-import PDFDocument from 'pdfkit'
-import { FONT_BUFFER } from './fontData.js'
-
-// Use embedded font buffer (works on Vercel serverless without file system access)
-const CUSTOM_FONT = 'CustomFont'
+import { jsPDF } from 'jspdf'
 
 const PINK = '#e94480'
 const PINK_LIGHT = '#fce4ec'
 const TEXT_DARK = '#1a1a1a'
 const TEXT_SEC = '#555555'
 const TEXT_TER = '#888888'
+const DIVIDER = '#e0e0e0'
 
 const CONSENT_STATEMENT = 'I confirm that the information I have provided is accurate and complete. I consent to the tooth jewellery procedure being carried out and agree to follow all aftercare instructions. I understand that the procedure involves the application of a Swarovski or Preciosa crystal to my tooth using dental adhesive, and I am aware of the risks and aftercare requirements as explained to me by Ethereal Smile.'
 
@@ -28,206 +25,202 @@ const MEDICAL_LABELS = {
   sensitiveTeeth: 'Sensitive teeth',
 }
 
-function drawHeader(doc, title) {
-  // Pink top bar
-  doc.rect(0, 0, doc.page.width, 60).fill(PINK)
+export function generateConsentPdf({ documentType, documentTitle, documentVersion, pdfUrl, responses, signatoryName, signatoryRelationship, signedAt, signedIp, clientName, clientEmail }) {
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' })
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const margin = 20
+  const contentWidth = pageWidth - margin * 2
+  let y = margin
 
-  // Title text
-  doc.fontSize(18).font(CUSTOM_FONT)
-    .fillColor('#ffffff')
-    .text(title, 50, 18, { width: doc.page.width - 100 })
-
-  // Reset cursor below header
-  doc.fillColor(TEXT_DARK)
-  doc.y = 80
-}
-
-function drawSectionTitle(doc, title) {
-  doc.moveDown(0.5)
-  doc.fontSize(11).font(CUSTOM_FONT).fillColor(PINK).text(title.toUpperCase())
-  doc.moveDown(0.3)
-  doc.strokeColor('#e0e0e0').lineWidth(0.5)
-    .moveTo(50, doc.y).lineTo(doc.page.width - 50, doc.y).stroke()
-  doc.moveDown(0.5)
-  doc.fillColor(TEXT_DARK)
-}
-
-function drawField(doc, label, value, opts = {}) {
-  const startY = doc.y
-  doc.fontSize(8).font(CUSTOM_FONT).fillColor(TEXT_TER).text(label.toUpperCase(), 50, doc.y, { width: opts.twoCol ? 220 : doc.page.width - 100 })
-  const labelHeight = doc.y - startY
-  doc.fontSize(10).font(CUSTOM_FONT).fillColor(TEXT_DARK).text(value || 'Not provided', 50, doc.y + 2, { width: opts.twoCol ? 220 : doc.page.width - 100 })
-  doc.moveDown(0.3)
-}
-
-function drawCheckbox(doc, label, checked) {
-  const y = doc.y
-  doc.fontSize(10).font(CUSTOM_FONT).fillColor(TEXT_DARK)
-
-  // Draw checkbox square
-  doc.rect(50, y + 1, 10, 10).lineWidth(0.5).strokeColor('#cccccc').stroke()
-  if (checked) {
-    doc.fontSize(10).fillColor(PINK).text('\u2713', 51.5, y + 0.5)
+  function addHeader(title) {
+    doc.setFillColor(233, 68, 128)
+    doc.rect(0, 0, pageWidth, 22, 'F')
+    doc.setTextColor(255, 255, 255)
+    doc.setFontSize(14)
+    doc.setFont('helvetica', 'bold')
+    doc.text(title, margin, 14)
+    doc.setTextColor(TEXT_DARK)
+    y = 30
   }
 
-  doc.fillColor(TEXT_DARK).text(label, 66, y + 1, { width: doc.page.width - 116 })
-  doc.moveDown(0.1)
-}
+  function addSectionTitle(title) {
+    y += 4
+    doc.setFontSize(10)
+    doc.setFont('helvetica', 'bold')
+    doc.setTextColor(233, 68, 128)
+    doc.text(title.toUpperCase(), margin, y)
+    y += 1
+    doc.setDrawColor(224, 224, 224)
+    doc.line(margin, y, pageWidth - margin, y)
+    y += 4
+    doc.setTextColor(TEXT_DARK)
+  }
 
-function drawStatement(doc, text) {
-  const startY = doc.y
-  doc.rect(50, startY, doc.page.width - 100, 2).fill(PINK)
-  doc.moveDown(0.5)
+  function addField(label, value) {
+    doc.setFontSize(7)
+    doc.setFont('helvetica', 'normal')
+    doc.setTextColor(TEXT_TER)
+    doc.text(label.toUpperCase(), margin, y)
+    y += 3.5
+    doc.setFontSize(9)
+    doc.setTextColor(TEXT_DARK)
+    doc.text(value || 'Not provided', margin, y)
+    y += 5
+  }
 
-  doc.fontSize(9).font(CUSTOM_FONT).fillColor(TEXT_DARK)
-    .text(text, 50, doc.y, { width: doc.page.width - 100, lineGap: 3 })
-  doc.moveDown(0.5)
-}
-
-function drawSignatureBlock(doc, signatoryName, signedAt, ip) {
-  doc.moveDown(0.5)
-
-  // Signature line
-  doc.strokeColor(TEXT_DARK).lineWidth(0.5)
-    .moveTo(50, doc.y + 20).lineTo(250, doc.y + 20).stroke()
-
-  doc.fontSize(8).font(CUSTOM_FONT).fillColor(TEXT_TER)
-    .text('SIGNATURE (typed)', 50, doc.y + 24)
-
-  doc.fontSize(12).font(CUSTOM_FONT).fillColor(TEXT_DARK)
-    .text(signatoryName, 50, doc.y - 18)
-
-  doc.moveDown(1)
-
-  // Date and IP
-  doc.fontSize(8).font(CUSTOM_FONT).fillColor(TEXT_TER)
-  doc.text('Date: ' + (signedAt ? new Date(signedAt).toLocaleString('en-GB', { dateStyle: 'full', timeStyle: 'long' }) : 'Not signed'), 50, doc.y, { continued: false })
-  doc.text('IP Address: ' + (ip || 'Not recorded'), 50, doc.y, { width: doc.page.width - 100 })
-}
-
-function drawFooter(doc, documentType, documentVersion, originalPdfUrl) {
-  doc.moveDown(1)
-  doc.strokeColor('#e0e0e0').lineWidth(0.5)
-    .moveTo(50, doc.y).lineTo(doc.page.width - 50, doc.y).stroke()
-  doc.moveDown(0.5)
-
-  doc.fontSize(7).font(CUSTOM_FONT).fillColor(TEXT_TER)
-    .text('This is the completed consent record generated by Ethereal Smile.', 50, doc.y, { width: doc.page.width - 100 })
-  doc.text('Consented to: ' + documentType + ' (version ' + (documentVersion || '1.0') + ')', 50, doc.y, { width: doc.page.width - 100 })
-  doc.text('Original document: ' + (originalPdfUrl || 'N/A'), 50, doc.y, { width: doc.page.width - 100 })
-  doc.text('This record is immutable and cannot be modified after signing.', 50, doc.y, { width: doc.page.width - 100 })
-
-  doc.moveDown(1)
-  doc.fontSize(7).font(CUSTOM_FONT).fillColor(TEXT_TER)
-    .text('Ethereal Smile by Hattie Clifford | etherealsmile.co.uk', 50, doc.y, { width: doc.page.width - 100, align: 'center' })
-}
-
-export function generateConsentPdf({ documentType, documentTitle, documentVersion, pdfUrl, responses, signatoryName, signatoryRelationship, signedAt, signedIp, clientName, clientEmail }) {
-  return new Promise((resolve, reject) => {
-    try {
-      const doc = new PDFDocument({
-        size: 'A4',
-        margins: { top: 20, bottom: 40, left: 50, right: 50 },
-        info: {
-          Title: documentTitle + ' - Consent Record',
-          Author: 'Ethereal Smile',
-          Subject: 'Completed consent form for ' + (clientName || 'client'),
-          Creator: 'Ethereal Smile Consent System',
-        }
-      })
-
-      const chunks = []
-      doc.on('data', (chunk) => chunks.push(chunk))
-      doc.on('end', () => resolve(Buffer.concat(chunks)))
-
-      // Register embedded font (bypasses pdfkit's internal font file lookup that fails on Vercel)
-      doc.registerFont(CUSTOM_FONT, FONT_BUFFER)
-
-      // Page 1: Header
-      drawHeader(doc, documentTitle + ' - Consent Record')
-
-      // Subtitle
-      doc.fontSize(10).font(CUSTOM_FONT).fillColor(TEXT_SEC)
-        .text('Ethereal Smile by Hattie Clifford', 50, doc.y, { width: doc.page.width - 100, align: 'center' })
-      doc.moveDown(0.5)
-
-      // Client info
-      drawSectionTitle(doc, 'Client Information')
-      drawField(doc, 'Client Name', clientName || 'Not provided')
-      drawField(doc, 'Email', clientEmail || 'Not provided')
-
-      // Document info
-      drawField(doc, 'Document Type', documentType)
-      drawField(doc, 'Document Version', documentVersion || '1.0')
-      drawField(doc, 'Date Signed', signedAt ? new Date(signedAt).toLocaleString('en-GB', { dateStyle: 'full', timeStyle: 'long' }) : 'N/A')
-
-      // Type-specific content
-      if (documentType === 'consent' || documentType === 'consultation') {
-        // Personal details
-        drawSectionTitle(doc, 'Personal Details')
-        drawField(doc, 'Full Name', responses.fullName)
-        drawField(doc, 'Date of Birth', responses.dateOfBirth)
-        drawField(doc, 'Age', responses.age)
-        drawField(doc, 'Phone', responses.phone)
-        drawField(doc, 'Email', responses.email)
-        drawField(doc, 'Address', responses.address)
-
-        // Medical history
-        drawSectionTitle(doc, 'Medical History')
-        drawField(doc, 'Allergies', responses.allergies || 'None stated')
-
-        const conditions = responses.medicalConditions || {}
-        Object.keys(MEDICAL_LABELS).forEach((key) => {
-          drawCheckbox(doc, MEDICAL_LABELS[key], !!conditions[key])
-        })
-
-        drawCheckbox(doc, 'Vomiting, diarrhoea, or infection in last 48 hours', !!responses.illnessInLast48h)
-
-        // Consent statement
-        drawSectionTitle(doc, 'Declaration & Consent')
-        drawStatement(doc, CONSENT_STATEMENT)
-        drawCheckbox(doc, 'Consent statement agreed', !!responses.consentAgreed)
-
-      } else if (documentType === 'guardian_consent') {
-        // Young person details
-        drawSectionTitle(doc, "Young Person's Details")
-        drawField(doc, "Young Person's Name", responses.youngPersonName)
-        drawField(doc, "Young Person's Date of Birth", responses.youngPersonDOB)
-
-        // Guardian details
-        drawSectionTitle(doc, "Guardian's Details")
-        drawField(doc, "Guardian's Name", responses.guardianName)
-        drawField(doc, 'Relationship', responses.guardianRelationship)
-        drawField(doc, 'Address', responses.guardianAddress)
-        drawField(doc, 'Postcode', responses.guardianPostcode)
-        drawField(doc, 'Contact Number', responses.guardianPhone)
-
-        // Guardian consent statement
-        drawSectionTitle(doc, 'Guardian Consent Statement')
-        drawStatement(doc, GUARDIAN_STATEMENT)
-        drawCheckbox(doc, 'Guardian consent statement agreed', !!responses.consentStatementAgreed)
-
-      } else if (documentType === 'aftercare') {
-        drawSectionTitle(doc, 'Aftercare Acknowledgment')
-        drawStatement(doc, AFTERCARE_STATEMENT)
-        drawCheckbox(doc, 'Aftercare information read and understood', !!responses.readAcknowledged)
-      }
-
-      // Signature
-      drawSectionTitle(doc, 'Electronic Signature')
-      drawSignatureBlock(doc, signatoryName, signedAt, signedIp)
-
-      if (signatoryRelationship && signatoryRelationship !== 'self') {
-        doc.fontSize(8).font(CUSTOM_FONT).fillColor(TEXT_TER)
-          .text('Signed as: ' + signatoryRelationship, 50, doc.y)
-      }
-
-      // Footer
-      drawFooter(doc, documentType, documentVersion, pdfUrl)
-
-      doc.end()
-    } catch (err) {
-      reject(err)
+  function addCheckbox(label, checked) {
+    const boxX = margin
+    const boxY = y - 2.5
+    doc.setDrawColor(180, 180, 180)
+    doc.setLineWidth(0.3)
+    doc.rect(boxX, boxY, 3.5, 3.5)
+    if (checked) {
+      doc.setFontSize(10)
+      doc.setTextColor(233, 68, 128)
+      doc.text('\u2713', boxX + 0.5, boxY + 3)
     }
-  })
+    doc.setFontSize(8.5)
+    doc.setTextColor(TEXT_DARK)
+    doc.text(label, margin + 5.5, y + 0.5)
+    y += 5
+  }
+
+  function addStatement(text) {
+    y += 2
+    doc.setFillColor(233, 68, 128)
+    doc.rect(margin, y, contentWidth, 0.8, 'F')
+    y += 4
+    doc.setFontSize(8.5)
+    doc.setFont('helvetica', 'italic')
+    doc.setTextColor(TEXT_DARK)
+    const lines = doc.splitTextToSize(text, contentWidth)
+    doc.text(lines, margin, y)
+    y += lines.length * 4.5 + 2
+  }
+
+  function addSignatureBlock(name, dateStr, ip) {
+    y += 4
+    doc.setDrawColor(TEXT_DARK)
+    doc.setLineWidth(0.3)
+    doc.line(margin, y + 8, margin + 70, y + 8)
+    doc.setFontSize(12)
+    doc.setFont('helvetica', 'bold')
+    doc.setTextColor(TEXT_DARK)
+    doc.text(name, margin, y + 6)
+    y += 12
+    doc.setFontSize(7)
+    doc.setFont('helvetica', 'normal')
+    doc.setTextColor(TEXT_TER)
+    doc.text('Date: ' + dateStr, margin, y)
+    doc.text('IP: ' + (ip || 'Not recorded'), margin + 80, y)
+    y += 5
+  }
+
+  function addFooter(docType, docVersion, originalUrl) {
+    const pageHeight = doc.internal.pageSize.getHeight()
+    y = pageHeight - 20
+    doc.setDrawColor(224, 224, 224)
+    doc.line(margin, y - 5, pageWidth - margin, y - 5)
+    doc.setFontSize(6.5)
+    doc.setFont('helvetica', 'normal')
+    doc.setTextColor(TEXT_TER)
+    doc.text('This is the completed consent record generated by Ethereal Smile.', margin, y)
+    doc.text('Consented to: ' + docType + ' (version ' + (docVersion || '1.0') + ')', margin, y + 3.5)
+    doc.text('Original document: ' + (originalUrl || 'N/A'), margin, y + 7)
+    doc.text('This record is immutable and cannot be modified after signing.', margin, y + 10.5)
+    doc.setFontSize(6)
+    doc.text('Ethereal Smile by Hattie Clifford | etherealsmile.co.uk', margin, y + 15)
+  }
+
+  function checkPage(needed) {
+    if (y + needed > doc.internal.pageSize.getHeight() - 25) {
+      doc.addPage()
+      y = margin
+    }
+  }
+
+  // Build the PDF
+  addHeader(documentTitle + ' - Consent Record')
+
+  doc.setFontSize(9)
+  doc.setFont('helvetica', 'normal')
+  doc.setTextColor(TEXT_SEC)
+  doc.text('Ethereal Smile by Hattie Clifford', pageWidth / 2, y, { align: 'center' })
+  y += 6
+
+  addSectionTitle('Client Information')
+  addField('Client Name', clientName)
+  addField('Email', clientEmail)
+  addField('Document Type', documentType)
+  addField('Document Version', documentVersion || '1.0')
+  addField('Date Signed', signedAt ? new Date(signedAt).toLocaleString('en-GB', { dateStyle: 'full', timeStyle: 'long' }) : 'N/A')
+
+  if (documentType === 'consent' || documentType === 'consultation') {
+    checkPage(80)
+    addSectionTitle('Personal Details')
+    addField('Full Name', responses.fullName)
+    addField('Date of Birth', responses.dateOfBirth)
+    addField('Age', responses.age)
+    addField('Phone', responses.phone)
+    addField('Email', responses.email)
+    addField('Address', responses.address)
+
+    checkPage(60)
+    addSectionTitle('Medical History')
+    addField('Allergies', responses.allergies || 'None stated')
+
+    const conditions = responses.medicalConditions || {}
+    Object.keys(MEDICAL_LABELS).forEach(function(key) {
+      checkPage(6)
+      addCheckbox(MEDICAL_LABELS[key], !!conditions[key])
+    })
+    checkPage(6)
+    addCheckbox('Vomiting, diarrhoea, or infection in last 48 hours', !!responses.illnessInLast48h)
+
+    checkPage(30)
+    addSectionTitle('Declaration & Consent')
+    addStatement(CONSENT_STATEMENT)
+    checkPage(6)
+    addCheckbox('Consent statement agreed', !!responses.consentAgreed)
+
+  } else if (documentType === 'guardian_consent') {
+    checkPage(40)
+    addSectionTitle("Young Person's Details")
+    addField("Young Person's Name", responses.youngPersonName)
+    addField("Young Person's Date of Birth", responses.youngPersonDOB)
+
+    addSectionTitle("Guardian's Details")
+    addField("Guardian's Name", responses.guardianName)
+    addField('Relationship', responses.guardianRelationship)
+    addField('Address', responses.guardianAddress)
+    addField('Postcode', responses.guardianPostcode)
+    addField('Contact Number', responses.guardianPhone)
+
+    checkPage(30)
+    addSectionTitle('Guardian Consent Statement')
+    addStatement(GUARDIAN_STATEMENT)
+    checkPage(6)
+    addCheckbox('Guardian consent agreed', !!responses.consentStatementAgreed)
+
+  } else if (documentType === 'aftercare') {
+    addSectionTitle('Aftercare Acknowledgment')
+    addStatement(AFTERCARE_STATEMENT)
+    addCheckbox('Aftercare information read and understood', !!responses.readAcknowledged)
+  }
+
+  checkPage(30)
+  addSectionTitle('Electronic Signature')
+  addSignatureBlock(signatoryName, signedAt ? new Date(signedAt).toLocaleString('en-GB', { dateStyle: 'full', timeStyle: 'long' }) : 'N/A', signedIp)
+
+  if (signatoryRelationship && signatoryRelationship !== 'self') {
+    doc.setFontSize(7)
+    doc.setFont('helvetica', 'normal')
+    doc.setTextColor(TEXT_TER)
+    doc.text('Signed as: ' + signatoryRelationship, margin, y)
+  }
+
+  addFooter(documentType, documentVersion, pdfUrl)
+
+  const pdfBuffer = Buffer.from(doc.output('arraybuffer'))
+  return pdfBuffer
 }
