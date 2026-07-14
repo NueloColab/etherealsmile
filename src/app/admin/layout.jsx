@@ -7,13 +7,10 @@ import AdminSidebar from '../../components/AdminSidebar'
 export default function AdminLayout({ children }) {
   const router = useRouter()
   const pathname = usePathname()
-  const [mounted, setMounted] = useState(false)
   const [authed, setAuthed] = useState(false)
   const [checking, setChecking] = useState(true)
 
   useEffect(() => {
-    setMounted(true)
-
     // Skip auth check on login page
     if (pathname === '/admin/login') {
       setChecking(false)
@@ -37,9 +34,8 @@ export default function AdminLayout({ children }) {
       })
   }, [pathname, router])
 
-  const isLogin = pathname === '/admin/login'
-
-  if (isLogin) {
+  // Login page: no sidebar, no auth needed
+  if (pathname === '/admin/login') {
     return (
       <div style={{ minHeight: '100vh', background: '#000000', color: '#ffffff' }}>
         {children}
@@ -47,20 +43,12 @@ export default function AdminLayout({ children }) {
     )
   }
 
-  // Show loading spinner while checking auth
-  if (checking || !mounted) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000000' }}>
-        <div style={{ width: '32px', height: '32px', border: '2px solid rgba(233,68,128,0.3)', borderTopColor: '#e94480', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-        <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
-      </div>
-    )
-  }
-
-  if (!authed) {
+  // Still checking auth: show nothing (prevents flash)
+  if (checking || !authed) {
     return null
   }
 
+  // Authenticated: show sidebar + content
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#000000' }}>
       <AdminSidebar />
