@@ -3,35 +3,9 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useCmsContent } from '../../lib/useCmsContent'
-
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-]
-
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+import { MONTHS, WEEKDAYS, getCalendarDays, isDateInPast } from '../../lib/calendar'
 
 const DEFAULT_TIME_SLOTS = ['10:00', '11:30', '13:00', '14:30', '16:00']
-
-function getCalendarDays(year, month) {
-  const firstDay = new Date(year, month, 1).getDay()
-  const daysInMonth = new Date(year, month + 1, 0).getDate()
-  const days = []
-  for (let i = 0; i < firstDay; i++) {
-    days.push(null)
-  }
-  for (let i = 1; i <= daysInMonth; i++) {
-    days.push(i)
-  }
-  return days
-}
-
-function isDateInPast(year, month, day) {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const check = new Date(year, month, day)
-  return check < today
-}
 
 export default function Book() {
   const searchParams = useSearchParams()

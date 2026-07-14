@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import BookingCalendar from './BookingCalendar'
 
 const STATUS_STYLES = {
   pending: { bg: 'rgba(233,68,128,0.1)', color: '#e94480', border: 'rgba(233,68,128,0.2)' },
@@ -14,6 +15,7 @@ export default function BookingsPage() {
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
+  const [view, setView] = useState('calendar') // 'calendar' or 'list'
 
   useEffect(() => {
     fetch('/api/bookings?limit=200&sort=-createdAt')
@@ -26,9 +28,6 @@ export default function BookingsPage() {
   }, [])
 
   const filtered = filter === 'all' ? bookings : bookings.filter(b => b.status === filter)
-
-  const inputStyle = { width: '100%', padding: '0.85rem 1rem', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#ffffff', fontSize: '0.85rem', outline: 'none', fontFamily: "'Inter', sans-serif" }
-  const labelStyle = { display: 'block', fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem' }
 
   if (loading) {
     return <div style={{ padding: '2rem', color: 'rgba(255,255,255,0.4)' }}>Loading bookings...</div>
@@ -44,13 +43,52 @@ export default function BookingsPage() {
           Bookings
         </h1>
         <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)', marginTop: '0.5rem' }}>
-          View and manage bookings and enquiries
+          View and manage bookings
         </p>
       </div>
 
-      {/* Filter tabs */}
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem' }}>
-        {['all', 'pending', 'confirmed', 'rejected'].map(f => (
+      {/* View toggle + Filter tabs */}
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', flexWrap: 'wrap', alignItems: 'center' }}>
+        {/* Calendar/List toggle */}
+        <div style={{ display: 'flex', borderRadius: '50px', border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden', marginRight: '1rem' }}>
+          <button
+            onClick={() => setView('calendar')}
+            style={{
+              padding: '0.5rem 1rem',
+              border: 'none',
+              background: view === 'calendar' ? 'rgba(233,68,128,0.15)' : 'transparent',
+              color: view === 'calendar' ? '#e94480' : 'rgba(255,255,255,0.5)',
+              fontSize: '0.7rem',
+              fontWeight: 500,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            Calendar
+          </button>
+          <button
+            onClick={() => setView('list')}
+            style={{
+              padding: '0.5rem 1rem',
+              border: 'none',
+              background: view === 'list' ? 'rgba(233,68,128,0.15)' : 'transparent',
+              color: view === 'list' ? '#e94480' : 'rgba(255,255,255,0.5)',
+              fontSize: '0.7rem',
+              fontWeight: 500,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            List
+          </button>
+        </div>
+
+        {/* Status filters */}
+        {['all', 'pending', 'confirmed'].map(f => (
           <button
             key={f}
             onClick={() => setFilter(f)}
@@ -74,7 +112,10 @@ export default function BookingsPage() {
         ))}
       </div>
 
-      {filtered.length === 0 ? (
+      {/* Calendar or List view */}
+      {view === 'calendar' ? (
+        <BookingCalendar bookings={filtered} />
+      ) : filtered.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '3rem', color: 'rgba(255,255,255,0.4)' }}>
           No bookings found.
         </div>
