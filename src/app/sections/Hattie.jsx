@@ -1,18 +1,54 @@
 'use client'
 
+import { useState } from 'react'
 import { useCmsContent } from '../../lib/useCmsContent'
 
 export default function Hattie() {
   const { content } = useCmsContent('hattie')
+  const [activeImage, setActiveImage] = useState(null)
 
   const heading = content?.heading || "Who's Hattie"
   const subtitle = content?.subtitle || 'The face behind the sparkle'
   const bodyText = content?.bodyText || 'Hattie Clifford is the founder and lead artist at Ethereal Smile. With years of experience in dental aesthetics and a passion for unique beauty, Hattie has transformed thousands of smiles across the UK.'
   const portraitImage = content?.portraitImage || '/hattie-portrait.jpg'
   const workingImage = content?.workingImage || '/hattie-working.jpg'
+  const studioImage = content?.studioImage || null
+
+  // Build images array (up to 3)
+  const images = [
+    { src: portraitImage, alt: heading, className: 'polaroid-1' },
+    workingImage ? { src: workingImage, alt: `${heading} at work`, className: 'polaroid-2' } : null,
+    studioImage ? { src: studioImage, alt: `${heading} in studio`, className: 'polaroid-3' } : null,
+  ].filter(Boolean)
 
   // Split body text into paragraphs
   const paragraphs = bodyText ? bodyText.split('\n\n').filter(Boolean) : []
+
+  // Polaroid styles based on position and number of images
+  function getPolaroidStyle(index, total, isActive) {
+    const base = {
+      position: 'absolute',
+      background: '#fff',
+      padding: '8px 8px 28px 8px',
+      boxShadow: isActive
+        ? '0 16px 48px rgba(233,68,128,0.3), 0 4px 12px rgba(0,0,0,0.3)'
+        : '0 8px 32px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.2)',
+      transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+      cursor: 'pointer',
+    }
+
+    if (total === 1) {
+      return { ...base, top: 0, left: '10%', width: '80%', transform: 'rotate(-2deg)', zIndex: isActive ? 10 : 2 }
+    }
+    if (total === 2) {
+      if (index === 0) return { ...base, top: 0, left: '5%', width: '60%', transform: isActive ? 'rotate(0deg) scale(1.03)' : 'rotate(-4deg)', zIndex: isActive ? 10 : 3 }
+      return { ...base, top: '20%', right: '0', width: '55%', transform: isActive ? 'rotate(0deg) scale(1.03)' : 'rotate(3deg)', zIndex: isActive ? 10 : 2 }
+    }
+    // 3 images
+    if (index === 0) return { ...base, top: 0, left: '5%', width: '50%', transform: isActive ? 'rotate(0deg) scale(1.04)' : 'rotate(-5deg)', zIndex: isActive ? 10 : 3 }
+    if (index === 1) return { ...base, top: '15%', right: '0', width: '48%', transform: isActive ? 'rotate(0deg) scale(1.04)' : 'rotate(3deg)', zIndex: isActive ? 10 : 2 }
+    return { ...base, bottom: '5%', left: '15%', width: '46%', transform: isActive ? 'rotate(0deg) scale(1.04)' : 'rotate(-1deg)', zIndex: isActive ? 10 : 1 }
+  }
 
   return (
     <section
@@ -51,51 +87,22 @@ export default function Hattie() {
           }}
         >
           {/* Left: Polaroid stack */}
-          <div className="reveal reveal-scale" style={{ position: 'relative', height: 'clamp(350px, 45vw, 520px)' }}>
-            {/* Portrait polaroid - slightly rotated left */}
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: '5%',
-                width: '55%',
-                background: '#fff',
-                padding: '8px 8px 32px 8px',
-                boxShadow: '0 8px 32px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.2)',
-                transform: 'rotate(-4deg)',
-                transition: 'transform 0.4s ease',
-                zIndex: 3,
-              }}
-            >
-              <img
-                src={portraitImage}
-                alt={heading}
-                style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover', display: 'block', borderRadius: '2px' }}
-              />
-            </div>
-            {/* Working polaroid - slightly rotated right */}
-            {workingImage && (
+          <div className="reveal reveal-scale" style={{ position: 'relative', height: images.length === 1 ? '400px' : 'clamp(350px, 45vw, 520px)' }}>
+            {images.map((img, i) => (
               <div
-                style={{
-                  position: 'absolute',
-                  top: '18%',
-                  right: '0',
-                  width: '52%',
-                  background: '#fff',
-                  padding: '8px 8px 32px 8px',
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.2)',
-                  transform: 'rotate(3deg)',
-                  transition: 'transform 0.4s ease',
-                  zIndex: 2,
-                }}
+                key={i}
+                style={getPolaroidStyle(i, images.length, activeImage === i)}
+                onClick={() => setActiveImage(activeImage === i ? null : i)}
+                onMouseEnter={() => setActiveImage(i)}
+                onMouseLeave={() => setActiveImage(null)}
               >
                 <img
-                  src={workingImage}
-                  alt={`${heading} at work`}
+                  src={img.src}
+                  alt={img.alt}
                   style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover', display: 'block', borderRadius: '2px' }}
                 />
               </div>
-            )}
+            ))}
           </div>
 
           {/* Right: text */}
@@ -126,11 +133,11 @@ export default function Hattie() {
         {/* Mobile responsive */}
         <style>{`
           @media (max-width: 768px) {
-            #hattie .section-inner > div:last-of-type:not(.reveal) {
+            #hattie .section-inner > div[style*="grid-template-columns"] {
               grid-template-columns: 1fr !important;
             }
             #hattie .section-inner > div[style*="position: relative"] {
-              height: 300px !important;
+              height: 320px !important;
             }
           }
         `}</style>

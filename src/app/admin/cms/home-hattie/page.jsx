@@ -31,6 +31,7 @@ export default function HattieEditor() {
         <Textarea label="Body Text" value={data.bodyText || ''} onChange={(v) => setForm({ ...data, bodyText: v })} />
         <CloudinaryUpload label="Portrait Image" currentUrl={data.portraitImage} onUpload={(url) => setForm({ ...data, portraitImage: url })} />
         <CloudinaryUpload label="Working Image" currentUrl={data.workingImage} onUpload={(url) => setForm({ ...data, workingImage: url })} />
+        <CloudinaryUpload label="Studio Image (optional 3rd photo)" currentUrl={data.studioImage || ''} onUpload={(url) => setForm({ ...data, studioImage: url })} />
 
         <SaveButtons saving={saving} saved={saved} form={form} data={data} onSave={save} onReset={() => setForm(null)} />
       </div>
