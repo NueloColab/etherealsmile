@@ -9,6 +9,9 @@ export default function AdminLayout({ children }) {
   const pathname = usePathname()
 
   useEffect(() => {
+    // Only run auth check on client side
+    if (typeof window === 'undefined') return
+    
     fetch('/api/auth/session')
       .then((r) => r.json())
       .then((session) => {
@@ -18,20 +21,10 @@ export default function AdminLayout({ children }) {
       })
   }, [pathname, router])
 
-  const isLogin = pathname === '/admin/login'
-
-  if (isLogin) {
-    return (
-      <div className="min-h-screen bg-black text-white">
-        {children}
-      </div>
-    )
-  }
-
   return (
-    <div className="min-h-screen bg-black text-white flex">
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#000000' }}>
       <AdminSidebar />
-      <main className="flex-1 ml-[260px] min-h-screen">
+      <main style={{ flex: 1, marginLeft: '260px', minHeight: '100vh', background: '#000000', color: '#ffffff' }}>
         {children}
       </main>
     </div>
