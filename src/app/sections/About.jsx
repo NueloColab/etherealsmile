@@ -76,7 +76,6 @@ export default function About() {
               paragraphs.map((para, i) => (
                 <p
                   key={i}
-                  className={`reveal reveal-delay-${Math.min(i + 2, 5)}`}
                   style={{ marginBottom: '1.25rem' }}
                 >
                   {para}
@@ -84,13 +83,13 @@ export default function About() {
               ))
             ) : (
               <>
-                <p className="reveal reveal-delay-2" style={{ marginBottom: '1.25rem' }}>
+                <p style={{ marginBottom: '1.25rem' }}>
                   Tooth gems are small, dazzling crystals bonded to the surface of your teeth using a safe, dental-grade adhesive. They add a subtle sparkle to your smile, turning every conversation into a moment of quiet luxury. No drilling, no damage, just pure brilliance.
                 </p>
-                <p className="reveal reveal-delay-2" style={{ marginBottom: '1.25rem' }}>
+                <p style={{ marginBottom: '1.25rem' }}>
                   We use only genuine Swarovski and Preciosa crystals, the world's finest. Each gem is hand-selected for its cut, clarity, and fire. Whether you choose a single subtle stone or a constellation of sparkles, you're wearing the same quality trusted by luxury jewellers worldwide.
                 </p>
-                <p className="reveal reveal-delay-2" style={{ marginBottom: '1.25rem' }}>
+                <p style={{ marginBottom: '1.25rem' }}>
                   Every appointment is private, relaxed, and tailored to you. We consult on placement and style, apply your gem with meticulous care, and send you home with aftercare guidance.
                 </p>
               </>
