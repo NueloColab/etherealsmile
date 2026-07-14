@@ -45,8 +45,9 @@ export async function PUT(request, { params }) {
     const updated = await db.select().from(clients).where(eq(clients.id, Number(params.id)))
     return NextResponse.json(updated[0])
   } catch (err) {
-    // Handle unique violation on email (Postgres error code 23505)
-    if (err.code === '23505' || err.message?.includes('unique') || err.message?.includes('duplicate')) {
+    // Handle unique violation on email (Drizzle wraps Postgres error in e.cause)
+    const pgError = err.cause || err
+    if (pgError.code === '23505' || pgError.message?.includes('unique') || pgError.message?.includes('duplicate')) {
       return NextResponse.json({ error: 'EMAIL_EXISTS', message: 'A client with this email already exists' }, { status: 409 })
     }
     console.error('Client PUT error:', err)
