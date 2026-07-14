@@ -26,9 +26,21 @@ export const enquiries = pgTable('enquiries', {
   notes: text('notes'),
 })
 
+export const clients = pgTable('clients', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }).notNull().unique(),
+  phone: varchar('phone', { length: 50 }),
+  instagram: varchar('instagram', { length: 255 }),
+  notes: text('notes'),
+  marketingConsent: boolean('marketing_consent').notNull().default(false),
+  source: varchar('source', { length: 50 }).notNull().default('manual'),
+  createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
+})
+
 export const bookings = pgTable('bookings', {
   id: serial('id').primaryKey(),
-  enquiryId: integer('enquiry_id'),
+  clientId: integer('client_id'),
   name: varchar('name', { length: 255 }).notNull(),
   email: varchar('email', { length: 255 }).notNull(),
   phone: varchar('phone', { length: 50 }),

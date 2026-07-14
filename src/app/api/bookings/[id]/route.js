@@ -3,6 +3,7 @@ import { bookings } from '../../../../lib/schema'
 import { eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 import { sendConfirmationEmail, sendAlternativeProposalEmail } from '../../../../lib/email'
+import { createOrAttachClient } from '../../../../lib/createOrAttachClient'
 import { randomBytes } from 'crypto'
 
 export async function GET(request, { params }) {
@@ -47,6 +48,19 @@ export async function PUT(request, { params }) {
 
     // Send emails based on action
     if (body.status === 'confirmed' && booking) {
+      // Create or attach client — failure must NOT block the confirm
+      try {
+        await createOrAttachClient({
+          email: booking.email,
+          name: booking.name,
+          phone: booking.phone || null,
+          source: 'booking_confirmed',
+          bookingId: booking.id,
+        })
+      } catch (clientErr) {
+        console.error('Client attach failed (non-blocking):', clientErr.message)
+      }
+
       await sendConfirmationEmail({
         to: booking.email,
         name: booking.name,
