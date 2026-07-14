@@ -9,8 +9,9 @@ import ScrollReveal from './ScrollReveal'
 export default function LayoutWrapper({ children }) {
   const pathname = usePathname()
   const isAdmin = pathname?.startsWith('/admin')
+  const isConsent = pathname?.startsWith('/consent')
 
-  if (isAdmin) {
+  if (isAdmin || isConsent) {
     return <>{children}</>
   }
 
