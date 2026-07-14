@@ -10,101 +10,121 @@ export default async function Services() {
       id="services"
       className="section"
       style={{
-        background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.5) 10%, rgba(0,0,0,0.5) 90%, transparent)',
+        background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.6) 10%, rgba(0,0,0,0.6) 90%, transparent)',
         paddingTop: '6rem',
         paddingBottom: '6rem',
       }}
     >
       <div className="section-inner">
-        <h2 className="section-title reveal">Services & Price List</h2>
+        <h2 className="section-title reveal">Services &amp; Price List</h2>
         <p className="section-subtitle reveal reveal-delay-1">Luxury crystal options, priced with transparency</p>
 
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-            gap: '1.5rem',
-            marginTop: '3rem',
+            maxWidth: '720px',
+            margin: '3rem auto 0',
           }}
         >
           {items.length > 0 ? (
-            items.map((item) => (
+            items.map((item, i) => (
               <div
                 key={item.id}
-                className="glass-card card-hover"
+                className="reveal"
                 style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
+                  borderBottom: '1px solid rgba(255,255,255,0.06)',
+                  padding: '1.75rem 0',
+                  transition: 'border-color 0.3s ease',
                 }}
               >
-                <div>
-                  <h3
-                    style={{
-                      fontFamily: "'Playfair Display', serif",
-                      fontSize: '1.1rem',
-                      color: '#e94480',
-                      marginBottom: '0.5rem',
-                      fontWeight: 500,
-                    }}
-                  >
-                    {item.name}
-                  </h3>
-                  {item.duration && (
-                    <p
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    gap: '1.5rem',
+                    marginBottom: item.description ? '0.5rem' : '0',
+                  }}
+                >
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <h3
                       style={{
-                        fontFamily: "'Inter', sans-serif",
-                        fontSize: '0.7rem',
-                        letterSpacing: '0.1em',
-                        textTransform: 'uppercase',
-                        color: 'rgba(255,255,255,0.4)',
-                        marginBottom: '0.75rem',
+                        fontFamily: "'Pirata One', 'Playfair Display', cursive",
+                        fontSize: '1.15rem',
+                        color: '#e94480',
+                        fontWeight: 400,
+                        letterSpacing: '0.05em',
+                        marginBottom: '0.35rem',
                       }}
                     >
-                      {item.duration}
-                    </p>
-                  )}
+                      {item.name}
+                    </h3>
+                    {item.duration && (
+                      <p
+                        style={{
+                          fontFamily: "'Inter', sans-serif",
+                          fontSize: '0.65rem',
+                          letterSpacing: '0.15em',
+                          textTransform: 'uppercase',
+                          color: 'rgba(255,255,255,0.35)',
+                        }}
+                      >
+                        {item.duration}
+                      </p>
+                    )}
+                  </div>
+
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '1.25rem',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontFamily: "'Playfair Display', serif",
+                        fontSize: '1.1rem',
+                        color: '#ffffff',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {item.price}
+                    </span>
+                    <a
+                      href={`/#book?service=${encodeURIComponent(item.name)}&price=${encodeURIComponent(item.price)}`}
+                      className="btn btn-outline"
+                      style={{
+                        padding: '0.4rem 1rem',
+                        fontSize: '0.6rem',
+                        letterSpacing: '0.15em',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      Enquire
+                    </a>
+                  </div>
+                </div>
+
+                {item.description && (
                   <p
                     style={{
                       fontFamily: "'Inter', sans-serif",
                       fontSize: '0.8rem',
-                      color: 'rgba(255,255,255,0.65)',
+                      color: 'rgba(255,255,255,0.55)',
                       lineHeight: 1.7,
+                      maxWidth: '85%',
                     }}
                   >
                     {item.description}
                   </p>
-                </div>
-                <div
-                  style={{
-                    marginTop: '1.5rem',
-                    paddingTop: '1rem',
-                    borderTop: '1px solid rgba(255,255,255,0.05)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <span
-                    style={{
-                      fontFamily: "'Playfair Display', serif",
-                      fontSize: '1.2rem',
-                      color: '#ffffff',
-                    }}
-                  >
-                    {item.price}
-                  </span>
-                  <a href="#book" className="btn btn-outline" style={{ padding: '0.5rem 1.25rem', fontSize: '0.6rem' }}>
-                    Enquire
-                  </a>
-                </div>
+                )}
               </div>
             ))
           ) : (
             <div
-              className="glass-card"
+              className="frame-card"
               style={{
-                gridColumn: '1 / -1',
                 textAlign: 'center',
                 padding: '3rem',
               }}

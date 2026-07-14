@@ -158,6 +158,7 @@ export default function EnquiryDetailClient({ enquiry }) {
           <DetailRow label="Name" value={enquiry.name} />
           <DetailRow label="Email" value={enquiry.email} />
           <DetailRow label="Phone" value={enquiry.phone || '-'} />
+          <DetailRow label="Service" value={enquiry.service ? `${enquiry.service} (${enquiry.price || 'TBC'})` : '-'} />
           <DetailRow label="Preferred Date" value={formatDate(enquiry.preferredDate)} />
           <DetailRow label="Preferred Time" value={enquiry.preferredTime || '-'} />
           <DetailRow label="Message" value={enquiry.message || '-'} />

@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server'
 export async function POST(request) {
   try {
     const body = await request.json()
-    const { name, email, phone, preferredDate, preferredTime, message } = body
+    const { name, email, phone, preferredDate, preferredTime, service, price, message } = body
 
     if (!name || !email) {
       return NextResponse.json({ error: 'Name and email are required' }, { status: 400 })
@@ -17,6 +17,8 @@ export async function POST(request) {
       phone: phone || null,
       preferredDate: preferredDate ? new Date(preferredDate) : null,
       preferredTime: preferredTime || null,
+      service: service || null,
+      price: price || null,
       message: message || null,
       status: 'pending',
     })

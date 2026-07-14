@@ -17,6 +17,8 @@ export const enquiries = pgTable('enquiries', {
   proposedTime: varchar('proposed_time', { length: 50 }),
   proposalToken: varchar('proposal_token', { length: 255 }).unique(),
   proposalExpiresAt: timestamp('proposal_expires_at', { mode: 'date' }),
+  service: varchar('service', { length: 255 }),
+  price: varchar('price', { length: 50 }),
   message: text('message'),
   status: enquiryStatusEnum('status').notNull().default('pending'),
   createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),

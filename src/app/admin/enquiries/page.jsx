@@ -36,7 +36,7 @@ export default async function AdminEnquiries() {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                {['ID', 'Name', 'Email', 'Phone', 'Preferred Date', 'Preferred Time', 'Status', 'Submitted'].map((h) => (
+                {['ID', 'Name', 'Email', 'Phone', 'Service', 'Preferred Date', 'Preferred Time', 'Status', 'Submitted'].map((h) => (
                   <th
                     key={h}
                     style={{
@@ -76,6 +76,10 @@ export default async function AdminEnquiries() {
                   </td>
                   <td style={{ padding: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>{e.email}</td>
                   <td style={{ padding: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>{e.phone || '-'}</td>
+                  <td style={{ padding: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>
+                    {e.service || '-'}
+                    {e.price && <span style={{ opacity: 0.6, marginLeft: '4px' }}>({e.price})</span>}
+                  </td>
                   <td style={{ padding: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>
                     {e.preferredDate ? new Date(e.preferredDate).toLocaleDateString('en-GB') : '-'}
                   </td>

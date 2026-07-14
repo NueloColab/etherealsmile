@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -38,12 +39,23 @@ function isDateInPast(year, month, day) {
 }
 
 export default function Book() {
+  const searchParams = useSearchParams()
+  const prefillService = searchParams.get('service') || ''
+  const prefillPrice = searchParams.get('price') || ''
+
   const today = new Date()
   const [year, setYear] = useState(today.getFullYear())
   const [month, setMonth] = useState(today.getMonth())
   const [selectedDate, setSelectedDate] = useState(null)
   const [selectedTime, setSelectedTime] = useState(null)
-  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' })
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: '',
+    service: prefillService,
+    price: prefillPrice,
+  })
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -106,7 +118,7 @@ export default function Book() {
       })
       if (!res.ok) throw new Error('Something went wrong. Please try again.')
       setSubmitted(true)
-      setForm({ name: '', email: '', phone: '', message: '' })
+      setForm({ name: '', email: '', phone: '', message: '', service: '', price: '' })
       setSelectedDate(null)
       setSelectedTime(null)
     } catch (err) {
@@ -285,6 +297,49 @@ export default function Book() {
             >
               Send an Enquiry
             </h3>
+
+            {prefillService && (
+              <div
+                style={{
+                  marginBottom: '1rem',
+                  padding: '0.5rem 0.75rem',
+                  background: 'rgba(233, 68, 128, 0.08)',
+                  borderRadius: '6px',
+                  border: '1px solid rgba(233, 68, 128, 0.15)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                }}
+              >
+                <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '0.8rem', color: '#e94480' }}>
+                  <span style={{ opacity: 0.7 }}>Service:</span>{' '}
+                  <strong>{prefillService}</strong>
+                  {prefillPrice && (
+                    <>{' '}
+                      <span style={{ opacity: 0.7 }}>({prefillPrice})</span>
+                    </>
+                  )}
+                </span>
+                <a
+                  href="/#book"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setForm((f) => ({ ...f, service: '', price: '' }))
+                    window.history.replaceState(null, '', '/#book')
+                  }}
+                  style={{
+                    fontSize: '0.65rem',
+                    color: 'rgba(255,255,255,0.4)',
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  Change
+                </a>
+              </div>
+            )}
 
             {selectedDate && (
               <>
