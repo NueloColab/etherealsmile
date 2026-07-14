@@ -48,6 +48,8 @@ export default function EnquiryDetailClient({ enquiry }) {
     }
     await updateEnquiry({
       status: 'pending',
+      proposedDate: altDate,
+      proposedTime: altTime,
       notes: `Proposed alternative: ${formatDateStr(altDate)} at ${altTime}. Customer preferred: ${formatDate(enquiry.preferredDate)} at ${enquiry.preferredTime || 'TBC'}`,
     })
     setShowAltForm(false)
