@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import AdminSidebar from '../../components/AdminSidebar'
+import AdminErrorBoundary from '../../components/AdminErrorBoundary'
 
 export default function AdminLayout({ children }) {
   const router = useRouter()
@@ -133,7 +134,9 @@ export default function AdminLayout({ children }) {
 
         {/* Page content */}
         <main style={{ padding: '2rem', maxWidth: '1200px', width: '100%' }}>
-          {children}
+          <AdminErrorBoundary>
+            {children}
+          </AdminErrorBoundary>
         </main>
       </div>
 
