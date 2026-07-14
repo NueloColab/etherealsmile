@@ -23,8 +23,9 @@ export default function Hattie() {
             marginTop: '2rem',
           }}
         >
-          {/* Left — Single large image */}
+          { /* Left — Image */ }
           <div
+            className="reveal reveal-left reveal-scale reveal-delay-1"
             style={{
               borderRadius: '16px',
               overflow: 'hidden',
@@ -43,6 +44,7 @@ export default function Hattie() {
             />
           </div>
 
+          { /* Right — Text */ }
           <div
             style={{
               fontFamily: "'Inter', sans-serif",
@@ -52,8 +54,8 @@ export default function Hattie() {
             }}
           >
             <h2
-              style={
-              className="reveal reveal-right",{
+              className="reveal reveal-right"
+              style={{
                 fontFamily: "'Pirata One', 'Playfair Display', cursive",
                 fontSize: 'clamp(2rem, 5vw, 3.2rem)',
                 fontWeight: 400,
@@ -68,6 +70,7 @@ export default function Hattie() {
               Who&rsquo;s Hattie
             </h2>
             <p
+              className="reveal reveal-delay-1"
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontStyle: 'italic',
@@ -81,19 +84,20 @@ export default function Hattie() {
               The face behind the sparkle
             </p>
 
-            <p style={{ marginBottom: '1.25rem' }}>
+            <p className="reveal reveal-delay-2" style={{ marginBottom: '1.25rem' }}>
               I&rsquo;m Hattie Clifford, the founder and artist behind Ethereal Smile. What started as a fascination with the intersection of beauty and self-expression has grown into a passion for helping people discover a new kind of confidence, one tiny sparkle at a time.
             </p>
 
-            <p style={{ marginBottom: '1.25rem' }}>
+            <p className="reveal reveal-delay-2" style={{ marginBottom: '1.25rem' }}>
               I trained extensively in tooth gem application and oral safety, ensuring every procedure meets the highest hygiene standards. But beyond the technical skill, what matters most to me is the experience: making sure every client feels comfortable, heard, and leaves with a smile that truly feels like their own.
             </p>
 
-            <p style={{ marginBottom: '1.25rem' }}>
+            <p className="reveal reveal-delay-2" style={{ marginBottom: '1.25rem' }}>
               Every crystal I place is chosen for its brilliance and quality. I work exclusively with Swarovski and Preciosa because I believe in using only the best. This isn&rsquo;t just a service; it&rsquo;s a collaboration between us, creating something beautiful together.
             </p>
 
             <p
+              className="reveal reveal-delay-4"
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontStyle: 'italic',

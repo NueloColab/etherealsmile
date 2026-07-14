@@ -21,7 +21,7 @@ export default function About() {
             marginTop: '2rem',
           }}
         >
-          {/* Left — Text */}
+          { /* Left — Text */ }
           <div
             style={{
               fontFamily: "'Inter', sans-serif",
@@ -31,8 +31,8 @@ export default function About() {
             }}
           >
             <h2
-              style={
-            className="reveal reveal-left",{
+              className="reveal reveal-left"
+              style={{
                 fontFamily: "'Pirata One', 'Playfair Display', cursive",
                 fontSize: 'clamp(2rem, 5vw, 3.2rem)',
                 fontWeight: 400,
@@ -47,6 +47,7 @@ export default function About() {
               About Ethereal Smile
             </h2>
             <p
+              className="reveal reveal-delay-1"
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontStyle: 'italic',
@@ -60,19 +61,17 @@ export default function About() {
               Luxury crystal tooth gems, applied with precision
             </p>
 
-            <p style={{ marginBottom: '1.25rem' }}>
-            className="reveal reveal-delay-2",
+            <p className="reveal reveal-delay-2" style={{ marginBottom: '1.25rem' }}>
               Tooth gems are small, dazzling crystals bonded to the surface of your teeth using a safe, dental-grade adhesive. They add a subtle sparkle to your smile, turning every conversation into a moment of quiet luxury. No drilling, no damage, just pure brilliance.
             </p>
-            <p style={{ marginBottom: '1.25rem' }}>
-            className="reveal reveal-delay-2",
+            <p className="reveal reveal-delay-2" style={{ marginBottom: '1.25rem' }}>
               We use only genuine Swarovski and Preciosa crystals, the world's finest. Each gem is hand-selected for its cut, clarity, and fire. Whether you choose a single subtle stone or a constellation of sparkles, you're wearing the same quality trusted by luxury jewellers worldwide.
             </p>
-            <p style={{ marginBottom: '1.25rem' }}>
-            className="reveal reveal-delay-2",
+            <p className="reveal reveal-delay-2" style={{ marginBottom: '1.25rem' }}>
               Every appointment is private, relaxed, and tailored to you. We consult on placement and style, apply your gem with meticulous care, and send you home with aftercare guidance.
             </p>
             <p
+              className="reveal reveal-delay-4"
               style={{
                 fontFamily: "'Playfair Display', serif",
                 fontStyle: 'italic',
@@ -85,8 +84,9 @@ export default function About() {
             </p>
           </div>
 
-          {/* Right — Image */}
+          { /* Right — Image */ }
           <div
+            className="reveal reveal-right reveal-scale reveal-delay-1"
             style={{
               borderRadius: '16px',
               overflow: 'hidden',
