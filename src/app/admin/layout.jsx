@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
+import { signOut } from 'next-auth/react'
 import AdminSidebar from '../../components/AdminSidebar'
 import AdminErrorBoundary from '../../components/AdminErrorBoundary'
 
@@ -11,6 +12,7 @@ export default function AdminLayout({ children }) {
   const [authed, setAuthed] = useState(false)
   const [checking, setChecking] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
@@ -66,11 +68,11 @@ export default function AdminLayout({ children }) {
   // Authenticated layout: sidebar + content area
   return (
     <div style={{ minHeight: '100vh', background: '#0a0e17', color: '#ffffff', fontFamily: "'Inter', sans-serif" }}>
-      <AdminSidebar isOpen={sidebarOpen || !isMobile} onClose={() => setSidebarOpen(false)} isMobile={isMobile} />
+      <AdminSidebar isOpen={sidebarOpen || !isMobile} onClose={() => setSidebarOpen(false)} isMobile={isMobile} collapsed={!isMobile && sidebarCollapsed} />
 
       {/* Main content area */}
       <div style={{
-        marginLeft: isMobile ? 0 : '260px',
+        marginLeft: isMobile ? 0 : (sidebarCollapsed ? '64px' : '260px'),
         minHeight: '100vh',
         transition: 'margin-left 0.3s ease',
       }}>
@@ -109,27 +111,86 @@ export default function AdminLayout({ children }) {
                 </svg>
               </button>
             )}
+            {/* Desktop collapse toggle */}
+            {!isMobile && (
+              <button
+                onClick={() => setSidebarCollapsed(c => !c)}
+                title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'rgba(255,255,255,0.4)',
+                  cursor: 'pointer',
+                  padding: '0.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  transition: 'color 0.2s ease',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#e94480')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.4)')}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  {sidebarCollapsed ? (
+                    <>
+                      <polyline points="13 17 18 12 13 7" />
+                      <polyline points="6 17 11 12 6 7" />
+                    </>
+                  ) : (
+                    <>
+                      <polyline points="11 17 6 12 11 7" />
+                      <polyline points="18 17 13 12 18 7" />
+                    </>
+                  )}
+                </svg>
+              </button>
+            )}
             <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
               Admin Portal
             </span>
           </div>
 
-          <a
-            href="/"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              fontSize: '0.7rem',
-              color: 'rgba(255,255,255,0.4)',
-              textDecoration: 'none',
-              padding: '0.4rem 1rem',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '50px',
-              transition: 'all 0.2s ease',
-            }}
-          >
-            View Site &rarr;
-          </a>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontSize: '0.7rem',
+                color: 'rgba(255,255,255,0.4)',
+                textDecoration: 'none',
+                padding: '0.4rem 1rem',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '50px',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              View Site &rarr;
+            </a>
+            <button
+              onClick={() => signOut({ callbackUrl: '/admin/login' })}
+              style={{
+                fontSize: '0.7rem',
+                color: 'rgba(255,255,255,0.4)',
+                background: 'none',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '50px',
+                padding: '0.4rem 1rem',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                letterSpacing: '0.05em',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = '#e57373'
+                e.currentTarget.style.borderColor = 'rgba(239,68,68,0.3)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = 'rgba(255,255,255,0.4)'
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'
+              }}
+            >
+              Sign Out
+            </button>
+          </div>
         </header>
 
         {/* Page content */}

@@ -20,7 +20,7 @@ const bottomMenuItems = [
   { label: 'Back to Site', href: '/', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3' },
 ]
 
-export default function AdminSidebar({ isOpen, onClose, isMobile }) {
+export default function AdminSidebar({ isOpen, onClose, isMobile, collapsed }) {
   const pathname = usePathname()
 
   return (
@@ -45,7 +45,7 @@ export default function AdminSidebar({ isOpen, onClose, isMobile }) {
           left: 0,
           top: 0,
           bottom: 0,
-          width: '260px',
+          width: collapsed ? '64px' : '260px',
           background: '#0a0e17',
           borderRight: '1px solid rgba(233,68,128,0.1)',
           zIndex: 50,
@@ -54,7 +54,8 @@ export default function AdminSidebar({ isOpen, onClose, isMobile }) {
           overflowY: 'auto',
           scrollbarWidth: 'thin',
           scrollbarColor: 'rgba(233,68,128,0.2) transparent',
-          transition: 'transform 0.3s ease',
+          transform: isMobile ? (isOpen ? 'translateX(0)' : 'translateX(-100%)') : undefined,
+          transition: isMobile ? 'transform 0.3s ease' : 'width 0.3s ease',
         }}
       >
         {/* Logo */}
@@ -63,28 +64,31 @@ export default function AdminSidebar({ isOpen, onClose, isMobile }) {
           onClick={onClose}
           style={{
             display: 'block',
-            padding: '1.75rem 1.25rem 1rem',
+            padding: collapsed ? '1rem 0.5rem' : '1.75rem 1.25rem 1rem',
             textDecoration: 'none',
             textAlign: 'center',
             borderBottom: '1px solid rgba(233,68,128,0.1)',
+            overflow: 'hidden',
           }}
         >
           <img
             src="/ethereal-logo.png"
             alt="Ethereal Smile"
-            style={{ height: '48px', width: 'auto', margin: '0 auto 0.5rem', display: 'block' }}
+            style={{ height: collapsed ? '32px' : '48px', width: 'auto', margin: '0 auto 0.5rem', display: 'block' }}
           />
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
-            <div style={{ width: '24px', height: '1px', background: 'rgba(233,68,128,0.3)' }} />
-            <p style={{ fontSize: '9px', letterSpacing: '3px', textTransform: 'uppercase', color: 'rgba(233,68,128,0.5)', margin: 0, fontFamily: "'Inter', sans-serif" }}>
-              Admin Portal
-            </p>
-            <div style={{ width: '24px', height: '1px', background: 'rgba(233,68,128,0.3)' }} />
-          </div>
+          {!collapsed && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
+              <div style={{ width: '24px', height: '1px', background: 'rgba(233,68,128,0.3)' }} />
+              <p style={{ fontSize: '9px', letterSpacing: '3px', textTransform: 'uppercase', color: 'rgba(233,68,128,0.5)', margin: 0, fontFamily: "'Inter', sans-serif" }}>
+                Admin Portal
+              </p>
+              <div style={{ width: '24px', height: '1px', background: 'rgba(233,68,128,0.3)' }} />
+            </div>
+          )}
         </Link>
 
         {/* Main Navigation */}
-        <nav style={{ flex: 1, padding: '0.75rem 0.5rem', marginTop: '0.5rem' }}>
+        <nav style={{ flex: 1, padding: collapsed ? '0.75rem 0.25rem' : '0.75rem 0.5rem', marginTop: '0.5rem' }}>
           <div style={{ marginBottom: '1.5rem' }}>
             {mainMenuItems.map((item) => {
               const isActive = item.href === '/admin'
@@ -95,27 +99,29 @@ export default function AdminSidebar({ isOpen, onClose, isMobile }) {
                   key={item.href}
                   href={item.href}
                   onClick={onClose}
+                  title={collapsed ? item.label : undefined}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.75rem',
-                    padding: '0.65rem 1rem',
+                    justifyContent: collapsed ? 'center' : undefined,
+                    gap: collapsed ? 0 : '0.75rem',
+                    padding: collapsed ? '0.65rem' : '0.65rem 1rem',
                     borderRadius: '8px',
                     fontSize: '0.8rem',
                     fontWeight: isActive ? 600 : 500,
                     letterSpacing: '0.02em',
                     color: isActive ? '#e94480' : 'rgba(255,255,255,0.5)',
                     background: isActive ? 'rgba(233,68,128,0.1)' : 'transparent',
-                    borderLeft: isActive ? '2px solid #e94480' : '2px solid transparent',
+                    borderLeft: isActive ? (collapsed ? '2px solid transparent' : '2px solid #e94480') : '2px solid transparent',
                     textDecoration: 'none',
                     transition: 'all 0.2s ease',
                     marginBottom: '2px',
                   }}
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                     <path d={item.icon} />
                   </svg>
-                  {item.label}
+                  {!collapsed && item.label}
                 </Link>
               )
             })}
@@ -123,17 +129,19 @@ export default function AdminSidebar({ isOpen, onClose, isMobile }) {
         </nav>
 
         {/* Bottom */}
-        <div style={{ padding: '0.75rem 0.5rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ padding: collapsed ? '0.75rem 0.25rem' : '0.75rem 0.5rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
           {bottomMenuItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               onClick={onClose}
+              title={collapsed ? item.label : undefined}
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.75rem',
-                padding: '0.65rem 1rem',
+                justifyContent: collapsed ? 'center' : undefined,
+                gap: collapsed ? 0 : '0.75rem',
+                padding: collapsed ? '0.65rem' : '0.65rem 1rem',
                 borderRadius: '8px',
                 fontSize: '0.75rem',
                 fontWeight: 500,
@@ -144,10 +152,10 @@ export default function AdminSidebar({ isOpen, onClose, isMobile }) {
                 marginBottom: '2px',
               }}
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d={item.icon} />
               </svg>
-              {item.label}
+              {!collapsed && item.label}
             </Link>
           ))}
         </div>
