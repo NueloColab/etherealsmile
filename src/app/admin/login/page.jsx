@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
 export default function AdminLogin() {
@@ -16,20 +15,24 @@ export default function AdminLogin() {
     setLoading(true)
     setError(null)
 
-    const result = await signIn('credentials', {
-      email,
-      password,
-      redirect: false,
-    })
-
-    if (result?.error) {
-      setError('Invalid email or password.')
+    try {
+      const res = await fetch('/api/auth/callback/credentials', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ email, password, csrfToken: 'dummy', callbackUrl: '/admin', json: 'true' }),
+      })
+      const data = await res.json()
+      if (data?.error) {
+        setError('Invalid email or password.')
+        setLoading(false)
+        return
+      }
+      router.push('/admin')
+      router.refresh()
+    } catch {
+      setError('Something went wrong.')
       setLoading(false)
-      return
     }
-
-    router.push('/admin')
-    router.refresh()
   }
 
   return (
