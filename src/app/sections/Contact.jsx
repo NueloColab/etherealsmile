@@ -148,75 +148,55 @@ export default function Contact() {
               ))}
             </div>
 
-            {/* Contact Info Card */}
-            <div
+            {/* Book Now Pill */}
+            <a
+              href="#book"
+              onClick={(e) => {
+                e.preventDefault()
+                document.querySelector('#book')?.scrollIntoView({ behavior: 'smooth' })
+              }}
               style={{
-                borderRadius: '20px',
-                border: '1px solid rgba(233, 68, 128, 0.15)',
-                background: 'rgba(0,0,0,0.25)',
-                backdropFilter: 'blur(12px)',
-                padding: '2rem',
-                textAlign: 'center',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+                padding: '0.85rem 2.5rem',
+                borderRadius: '50px',
+                border: '1.5px solid rgba(233, 68, 128, 0.4)',
+                background: 'rgba(233, 68, 128, 0.08)',
+                backdropFilter: 'blur(8px)',
+                color: '#e94480',
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                textDecoration: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.35s cubic-bezier(0.16,1,0.3,1)',
+                margin: '0 auto',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(233,68,128,0.2)'
+                e.currentTarget.style.borderColor = 'rgba(233,68,128,0.8)'
+                e.currentTarget.style.boxShadow = '0 4px 24px rgba(233,68,128,0.2)'
+                e.currentTarget.style.transform = 'translateY(-3px)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(233,68,128,0.08)'
+                e.currentTarget.style.borderColor = 'rgba(233,68,128,0.4)'
+                e.currentTarget.style.boxShadow = 'none'
+                e.currentTarget.style.transform = 'translateY(0)'
               }}
             >
-              <p
-                style={{
-                  fontFamily: "'Pirata One', 'Playfair Display', cursive",
-                  fontSize: '1.1rem',
-                  color: '#e94480',
-                  marginBottom: '1.25rem',
-                  letterSpacing: '0.05em',
-                }}
-              >
-                Get in Touch
-              </p>
-
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.75rem',
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '0.85rem',
-                  color: 'rgba(255,255,255,0.7)',
-                }}
-              >
-                <a
-                  href={`mailto:${email}`}
-                  style={{
-                    color: 'rgba(255,255,255,0.7)',
-                    textDecoration: 'none',
-                    transition: 'color 0.3s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.5rem',
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = '#e94480')}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.7)')}
-                >
-                  <span style={{ color: '#e94480', fontSize: '0.7rem' }}>\u2709</span> {email}
-                </a>
-                {phone && (
-                  <a
-                    href={`tel:${phone}`}
-                    style={{
-                      color: 'rgba(255,255,255,0.7)',
-                      textDecoration: 'none',
-                      transition: 'color 0.3s ease',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '0.5rem',
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = '#e94480')}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.7)')}
-                  >
-                    <span style={{ color: '#e94480', fontSize: '0.7rem' }}>\u260e</span> {phone}
-                  </a>
-                )}
-              </div>
-            </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              Book Now
+            </a>
           </div>
 
           {/* Right: Form */}
