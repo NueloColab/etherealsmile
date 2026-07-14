@@ -13,12 +13,16 @@ export function useCmsContent(key) {
     if (!key) return
     setLoading(true)
     fetch(`/api/cms?key=${key}`)
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`CMS fetch failed: ${r.status}`)
+        return r.json()
+      })
       .then((data) => {
         setContent(data)
         setLoading(false)
       })
       .catch((err) => {
+        console.error(`useCmsContent(${key}) error:`, err)
         setError(err.message)
         setLoading(false)
       })
@@ -39,10 +43,10 @@ export function useCmsContent(key) {
         setContent(newContent)
         setSaved(true)
         setSaving(false)
-        // Auto-clear the saved state after 3 seconds
         setTimeout(() => setSaved(false), 3000)
         return true
       } catch (err) {
+        console.error(`useCmsContent(${key}) save error:`, err)
         setError(err.message)
         setSaving(false)
         return false
@@ -62,12 +66,16 @@ export function useAllCmsContent() {
   useEffect(() => {
     setLoading(true)
     fetch('/api/cms')
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`CMS fetch failed: ${r.status}`)
+        return r.json()
+      })
       .then((data) => {
         setContent(data)
         setLoading(false)
       })
       .catch((err) => {
+        console.error('useAllCmsContent error:', err)
         setError(err.message)
         setLoading(false)
       })
