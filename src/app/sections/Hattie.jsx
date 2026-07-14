@@ -79,6 +79,17 @@ export default function Hattie() {
             )}
           </div>
         </div>
+
+        {/* Working image */}
+        {workingImage && (
+          <div className="reveal reveal-delay-2" style={{ marginTop: '2rem', textAlign: 'center' }}>
+            <img
+              src={workingImage}
+              alt={`${heading} at work`}
+              style={{ width: '100%', maxWidth: '600px', borderRadius: '8px' }}
+            />
+          </div>
+        )}
       </div>
     </section>
   )
