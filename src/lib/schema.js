@@ -49,6 +49,7 @@ export const bookings = pgTable('bookings', {
   timeSlot: varchar('time_slot', { length: 50 }),
   service: varchar('service', { length: 255 }),
   status: bookingStatusEnum('status').notNull().default('pending'),
+  source: varchar('source', { length: 50 }).notNull().default('website'),
   price: varchar('price', { length: 50 }),
   message: text('message'),
   notes: text('notes'),

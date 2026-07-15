@@ -3,8 +3,16 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
+const SOURCE_STYLES = {
+  website: { color: '#e94480', label: 'Web' },
+  booksy: { color: '#60a5fa', label: 'Booksy' },
+  phone: { color: '#fbbf24', label: 'Phone' },
+  walkin: { color: '#a78bfa', label: 'Walk-in' },
+}
+
 export default function AvailabilityPage() {
   const [blocks, setBlocks] = useState([])
+  const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [saving, setSaving] = useState(false)
@@ -12,16 +20,23 @@ export default function AvailabilityPage() {
   const [form, setForm] = useState({ date: '', timeSlot: '', reason: '' })
 
   useEffect(() => {
-    fetchBlocks()
+    fetchAll()
   }, [])
 
-  async function fetchBlocks() {
+  async function fetchAll() {
     setLoading(true)
     try {
-      const res = await fetch('/api/availability')
-      const data = await res.json()
-      if (data.success) setBlocks(data.data)
-      else setError(data.error)
+      const [blocksRes, bookingsRes] = await Promise.all([
+        fetch('/api/availability'),
+        fetch('/api/bookings?limit=200'),
+      ])
+      const blocksData = await blocksRes.json()
+      const bookingsData = await bookingsRes.json()
+
+      if (blocksData.success) setBlocks(blocksData.data)
+      else setError(blocksData.error)
+
+      setBookings(Array.isArray(bookingsData) ? bookingsData : [])
     } catch (err) {
       setError(err.message)
     } finally {
@@ -71,6 +86,22 @@ export default function AvailabilityPage() {
     return new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
   }
 
+  function getDateKey(date) {
+    const d = new Date(date)
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${y}-${m}-${day}`
+  }
+
+  // Merge blocks + bookings into a single diary view
+  const diaryItems = [
+    ...blocks.map((b) => ({ ...b, type: 'block' })),
+    ...bookings
+      .filter((b) => b.status === 'confirmed' || b.status === 'pending')
+      .map((b) => ({ ...b, type: 'booking' })),
+  ].sort((a, b) => new Date(a.date || a.preferredDate) - new Date(b.date || b.preferredDate))
+
   const inputStyle = {
     width: '100%',
     padding: '0.85rem 1rem',
@@ -102,8 +133,22 @@ export default function AvailabilityPage() {
           My Schedule
         </h1>
         <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem', marginTop: '0.5rem' }}>
-          Block dates and times you are not available. Customers will not be able to book these slots.
+          Your full diary — website bookings, Booksy, phone, and blocked slots all in one place.
         </p>
+      </div>
+
+      {/* Legend */}
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#e94480' }} />
+          <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>Blocked / Unavailable</span>
+        </div>
+        {Object.entries(SOURCE_STYLES).map(([key, style]) => (
+          <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: style.color }} />
+            <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', textTransform: 'capitalize' }}>{style.label} Booking</span>
+          </div>
+        ))}
       </div>
 
       {error && (
@@ -167,63 +212,109 @@ export default function AvailabilityPage() {
         `}</style>
       </div>
 
-      {/* List */}
+      {/* Diary list */}
       {loading ? (
-        <p style={{ color: 'rgba(255,255,255,0.4)' }}>Loading...</p>
-      ) : blocks.length === 0 ? (
+        <p style={{ color: 'rgba(255,255,255,0.4)' }}>Loading diary...</p>
+      ) : diaryItems.length === 0 ? (
         <p style={{ color: 'rgba(255,255,255,0.4)', textAlign: 'center', padding: '2rem' }}>
-          No blocked slots yet. Add your Booksy bookings and holidays here to prevent double-booking.
+          Nothing in your diary yet. Add bookings from the Bookings page or block slots here.
         </p>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {blocks.map((block) => (
-            <div
-              key={block.id}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '0.75rem 1rem',
-                background: 'rgba(255,255,255,0.03)',
-                borderRadius: '8px',
-                border: '1px solid rgba(255,255,255,0.06)',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-                <span style={{ color: '#e94480', fontWeight: 600, fontSize: '0.9rem' }}>
-                  {formatDate(block.date)}
-                </span>
-                {block.timeSlot ? (
-                  <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.8rem' }}>
-                    {block.timeSlot}
-                  </span>
-                ) : (
-                  <span style={{ padding: '0.15rem 0.5rem', borderRadius: '4px', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', background: 'rgba(233,68,128,0.1)', color: '#e94480', border: '1px solid rgba(233,68,128,0.2)' }}>
-                    All day
-                  </span>
-                )}
-                {block.reason && (
-                  <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem' }}>
-                    {block.reason}
-                  </span>
-                )}
-              </div>
-              <button
-                onClick={() => removeBlock(block.id)}
+          {diaryItems.map((item) => {
+            if (item.type === 'block') {
+              return (
+                <div
+                  key={`block-${item.id}`}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '0.75rem 1rem',
+                    background: 'rgba(239,68,68,0.04)',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(239,68,68,0.15)',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                    <span style={{ color: '#e94480', fontWeight: 600, fontSize: '0.9rem' }}>
+                      {formatDate(item.date)}
+                    </span>
+                    {item.timeSlot ? (
+                      <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.8rem' }}>{item.timeSlot}</span>
+                    ) : (
+                      <span style={{ padding: '0.15rem 0.5rem', borderRadius: '4px', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', background: 'rgba(239,68,68,0.1)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)' }}>
+                        All day
+                      </span>
+                    )}
+                    <span style={{ padding: '0.15rem 0.5rem', borderRadius: '4px', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', background: 'rgba(239,68,68,0.08)', color: '#f87171', border: '1px solid rgba(239,68,68,0.15)' }}>
+                      Blocked
+                    </span>
+                    {item.reason && (
+                      <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem' }}>{item.reason}</span>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => removeBlock(item.id)}
+                    style={{
+                      background: 'none',
+                      border: '1px solid rgba(239,68,68,0.3)',
+                      color: '#f87171',
+                      borderRadius: '4px',
+                      padding: '0.3rem 0.6rem',
+                      fontSize: '0.7rem',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              )
+            }
+
+            const src = SOURCE_STYLES[item.source] || SOURCE_STYLES.website
+            return (
+              <Link
+                key={`booking-${item.id}`}
+                href={`/admin/bookings/${item.id}`}
                 style={{
-                  background: 'none',
-                  border: '1px solid rgba(239,68,68,0.3)',
-                  color: '#f87171',
-                  borderRadius: '4px',
-                  padding: '0.3rem 0.6rem',
-                  fontSize: '0.7rem',
-                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '0.75rem 1rem',
+                  background: 'rgba(255,255,255,0.03)',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                  textDecoration: 'none',
+                  transition: 'background 0.15s ease',
                 }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.03)')}
               >
-                Remove
-              </button>
-            </div>
-          ))}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                  <span style={{ color: '#e94480', fontWeight: 600, fontSize: '0.9rem' }}>
+                    {formatDate(item.date)}
+                  </span>
+                  <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.8rem' }}>{item.timeSlot}</span>
+                  <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.85rem' }}>{item.name}</span>
+                  <span style={{ padding: '0.15rem 0.5rem', borderRadius: '4px', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', background: src.color + '1a', color: src.color, border: `1px solid ${src.color}33` }}>
+                    {src.label}
+                  </span>
+                  {item.status === 'pending' && (
+                    <span style={{ padding: '0.15rem 0.5rem', borderRadius: '4px', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', background: 'rgba(233,68,128,0.1)', color: '#e94480', border: '1px solid rgba(233,68,128,0.2)' }}>
+                      Pending
+                    </span>
+                  )}
+                  {item.service && (
+                    <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem' }}>{item.service}</span>
+                  )}
+                </div>
+                <span style={{ color: '#e94480', fontSize: '0.75rem', letterSpacing: '0.05em' }}>
+                  View &rarr;
+                </span>
+              </Link>
+            )
+          })}
         </div>
       )}
     </div>

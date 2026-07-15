@@ -38,7 +38,10 @@ export async function POST(request) {
       return NextResponse.json({ error: 'This time slot is no longer available. Please select another slot.' }, { status: 409 })
     }
 
-    await db.insert(bookings).values({
+    const source = body.source || 'website'
+    const bookingStatus = body.status || 'pending'
+
+    const [newBooking] = await db.insert(bookings).values({
       name,
       email,
       phone: phone || null,
@@ -48,25 +51,41 @@ export async function POST(request) {
       service: service || null,
       price: price || null,
       message: message || null,
-      status: 'pending',
-    })
+      status: bookingStatus,
+      source,
+      confirmedAt: bookingStatus === 'confirmed' ? new Date() : null,
+    }).returning()
 
-    // Send notification email to Hattie
-    const emailResult = await sendNewBookingNotification({
-      name,
-      email,
-      phone: phone || 'Not provided',
-      preferredDate: preferredDate
-        ? new Date(preferredDate).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
-        : 'Not specified',
-      preferredTime: preferredTime || 'Not specified',
-      service: service || 'Not specified',
-      price: price || 'Not specified',
-      message: message || 'None',
-      isMinor: isMinor || false,
-    })
+    // Auto-block availability for manual bookings (Booksy, phone, etc.)
+    if (source !== 'website' && preferredDate && preferredTime) {
+      await db.insert(availability).values({
+        date: new Date(preferredDate),
+        timeSlot: preferredTime,
+        reason: `${source} booking — ${name}`,
+      }).catch(() => {
+        // Ignore duplicate block errors
+      })
+    }
 
-    return NextResponse.json({ success: true, emailId: emailResult?.id || null }, { status: 201 })
+    // Send notification email to Hattie (only for website bookings)
+    let emailResult = null
+    if (source === 'website') {
+      emailResult = await sendNewBookingNotification({
+        name,
+        email,
+        phone: phone || 'Not provided',
+        preferredDate: preferredDate
+          ? new Date(preferredDate).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+          : 'Not specified',
+        preferredTime: preferredTime || 'Not specified',
+        service: service || 'Not specified',
+        price: price || 'Not specified',
+        message: message || 'None',
+        isMinor: isMinor || false,
+      })
+    }
+
+    return NextResponse.json({ success: true, data: newBooking, emailId: emailResult?.id || null }, { status: 201 })
   } catch (err) {
     console.error('Booking error:', err)
     return NextResponse.json({ error: 'Failed to create booking' }, { status: 500 })

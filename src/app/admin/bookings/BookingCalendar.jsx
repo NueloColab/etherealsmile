@@ -9,6 +9,13 @@ const STATUS_DOT = {
   confirmed: { color: '#4ade80', label: 'Confirmed' },
 }
 
+const SOURCE_DOT = {
+  website: '#e94480',
+  booksy: '#60a5fa',
+  phone: '#fbbf24',
+  walkin: '#a78bfa',
+}
+
 export default function BookingCalendar({ bookings }) {
   const today = new Date()
   const [year, setYear] = useState(today.getFullYear())
@@ -119,12 +126,21 @@ export default function BookingCalendar({ bookings }) {
             >
               {day}
               {dayBookings.length > 0 && (
-                <div style={{ display: 'flex', gap: '2px' }}>
-                  {hasConfirmed && (
-                    <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#4ade80' }} />
-                  )}
-                  {hasPending && (
-                    <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#e94480' }} />
+                <div style={{ display: 'flex', gap: '2px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                  {dayBookings.slice(0, 4).map((b, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        width: '4px',
+                        height: '4px',
+                        borderRadius: '50%',
+                        background: SOURCE_DOT[b.source] || SOURCE_DOT.website,
+                      }}
+                      title={`${b.name} — ${b.source}`}
+                    />
+                  ))}
+                  {dayBookings.length > 4 && (
+                    <span style={{ fontSize: '0.5rem', color: 'rgba(255,255,255,0.4)', lineHeight: '4px' }}>+</span>
                   )}
                 </div>
               )}
@@ -145,13 +161,18 @@ export default function BookingCalendar({ bookings }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               {selectedBookings.map(booking => {
                 const dot = STATUS_DOT[booking.status] || STATUS_DOT.pending
+                const srcColor = SOURCE_DOT[booking.source] || SOURCE_DOT.website
+                const srcLabel = booking.source === 'booksy' ? 'Booksy' : booking.source === 'phone' ? 'Phone' : booking.source === 'walkin' ? 'Walk-in' : 'Web'
                 return (
                   <div key={booking.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
                       <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.85rem' }}>{booking.name}</span>
                       <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem' }}>{booking.timeSlot}{booking.service ? ` · ${booking.service}` : ''}{booking.price ? ` · ${booking.price}` : ''}</span>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span style={{ padding: '0.2rem 0.4rem', borderRadius: '4px', fontSize: '0.55rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', background: srcColor + '1a', color: srcColor, border: `1px solid ${srcColor}33` }}>
+                        {srcLabel}
+                      </span>
                       <span style={{ padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', background: dot.color + '1a', color: dot.color, border: `1px solid ${dot.color}33` }}>
                         {dot.label}
                       </span>
