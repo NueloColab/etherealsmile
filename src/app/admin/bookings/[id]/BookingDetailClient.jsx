@@ -394,7 +394,7 @@ export default function BookingDetailClient({ booking: initialBooking }) {
       )}
 
       {/* Consent Records Panel */}
-      <ConsentRecordsPanel scope="booking" targetId={booking.id} />
+      <ConsentRecordsPanel scope="booking" targetId={booking.id} bookingStatus={status} />
 
       {/* Metadata */}
       <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.05em' }}>

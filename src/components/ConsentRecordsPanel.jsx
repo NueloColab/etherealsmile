@@ -27,7 +27,7 @@ function formatDocType(t) {
   return map[t] || t
 }
 
-export default function ConsentRecordsPanel({ scope, targetId }) {
+export default function ConsentRecordsPanel({ scope, targetId, bookingStatus }) {
   const [records, setRecords] = useState([])
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(null)
@@ -35,6 +35,9 @@ export default function ConsentRecordsPanel({ scope, targetId }) {
   const [downloading, setDownloading] = useState(null)
   const [error, setError] = useState(null)
   const [successMsg, setSuccessMsg] = useState(null)
+
+  // For booking scope, only allow sending when the booking is confirmed (has a clientId)
+  const canSend = scope === 'client' || bookingStatus === 'confirmed'
 
   async function fetchRecords() {
     setLoading(true)
@@ -65,37 +68,26 @@ export default function ConsentRecordsPanel({ scope, targetId }) {
     setSending(documentType)
     setError(null)
     setSuccessMsg(null)
-    console.log('[CONSENT PANEL] handleSend called, scope:', scope, 'targetId:', targetId, 'docType:', documentType)
     try {
-      // Need clientId - for booking scope, get from first record or fetch booking
-      // For client scope, use targetId directly
       let clientId = scope === 'client' ? targetId : null
 
       if (scope === 'booking') {
-        // Try to get clientId from existing records first
+        // Confirmed bookings always have a clientId, but resolve it from records first
         const recordsWithClient = records.filter(r => r.clientId)
         if (recordsWithClient.length > 0) {
           clientId = recordsWithClient[0].clientId
-          console.log('[CONSENT PANEL] Got clientId from existing records:', clientId)
         } else {
           // Fetch the booking to get the client ID
-          console.log('[CONSENT PANEL] No records with clientId, fetching booking /api/bookings/' + targetId)
           const bookingRes = await fetch(`/api/bookings/${targetId}`)
-          console.log('[CONSENT PANEL] Booking fetch status:', bookingRes.status, bookingRes.ok)
           if (bookingRes.ok) {
             const bookingData = await bookingRes.json()
-            console.log('[CONSENT PANEL] Booking data:', JSON.stringify({ id: bookingData.id, name: bookingData.name, clientId: bookingData.clientId, email: bookingData.email }))
             clientId = bookingData.clientId
-          } else {
-            const errText = await bookingRes.text()
-            console.error('[CONSENT PANEL] Booking fetch failed:', bookingRes.status, errText?.substring(0, 200))
           }
         }
       }
 
       if (!clientId) {
-        console.error('[CONSENT PANEL] Could not determine clientId. scope:', scope, 'targetId:', targetId, 'records:', records.length)
-        setError('Cannot determine client for this booking')
+        setError('Client not linked to this booking. Try refreshing the page.')
         setSending(null)
         return
       }
@@ -104,8 +96,6 @@ export default function ConsentRecordsPanel({ scope, targetId }) {
       if (scope === 'booking') {
         body.bookingId = targetId
       }
-
-      console.log('[CONSENT PANEL] Sending POST /api/consent-records with body:', JSON.stringify(body))
 
       const res = await fetch('/api/consent-records', {
         method: 'POST',
@@ -218,6 +208,21 @@ export default function ConsentRecordsPanel({ scope, targetId }) {
         </div>
       )}
 
+      {/* Pending booking notice - gate sending on confirmed status */}
+      {scope === 'booking' && !canSend && (
+        <div style={{ padding: '0.75rem 1rem', borderRadius: '8px', background: 'rgba(233,68,128,0.06)', border: '1px solid rgba(233,68,128,0.2)', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+            <span style={{ fontSize: '1rem', lineHeight: 1 }}>&#128274;</span>
+            <div>
+              <p style={{ margin: 0, fontSize: '0.85rem', color: '#e94480', fontWeight: 500 }}>Confirm this booking to send consent forms</p>
+              <p style={{ margin: '0.25rem 0 0', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.5 }}>
+                Consent forms can only be sent once a booking is confirmed and linked to a client record.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Existing records */}
       {records.length === 0 && (
         <div style={{ padding: '1rem', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', marginBottom: '1rem' }}>
@@ -326,36 +331,69 @@ export default function ConsentRecordsPanel({ scope, targetId }) {
       })}
 
       {/* Send new document section */}
-      <div style={{ marginTop: '1rem', padding: '1rem', borderRadius: '8px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
-        <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-          Send consent form
+      {canSend ? (
+        <div style={{ marginTop: '1rem', padding: '1rem', borderRadius: '8px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            Send consent form
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+            {DOC_TYPES.map(doc => {
+              const isLive = liveDocTypes.has(doc.type)
+              return (
+                <button type="button"
+                  key={doc.type}
+                  onClick={() => !isLive && handleSend(doc.type)}
+                  disabled={isLive || sending !== null}
+                  style={{
+                    padding: '0.4rem 0.8rem',
+                    borderRadius: '6px',
+                    border: isLive ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(233,68,128,0.3)',
+                    background: isLive ? 'rgba(255,255,255,0.03)' : 'rgba(233,68,128,0.08)',
+                    color: isLive ? 'rgba(255,255,255,0.2)' : '#e94480',
+                    fontSize: '0.7rem',
+                    fontWeight: 500,
+                    cursor: isLive || sending !== null ? 'not-allowed' : 'pointer',
+                    letterSpacing: '0.03em',
+                  }}
+                >
+                  {sending === doc.type ? 'Sending...' : isLive ? `${doc.label} (sent)` : doc.label}
+                </button>
+              )
+            })}
+          </div>
         </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-          {DOC_TYPES.map(doc => {
-            const isLive = liveDocTypes.has(doc.type)
-            return (
-              <button type="button"
-                key={doc.type}
-                onClick={() => !isLive && handleSend(doc.type)}
-                disabled={isLive || sending !== null}
-                style={{
-                  padding: '0.4rem 0.8rem',
-                  borderRadius: '6px',
-                  border: isLive ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(233,68,128,0.3)',
-                  background: isLive ? 'rgba(255,255,255,0.03)' : 'rgba(233,68,128,0.08)',
-                  color: isLive ? 'rgba(255,255,255,0.2)' : '#e94480',
-                  fontSize: '0.7rem',
-                  fontWeight: 500,
-                  cursor: isLive || sending !== null ? 'not-allowed' : 'pointer',
-                  letterSpacing: '0.03em',
-                }}
-              >
-                {sending === doc.type ? 'Sending...' : isLive ? `${doc.label} (sent)` : doc.label}
-              </button>
-            )
-          })}
+      ) : scope === 'booking' ? null : (
+        <div style={{ marginTop: '1rem', padding: '1rem', borderRadius: '8px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            Send consent form
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+            {DOC_TYPES.map(doc => {
+              const isLive = liveDocTypes.has(doc.type)
+              return (
+                <button type="button"
+                  key={doc.type}
+                  onClick={() => !isLive && handleSend(doc.type)}
+                  disabled={isLive || sending !== null}
+                  style={{
+                    padding: '0.4rem 0.8rem',
+                    borderRadius: '6px',
+                    border: isLive ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(233,68,128,0.3)',
+                    background: isLive ? 'rgba(255,255,255,0.03)' : 'rgba(233,68,128,0.08)',
+                    color: isLive ? 'rgba(255,255,255,0.2)' : '#e94480',
+                    fontSize: '0.7rem',
+                    fontWeight: 500,
+                    cursor: isLive || sending !== null ? 'not-allowed' : 'pointer',
+                    letterSpacing: '0.03em',
+                  }}
+                >
+                  {sending === doc.type ? 'Sending...' : isLive ? `${doc.label} (sent)` : doc.label}
+                </button>
+              )
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
