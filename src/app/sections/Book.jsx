@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { useCmsContent } from '../../lib/useCmsContent'
 import { MONTHS, WEEKDAYS, getCalendarDays, isDateInPast } from '../../lib/calendar'
 
-const DEFAULT_TIME_SLOTS = ['10:00', '11:30', '13:00', '14:30', '16:00']
+const DEFAULT_TIME_SLOTS = ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00']
 
 export default function Book() {
   const searchParams = useSearchParams()
@@ -427,9 +427,10 @@ export default function Book() {
                     Preferred Time
                   </label>
                   <div
+                    className="time-slot-grid"
                     style={{
                       display: 'grid',
-                      gridTemplateColumns: 'repeat(3, 1fr)',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(72px, 1fr))',
                       gap: '0.5rem',
                     }}
                   >
@@ -570,6 +571,13 @@ export default function Book() {
           </div>
         </div>
       </div>
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .time-slot-grid {
+            grid-template-columns: repeat(3, 1fr) !important;
+          }
+        }
+      `}</style>
     </section>
   )
 }
