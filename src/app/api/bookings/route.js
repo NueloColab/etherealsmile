@@ -1,7 +1,7 @@
 import { db } from '../../../lib/db'
 import { dbAdmin } from '../../../lib/db-admin'
-import { bookings } from '../../../lib/schema'
-import { eq, desc } from 'drizzle-orm'
+import { bookings, availability } from '../../../lib/schema'
+import { eq, desc, and, sql } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 import { sendNewBookingNotification } from '../../../lib/email'
 
@@ -12,6 +12,30 @@ export async function POST(request) {
 
     if (!name || !email || !phone || !preferredDate || !preferredTime) {
       return NextResponse.json({ error: 'Name, email, phone, date and time are required' }, { status: 400 })
+    }
+
+    // Check availability
+    const dateObj = new Date(preferredDate)
+    const dateOnly = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate())
+
+    const dayBlocked = await db.select().from(availability).where(
+      and(
+        sql`date_trunc('day', ${availability.date}) = date_trunc('day', ${dateOnly}::timestamp)`,
+        eq(availability.timeSlot, null)
+      )
+    )
+    if (dayBlocked.length > 0) {
+      return NextResponse.json({ error: 'This date is fully booked. Please select another date.' }, { status: 409 })
+    }
+
+    const slotBlocked = await db.select().from(availability).where(
+      and(
+        sql`date_trunc('day', ${availability.date}) = date_trunc('day', ${dateOnly}::timestamp)`,
+        eq(availability.timeSlot, preferredTime)
+      )
+    )
+    if (slotBlocked.length > 0) {
+      return NextResponse.json({ error: 'This time slot is no longer available. Please select another slot.' }, { status: 409 })
     }
 
     await db.insert(bookings).values({

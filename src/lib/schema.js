@@ -62,6 +62,14 @@ export const bookings = pgTable('bookings', {
   createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
 })
 
+export const availability = pgTable('availability', {
+  id: serial('id').primaryKey(),
+  date: timestamp('date', { mode: 'date' }).notNull(),
+  timeSlot: varchar('time_slot', { length: 50 }),
+  reason: varchar('reason', { length: 255 }),
+  createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
+})
+
 export const blogPosts = pgTable('blog_posts', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),

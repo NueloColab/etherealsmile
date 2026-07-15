@@ -2,6 +2,32 @@
 
 import { useState, useRef } from 'react'
 
+async function uploadToCloudinary(file, folder, resourceType) {
+  const signRes = await fetch('/api/cloudinary/sign', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ folder, resourceType }),
+  })
+  if (!signRes.ok) throw new Error('Failed to get upload signature')
+  const { signature, timestamp, apiKey, cloudName, folder: signedFolder } = await signRes.json()
+
+  const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('api_key', apiKey)
+  formData.append('timestamp', timestamp)
+  formData.append('signature', signature)
+  formData.append('folder', signedFolder)
+
+  const uploadRes = await fetch(cloudinaryUrl, { method: 'POST', body: formData })
+  if (!uploadRes.ok) {
+    const err = await uploadRes.json().catch(() => ({}))
+    throw new Error(err.error?.message || 'Cloudinary upload failed')
+  }
+  const data = await uploadRes.json()
+  return data.secure_url
+}
+
 export default function CloudinaryUpload({ onUpload, label = 'Upload Image', currentUrl }) {
   const [uploading, setUploading] = useState(false)
   const [dragActive, setDragActive] = useState(false)
@@ -11,22 +37,11 @@ export default function CloudinaryUpload({ onUpload, label = 'Upload Image', cur
     if (!file) return
     setUploading(true)
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('folder', 'cms')
-
-      const res = await fetch('/api/cloudinary/upload', {
-        method: 'POST',
-        body: formData,
-      })
-
-      if (!res.ok) throw new Error('Upload failed')
-
-      const data = await res.json()
-      onUpload(data.url)
+      const url = await uploadToCloudinary(file, 'cms', 'image')
+      onUpload(url)
     } catch (error) {
       console.error('Upload error:', error)
-      alert('Failed to upload image. Please try again.')
+      alert('Failed to upload image: ' + error.message)
     } finally {
       setUploading(false)
     }

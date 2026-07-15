@@ -60,6 +60,40 @@ export default function Book() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [availability, setAvailability] = useState([])
+
+  // Fetch availability blocks
+  useEffect(() => {
+    fetch('/api/availability')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success) setAvailability(data.data)
+      })
+      .catch(() => {})
+  }, [])
+
+  function getDateKey(date) {
+    const d = new Date(date)
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${y}-${m}-${day}`
+  }
+
+  function isDateBlocked(day) {
+    if (!day) return false
+    const key = getDateKey(new Date(year, month, day))
+    return availability.some((b) => getDateKey(b.date) === key && !b.timeSlot)
+  }
+
+  function getAvailableSlots() {
+    if (!selectedDate) return timeSlots
+    const key = getDateKey(selectedDate)
+    const blockedSlots = availability
+      .filter((b) => getDateKey(b.date) === key && b.timeSlot)
+      .map((b) => b.timeSlot)
+    return timeSlots.filter((t) => !blockedSlots.includes(t))
+  }
 
   const days = getCalendarDays(year, month)
 
@@ -212,6 +246,7 @@ export default function Book() {
               ))}
               {days.map((day, i) => {
                 const isPast = day && isDateInPast(year, month, day)
+                const isBlocked = day && isDateBlocked(day)
                 const isSelected =
                   day &&
                   selectedDate &&
@@ -223,16 +258,18 @@ export default function Book() {
                   <button
                     key={i}
                     onClick={() => selectDate(day)}
-                    disabled={!day || isPast}
+                    disabled={!day || isPast || isBlocked}
                     style={{
                       aspectRatio: '1',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       borderRadius: '6px',
-                      border: isSelected ? '1px solid #e94480' : '1px solid transparent',
+                      border: isSelected ? '1px solid #e94480' : isBlocked ? '1px solid rgba(239,68,68,0.3)' : '1px solid transparent',
                       background: isSelected
                         ? 'rgba(233, 68, 128, 0.25)'
+                        : isBlocked
+                        ? 'rgba(239,68,68,0.08)'
                         : isPast
                         ? 'transparent'
                         : day
@@ -240,16 +277,20 @@ export default function Book() {
                         : 'transparent',
                       color: isSelected
                         ? '#e94480'
+                        : isBlocked
+                        ? 'rgba(239,68,68,0.5)'
                         : isPast
                         ? 'rgba(255,255,255,0.15)'
                         : 'rgba(255,255,255,0.8)',
                       fontFamily: "'Inter', sans-serif",
                       fontSize: '0.8rem',
                       fontWeight: isSelected ? 600 : 400,
-                      cursor: day && !isPast ? 'pointer' : 'default',
+                      cursor: day && !isPast && !isBlocked ? 'pointer' : 'default',
                       transition: 'all 0.2s ease',
                       boxShadow: isSelected ? '0 0 12px rgba(233, 68, 128, 0.3)' : 'none',
+                      textDecoration: isBlocked ? 'line-through' : 'none',
                     }}
+                    title={isBlocked ? 'Not available' : undefined}
                   >
                     {day || ''}
                   </button>
@@ -392,7 +433,7 @@ export default function Book() {
                       gap: '0.5rem',
                     }}
                   >
-                    {timeSlots.map((time) => {
+                    {getAvailableSlots().map((time) => {
                       const isSelected = selectedTime === time
                       return (
                         <button
@@ -423,6 +464,11 @@ export default function Book() {
                         </button>
                       )
                     })}
+                    {getAvailableSlots().length === 0 && (
+                      <p style={{ gridColumn: '1 / -1', color: 'rgba(239,68,68,0.6)', fontSize: '0.8rem', textAlign: 'center', padding: '0.5rem' }}>
+                        No available slots on this date.
+                      </p>
+                    )}
                   </div>
                 </div>
               </>
