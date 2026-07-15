@@ -5,9 +5,11 @@ import { useCmsContent } from '../../../../lib/useCmsContent'
 import Link from 'next/link'
 import CloudinaryUpload from '../../../../components/CloudinaryUpload'
 import CloudinaryVideoUpload from '../../../../components/CloudinaryVideoUpload'
+import { useToast } from '../../../../components/Toast'
 
 export default function ShowreelCmsPage() {
   const { content, loading, saving, save, error } = useCmsContent('showreel')
+  const { addToast } = useToast()
   const [form, setForm] = useState(null)
 
   if (loading) {
@@ -34,6 +36,7 @@ export default function ShowreelCmsPage() {
   const handleSave = async () => {
     await save(current)
     setForm(null)
+    addToast('Showreel saved', 'success')
   }
 
   const hasChanges = JSON.stringify(form) !== JSON.stringify(content)
@@ -220,9 +223,7 @@ export default function ShowreelCmsPage() {
               <video
                 src={current.videoUrl}
                 poster={current.posterImage || ''}
-                muted
-                loop
-                playsInline
+                controls
                 preload="metadata"
                 style={{
                   position: 'absolute',

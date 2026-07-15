@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { useToast } from './Toast'
 
 async function uploadToCloudinary(file, folder, resourceType) {
   // 1. Get signed params from server
@@ -34,6 +35,7 @@ export default function CloudinaryVideoUpload({ onUpload, label = 'Upload Video'
   const [uploading, setUploading] = useState(false)
   const [dragActive, setDragActive] = useState(false)
   const fileInputRef = useRef(null)
+  const { addToast } = useToast()
 
   async function handleUpload(file) {
     if (!file) return
@@ -41,9 +43,10 @@ export default function CloudinaryVideoUpload({ onUpload, label = 'Upload Video'
     try {
       const url = await uploadToCloudinary(file, 'videos', 'video')
       onUpload(url)
+      addToast('Video uploaded successfully', 'success')
     } catch (error) {
       console.error('Upload error:', error)
-      alert('Failed to upload video: ' + error.message)
+      addToast('Failed to upload video: ' + error.message, 'error')
     } finally {
       setUploading(false)
     }
@@ -70,6 +73,7 @@ export default function CloudinaryVideoUpload({ onUpload, label = 'Upload Video'
 
   function handleRemove() {
     onUpload('')
+    addToast('Video removed', 'success')
   }
 
   return (
@@ -84,9 +88,7 @@ export default function CloudinaryVideoUpload({ onUpload, label = 'Upload Video'
         <div style={{ position: 'relative', border: '1px solid rgba(233,68,128,0.15)', borderRadius: '10px', overflow: 'hidden', background: 'rgba(255,255,255,0.02)' }}>
           <video
             src={currentUrl}
-            muted
-            loop
-            playsInline
+            controls
             preload="metadata"
             style={{ width: '100%', maxHeight: '250px', objectFit: 'cover', display: 'block' }}
           />

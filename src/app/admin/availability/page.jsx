@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useToast } from '../../../components/Toast'
 
 const SOURCE_STYLES = {
   website: { color: '#e94480', label: 'Web' },
@@ -18,6 +19,7 @@ export default function AvailabilityPage() {
   const [saving, setSaving] = useState(false)
 
   const [form, setForm] = useState({ date: '', timeSlot: '', reason: '' })
+  const { addToast } = useToast()
 
   useEffect(() => {
     fetchAll()
@@ -58,6 +60,7 @@ export default function AvailabilityPage() {
       if (data.success) {
         setBlocks((prev) => [...prev, data.data].sort((a, b) => new Date(a.date) - new Date(b.date)))
         setForm({ date: '', timeSlot: '', reason: '' })
+        addToast('Slot blocked', 'success')
       } else {
         alert(data.error)
       }
@@ -75,6 +78,7 @@ export default function AvailabilityPage() {
       const data = await res.json()
       if (data.success) {
         setBlocks((prev) => prev.filter((b) => b.id !== id))
+        addToast('Block removed', 'success')
       }
     } catch (err) {
       alert(err.message)

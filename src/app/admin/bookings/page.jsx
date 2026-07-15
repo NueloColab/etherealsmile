@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import BookingCalendar from './BookingCalendar'
+import { useToast } from '../../../components/Toast'
 
 const STATUS_STYLES = {
   pending: { bg: 'rgba(233,68,128,0.1)', color: '#e94480', border: 'rgba(233,68,128,0.2)' },
@@ -29,6 +30,7 @@ export default function BookingsPage() {
   const [view, setView] = useState('calendar')
   const [showAdd, setShowAdd] = useState(false)
   const [adding, setAdding] = useState(false)
+  const { addToast } = useToast()
 
   const [newBooking, setNewBooking] = useState({
     name: '',
@@ -101,6 +103,7 @@ export default function BookingsPage() {
           name: '', email: '', phone: '', date: '', timeSlot: '', service: '', price: '', notes: '', source: 'booksy', status: 'confirmed',
         })
         fetchBookings()
+        addToast('Booking added to diary', 'success')
       } else {
         alert(data.error || 'Failed to add booking')
       }

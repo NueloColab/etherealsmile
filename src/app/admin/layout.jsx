@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import AdminSidebar from '../../components/AdminSidebar'
 import AdminErrorBoundary from '../../components/AdminErrorBoundary'
+import { ToastProvider } from '../../components/Toast'
 
 export default function AdminLayout({ children }) {
   const router = useRouter()
@@ -195,9 +196,11 @@ export default function AdminLayout({ children }) {
 
         {/* Page content */}
         <main style={{ padding: '2rem', maxWidth: '1200px', width: '100%' }}>
+          <ToastProvider>
           <AdminErrorBoundary>
             {children}
           </AdminErrorBoundary>
+        </ToastProvider>
         </main>
       </div>
 

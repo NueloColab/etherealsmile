@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { useToast } from './Toast'
 
 async function uploadToCloudinary(file, folder, resourceType) {
   const signRes = await fetch('/api/cloudinary/sign', {
@@ -32,6 +33,7 @@ export default function CloudinaryUpload({ onUpload, label = 'Upload Image', cur
   const [uploading, setUploading] = useState(false)
   const [dragActive, setDragActive] = useState(false)
   const fileInputRef = useRef(null)
+  const { addToast } = useToast()
 
   async function handleUpload(file) {
     if (!file) return
@@ -39,9 +41,10 @@ export default function CloudinaryUpload({ onUpload, label = 'Upload Image', cur
     try {
       const url = await uploadToCloudinary(file, 'cms', 'image')
       onUpload(url)
+      addToast('Image uploaded successfully', 'success')
     } catch (error) {
       console.error('Upload error:', error)
-      alert('Failed to upload image: ' + error.message)
+      addToast('Failed to upload image: ' + error.message, 'error')
     } finally {
       setUploading(false)
     }
@@ -68,6 +71,7 @@ export default function CloudinaryUpload({ onUpload, label = 'Upload Image', cur
 
   function handleRemove() {
     onUpload('')
+    addToast('Image removed', 'success')
   }
 
   return (
