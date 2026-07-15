@@ -105,7 +105,7 @@ export async function sendConfirmationEmail({ to, name, date, time, service, pri
                   <div class="email-divider"></div>
 
                   <p class="email-text" style="font-size: 0.85rem; color: rgba(255,255,255,0.5); text-align: center;">
-                    If you need to reschedule, reply to this email or contact <a href="mailto:hattie@etherealsmile.co.uk" style="color: #e94480;">hattie@etherealsmile.co.uk</a>
+                    If you need to reschedule, reply to this email or contact <a href="mailto:etherealsmilex@gmail.com" style="color: #e94480;">etherealsmilex@gmail.com</a>
                   </p>
                 </div>
 
@@ -255,7 +255,7 @@ export async function sendNewBookingNotification({ name, email, phone, preferred
   try {
     const result = await client.emails.send({
       from: FROM,
-      to: 'hattie@etherealsmile.co.uk',
+      to: 'etherealsmilex@gmail.com',
       subject: `New Enquiry from ${name}`,
       html: `
         <!DOCTYPE html>
@@ -429,7 +429,7 @@ export async function sendConsentRequestEmail({ to, name, documentType, document
                   <div class="email-divider"></div>
 
                   <p class="email-text" style="font-size: 0.8rem; color: rgba(255,255,255,0.4); text-align: center;">
-                    This link expires in 7 days. If you have any questions, contact <a href="mailto:hattie@etherealsmile.co.uk" style="color: #e94480;">hattie@etherealsmile.co.uk</a>
+                    This link expires in 7 days. If you have any questions, contact <a href="mailto:etherealsmilex@gmail.com" style="color: #e94480;">etherealsmilex@gmail.com</a>
                   </p>
                 </div>
 
@@ -469,7 +469,7 @@ export async function sendConsentSignedNotification({ clientName, clientEmail, d
   try {
     const result = await client.emails.send({
       from: FROM,
-      to: 'hattie@etherealsmile.co.uk',
+      to: 'etherealsmilex@gmail.com',
       subject: `Consent Signed: ${docTypeLabel} by ${signatoryName}`,
       html: `
         <!DOCTYPE html>
@@ -584,7 +584,7 @@ export async function sendConsentConfirmationEmail({ to, name, documentType, doc
                   <div class="email-divider"></div>
 
                   <p class="email-text" style="font-size: 0.8rem; color: rgba(255,255,255,0.5); text-align: center;">
-                    This is an automated confirmation. If you did not sign this form, please contact us immediately at <a href="mailto:hattie@etherealsmile.co.uk" style="color: #e94480;">hattie@etherealsmile.co.uk</a>
+                    This is an automated confirmation. If you did not sign this form, please contact us immediately at <a href="mailto:etherealsmilex@gmail.com" style="color: #e94480;">etherealsmilex@gmail.com</a>
                   </p>
                 </div>
 
@@ -699,7 +699,7 @@ export async function sendConsentEmailWithAttachment({ to, name, documentType, d
                     <p class="email-text">Hi ${name},<br /><br />Your <strong style="color: #e94480;">${docTypeLabel}</strong> has been signed and submitted successfully.</p>
                     <p class="email-text" style="font-size: 0.85rem; color: rgba(255,255,255,0.6);">A copy of your completed consent record is attached to this email as a PDF. Please save it for your records.</p>
                     <div class="email-divider"></div>
-                    <p class="email-text" style="font-size: 0.75rem; color: rgba(255,255,255,0.4); text-align: center;">This is an automated confirmation. If you did not sign this form, please contact <a href="mailto:hattie@etherealsmile.co.uk" style="color: #e94480;">hattie@etherealsmile.co.uk</a> immediately.</p>
+                    <p class="email-text" style="font-size: 0.75rem; color: rgba(255,255,255,0.4); text-align: center;">This is an automated confirmation. If you did not sign this form, please contact <a href="mailto:etherealsmilex@gmail.com" style="color: #e94480;">etherealsmilex@gmail.com</a> immediately.</p>
                   </div>
                   <div class="email-footer">
                     <p class="email-footer-text">Ethereal Smile by Hattie Clifford<br /><a href="${SITE_URL}" style="color: #e94480; text-decoration: none;">${SITE_URL.replace('https://', '')}</a></p>

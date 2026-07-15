@@ -193,7 +193,7 @@ export async function POST(request, { params }) {
 
         // Hattie notification email with PDF attached
         await sendConsentEmailWithAttachment({
-          to: 'hattie@etherealsmile.co.uk',
+          to: 'etherealsmilex@gmail.com',
           name: signatoryName.trim(),
           documentType: doc?.documentType || 'consent',
           documentTitle: doc?.title || 'Consent Form',

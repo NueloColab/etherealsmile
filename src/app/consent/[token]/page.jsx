@@ -51,7 +51,7 @@ class ConsentErrorBoundary extends Component {
             )}
           </div>
           <p style={{ fontSize: '0.8rem', color: 'rgba(0,0,0,0.4)' }}>
-            Contact <a href="mailto:hattie@etherealsmile.co.uk" style={{ color: '#e94480' }}>hattie@etherealsmile.co.uk</a> if this persists.
+            Contact <a href="mailto:etherealsmilex@gmail.com" style={{ color: '#e94480' }}>etherealsmilex@gmail.com</a> if this persists.
           </p>
           <button type="button" onClick={() => window.location.reload()} style={{ marginTop: '1rem', padding: '0.75rem 2rem', borderRadius: '50px', background: '#e94480', color: '#fff', border: 'none', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.08em', cursor: 'pointer' }}>
             Refresh Page
@@ -212,7 +212,7 @@ function ConsentPage() {
         <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>&#9888;</div>
         <h2 style={{ fontFamily: "'Playfair Display', serif", color: PINK, fontSize: '1.4rem', margin: '0 0 0.75rem' }}>Form Not Found</h2>
         <p style={{ color: TEXT_SEC, fontSize: '0.9rem', lineHeight: 1.6 }}>{error}</p>
-        <p style={{ color: TEXT_TER, fontSize: '0.8rem', marginTop: '1rem' }}>Contact <a href="mailto:hattie@etherealsmile.co.uk" style={{ color: PINK }}>hattie@etherealsmile.co.uk</a> if you believe this is an error.</p>
+        <p style={{ color: TEXT_TER, fontSize: '0.8rem', marginTop: '1rem' }}>Contact <a href="mailto:etherealsmilex@gmail.com" style={{ color: PINK }}>etherealsmilex@gmail.com</a> if you believe this is an error.</p>
       </div>
     )
   }
