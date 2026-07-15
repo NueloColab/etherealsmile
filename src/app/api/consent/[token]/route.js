@@ -67,6 +67,7 @@ export async function POST(request, { params }) {
     const { token } = params
     const body = await request.json()
     const { signatoryName, signatoryRelationship, responses, action } = body
+    console.log('[CONSENT SIGN] Token:', token?.substring(0, 16) + '...', 'Action:', action, 'Signatory:', signatoryName)
 
     const items = await db.select().from(consentRecords).where(eq(consentRecords.acceptToken, token))
     const record = items[0]
@@ -196,9 +197,10 @@ export async function POST(request, { params }) {
       console.error('Consent emails failed (non-blocking):', emailErr.message)
     }
 
+    console.log('[CONSENT SIGN] Success - record:', record.id, 'type:', doc?.documentType, 'signedPdfUrl:', signedPdfUrl)
     return NextResponse.json({ success: true, action: 'signed', signedPdfUrl: signedPdfUrl })
   } catch (err) {
-    console.error('Consent token POST error:', err)
-    return NextResponse.json({ error: 'Failed to process consent form' }, { status: 500 })
+    console.error('[CONSENT SIGN] CRITICAL ERROR:', err.message, err.stack)
+    return NextResponse.json({ error: 'Failed to process consent form: ' + err.message }, { status: 500 })
   }
 }

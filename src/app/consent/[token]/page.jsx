@@ -1,7 +1,60 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Component } from 'react'
 import { useParams } from 'next/navigation'
+
+class ConsentErrorBoundary extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { hasError: false, error: null, errorInfo: null }
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error: error }
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('[CONSENT ERROR BOUNDARY]', error, errorInfo)
+    this.setState({ errorInfo: errorInfo })
+  }
+
+  render() {
+    if (this.state.hasError) {
+      var errMsg = this.state.error ? (this.state.error.message || String(this.state.error)) : 'Unknown error'
+      var stack = this.state.errorInfo && this.state.errorInfo.componentStack ? this.state.errorInfo.componentStack.substring(0, 300) : ''
+      return (
+        <div style={{ padding: '3rem 1.5rem', maxWidth: '600px', margin: '0 auto', textAlign: 'center', background: '#fff', color: '#1a1a1a', minHeight: '100vh' }}>
+          <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(239,68,68,0.1)', border: '2px solid rgba(239,68,68,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+            <span style={{ fontSize: '2rem' }}>&#9888;</span>
+          </div>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.5rem', color: '#1a1a1a', margin: '0 0 0.75rem' }}>Something went wrong</h2>
+          <p style={{ color: 'rgba(0,0,0,0.6)', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '1rem' }}>
+            The consent form encountered an error. Please try refreshing the page.
+          </p>
+          <div style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.15)', borderRadius: '8px', padding: '0.75rem 1rem', marginBottom: '1rem', textAlign: 'left' }}>
+            <p style={{ fontSize: '0.8rem', color: '#e94480', fontWeight: 600, margin: '0 0 0.25rem' }}>Error details:</p>
+            <p style={{ fontSize: '0.75rem', color: 'rgba(0,0,0,0.7)', margin: 0, wordBreak: 'break-word', fontFamily: 'monospace' }}>
+              {errMsg}
+            </p>
+            {stack && (
+              <details style={{ marginTop: '0.5rem' }}>
+                <summary style={{ fontSize: '0.7rem', color: 'rgba(0,0,0,0.4)', cursor: 'pointer' }}>Component stack</summary>
+                <pre style={{ fontSize: '0.65rem', color: 'rgba(0,0,0,0.5)', whiteSpace: 'pre-wrap', margin: '0.25rem 0 0' }}>{stack}</pre>
+              </details>
+            )}
+          </div>
+          <p style={{ fontSize: '0.8rem', color: 'rgba(0,0,0,0.4)' }}>
+            Contact <a href="mailto:hattie@etherealsmile.co.uk" style={{ color: '#e94480' }}>hattie@etherealsmile.co.uk</a> if this persists.
+          </p>
+          <button onClick={() => window.location.reload()} style={{ marginTop: '1rem', padding: '0.75rem 2rem', borderRadius: '50px', background: '#e94480', color: '#fff', border: 'none', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.08em', cursor: 'pointer' }}>
+            Refresh Page
+          </button>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
 
 const DOCUMENT_TYPES = {
   consent: {
@@ -40,7 +93,15 @@ const TEXT_SEC = 'rgba(0,0,0,0.55)'
 const TEXT_TER = 'rgba(0,0,0,0.35)'
 const DIVIDER = 'rgba(0,0,0,0.08)'
 
-export default function ConsentPage() {
+export default function ConsentPageWrapper() {
+  return (
+    <ConsentErrorBoundary>
+      <ConsentPage />
+    </ConsentErrorBoundary>
+  )
+}
+
+function ConsentPage() {
   const params = useParams()
   const [record, setRecord] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -228,15 +289,28 @@ export default function ConsentPage() {
         action: record.documentType === 'aftercare' ? undefined : 'sign',
       }),
     })
-    .then(function(r) { return r.json().then(function(data) { return { ok: r.ok, status: r.status, data: data } }) })
+    .then(function(r) {
+      console.log('[CONSENT] Sign response status:', r.status, r.statusText)
+      return r.text().then(function(text) {
+        var data
+        try {
+          data = JSON.parse(text)
+        } catch (parseErr) {
+          console.error('[CONSENT] Failed to parse response as JSON. Status:', r.status, 'Body:', text.substring(0, 500))
+          throw new Error('Server returned invalid response (status ' + r.status + '). Please try again.')
+        }
+        return { ok: r.ok, status: r.status, data: data }
+      })
+    })
     .then(function(result) {
+      console.log('[CONSENT] Sign result:', JSON.stringify({ ok: result.ok, status: result.status, action: result.data?.action, hasPdf: !!result.data?.signedPdfUrl, error: result.data?.error }))
       if (!result.ok) {
         if (result.status === 403) {
           setError('This form has already been signed and cannot be modified.')
         } else if (result.status === 410) {
           setError('This form has expired. Please contact us for a new one.')
         } else {
-          setError(result.data.error || 'Failed to submit')
+          setError(result.data.error || 'Failed to submit (status ' + result.status + ')')
         }
         setSubmitting(false)
         return
@@ -245,8 +319,9 @@ export default function ConsentPage() {
       setSignedPdfUrl(result.data.signedPdfUrl || null)
       setSubmitting(false)
     })
-    .catch(function() {
-      setError('Failed to submit. Please try again.')
+    .catch(function(err) {
+      console.error('[CONSENT] Sign submission error:', err.message, err.stack)
+      setError('Failed to submit: ' + (err.message || 'Unknown error. Please try again.'))
       setSubmitting(false)
     })
   }

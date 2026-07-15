@@ -65,6 +65,7 @@ export default function ConsentRecordsPanel({ scope, targetId }) {
     setSending(documentType)
     setError(null)
     setSuccessMsg(null)
+    console.log('[CONSENT PANEL] handleSend called, scope:', scope, 'targetId:', targetId, 'docType:', documentType)
     try {
       // Need clientId - for booking scope, get from first record or fetch booking
       // For client scope, use targetId directly
@@ -75,17 +76,25 @@ export default function ConsentRecordsPanel({ scope, targetId }) {
         const recordsWithClient = records.filter(r => r.clientId)
         if (recordsWithClient.length > 0) {
           clientId = recordsWithClient[0].clientId
+          console.log('[CONSENT PANEL] Got clientId from existing records:', clientId)
         } else {
           // Fetch the booking to get the client ID
+          console.log('[CONSENT PANEL] No records with clientId, fetching booking /api/bookings/' + targetId)
           const bookingRes = await fetch(`/api/bookings/${targetId}`)
+          console.log('[CONSENT PANEL] Booking fetch status:', bookingRes.status, bookingRes.ok)
           if (bookingRes.ok) {
             const bookingData = await bookingRes.json()
+            console.log('[CONSENT PANEL] Booking data:', JSON.stringify({ id: bookingData.id, name: bookingData.name, clientId: bookingData.clientId, email: bookingData.email }))
             clientId = bookingData.clientId
+          } else {
+            const errText = await bookingRes.text()
+            console.error('[CONSENT PANEL] Booking fetch failed:', bookingRes.status, errText?.substring(0, 200))
           }
         }
       }
 
       if (!clientId) {
+        console.error('[CONSENT PANEL] Could not determine clientId. scope:', scope, 'targetId:', targetId, 'records:', records.length)
         setError('Cannot determine client for this booking')
         setSending(null)
         return
@@ -95,6 +104,8 @@ export default function ConsentRecordsPanel({ scope, targetId }) {
       if (scope === 'booking') {
         body.bookingId = targetId
       }
+
+      console.log('[CONSENT PANEL] Sending POST /api/consent-records with body:', JSON.stringify(body))
 
       const res = await fetch('/api/consent-records', {
         method: 'POST',
@@ -243,7 +254,7 @@ export default function ConsentRecordsPanel({ scope, targetId }) {
 
               <div style={{ display: 'flex', gap: '0.5rem' }}>
                 {(record.status === 'sent' || record.status === 'viewed') && (
-                  <button
+                  <button type="button"
                     onClick={() => handleResend(record.id, record.status)}
                     disabled={resending === record.id}
                     style={{
@@ -262,7 +273,7 @@ export default function ConsentRecordsPanel({ scope, targetId }) {
                   </button>
                 )}
                 {(record.status === 'declined' || record.status === 'expired') && (
-                  <button
+                  <button type="button"
                     onClick={() => handleResend(record.id, record.status)}
                     disabled={resending === record.id}
                     style={{
@@ -281,7 +292,7 @@ export default function ConsentRecordsPanel({ scope, targetId }) {
                   </button>
                 )}
                 {record.status === 'signed' && (
-                  <button
+                  <button type="button"
                     onClick={() => handleDownload(record.id)}
                     disabled={downloading === record.id}
                     style={{
@@ -323,7 +334,7 @@ export default function ConsentRecordsPanel({ scope, targetId }) {
           {DOC_TYPES.map(doc => {
             const isLive = liveDocTypes.has(doc.type)
             return (
-              <button
+              <button type="button"
                 key={doc.type}
                 onClick={() => !isLive && handleSend(doc.type)}
                 disabled={isLive || sending !== null}
