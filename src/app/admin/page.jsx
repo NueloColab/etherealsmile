@@ -1,191 +1,135 @@
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../api/auth/[...nextauth]/route'
 import { redirect } from 'next/navigation'
-import { db } from '../../lib/db'
-import { enquiries, blogPosts, galleryItems, services } from '../../lib/schema'
-import { sql } from 'drizzle-orm'
-import Link from 'next/link'
-import DashboardStats from '../../components/DashboardStats'
+import { dbAdmin as db } from '../../lib/db-admin'
+import { bookings, clients, consentRecords, consentDocuments, enquiries, blogPosts, galleryItems, services } from '../../lib/schema'
+import { sql, desc, eq, and, gte } from 'drizzle-orm'
+import DashboardClient from '../../components/DashboardClient'
 
 export default async function AdminDashboard() {
   const session = await getServerSession(authOptions)
   if (!session) redirect('/admin/login')
 
-  const enquiryCount = await db.select({ count: sql`count(*)` }).from(enquiries)
-  const postCount = await db.select({ count: sql`count(*)` }).from(blogPosts)
-  const galleryCount = await db.select({ count: sql`count(*)` }).from(galleryItems)
-  const serviceCount = await db.select({ count: sql`count(*)` }).from(services)
+  // --- Stats queries ---
 
-  const recentEnquiries = await db
-    .select()
+  // Booking counts by status
+  const bookingCounts = await db.select({
+    status: bookings.status,
+    count: sql`count(*)`,
+  }).from(bookings).groupBy(bookings.status)
+
+  const pendingBookings = Number(bookingCounts.find(r => r.status === 'pending')?.count || 0)
+  const confirmedBookingsTotal = Number(bookingCounts.find(r => r.status === 'confirmed')?.count || 0)
+
+  // Confirmed upcoming (date >= today)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const confirmedUpcoming = await db.select({ count: sql`count(*)` })
+    .from(bookings)
+    .where(and(eq(bookings.status, 'confirmed'), gte(bookings.date, today)))
+  const confirmedUpcomingCount = Number(confirmedUpcoming[0]?.count || 0)
+
+  // Revenue: sum confirmed booking prices (parsed from varchar)
+  const confirmedBookings = await db.select({ price: bookings.price })
+    .from(bookings)
+    .where(eq(bookings.status, 'confirmed'))
+
+  const revenue = confirmedBookings.reduce((sum, b) => {
+    if (!b.price) return sum
+    const num = parseFloat(b.price.replace(/[£,\s]/g, '')) || 0
+    return sum + num
+  }, 0)
+
+  // Client count
+  const clientCount = await db.select({ count: sql`count(*)` }).from(clients)
+  const totalClients = Number(clientCount[0]?.count || 0)
+
+  // Consent records by status
+  const consentCounts = await db.select({
+    status: consentRecords.status,
+    count: sql`count(*)`,
+  }).from(consentRecords).groupBy(consentRecords.status)
+
+  const consentPending = Number(consentCounts.find(r => r.status === 'sent' || r.status === 'viewed')?.count || 0)
+  const consentSigned = Number(consentCounts.find(r => r.status === 'signed')?.count || 0)
+
+  // Enquiries count
+  const enquiryCount = await db.select({ count: sql`count(*)` }).from(enquiries)
+  const totalEnquiries = Number(enquiryCount[0]?.count || 0)
+
+  // Journal posts count
+  const postCount = await db.select({ count: sql`count(*)` }).from(blogPosts)
+  const totalPosts = Number(postCount[0]?.count || 0)
+
+  // --- Recent data ---
+
+  // Recent bookings (last 10)
+  const recentBookings = await db.select()
+    .from(bookings)
+    .orderBy(desc(bookings.createdAt))
+    .limit(10)
+
+  // Upcoming bookings (today + next 7 days)
+  const nextWeek = new Date(today)
+  nextWeek.setDate(nextWeek.getDate() + 7)
+  const upcomingBookings = await db.select()
+    .from(bookings)
+    .where(and(
+      eq(bookings.status, 'confirmed'),
+      gte(bookings.date, today)
+    ))
+    .orderBy(bookings.date)
+    .limit(20)
+
+  // Calendar bookings (pending + confirmed, for dot indicators)
+  const calendarBookings = await db.select()
+    .from(bookings)
+    .where(sql`${bookings.status} IN ('pending', 'confirmed')`)
+    .orderBy(bookings.date)
+
+  // Recent consent records with client name and document type (last 10)
+  const recentConsent = await db.select({
+    id: consentRecords.id,
+    clientId: consentRecords.clientId,
+    bookingId: consentRecords.bookingId,
+    documentType: consentDocuments.documentType,
+    status: consentRecords.status,
+    signatoryName: consentRecords.signatoryName,
+    sentAt: consentRecords.sentAt,
+    signedAt: consentRecords.signedAt,
+    clientName: clients.name,
+  })
+    .from(consentRecords)
+    .leftJoin(consentDocuments, eq(consentRecords.documentId, consentDocuments.id))
+    .leftJoin(clients, eq(consentRecords.clientId, clients.id))
+    .orderBy(desc(consentRecords.createdAt))
+    .limit(10)
+
+  // Recent enquiries (last 5)
+  const recentEnquiries = await db.select()
     .from(enquiries)
-    .orderBy(sql`${enquiries.createdAt} desc`)
+    .orderBy(desc(enquiries.createdAt))
     .limit(5)
 
-  const stats = [
-    { label: 'Enquiries', count: enquiryCount[0]?.count || 0, href: '/admin/enquiries', color: '#e94480' },
-    { label: 'Journal Posts', count: postCount[0]?.count || 0, href: '/admin/blog', color: '#c9a96e' },
-    { label: 'Gallery Items', count: galleryCount[0]?.count || 0, href: '/admin/gallery', color: '#e94480' },
-    { label: 'Services', count: serviceCount[0]?.count || 0, href: '/admin/services', color: '#c9a96e' },
-  ]
+  const stats = {
+    pendingBookings,
+    confirmedUpcoming: confirmedUpcomingCount,
+    totalClients,
+    consentPending,
+    consentSigned,
+    totalEnquiries,
+    totalPosts,
+    revenue,
+  }
 
   return (
-    <div style={{ padding: '2.5rem 2rem', maxWidth: '1100px' }}>
-      {/* Header */}
-      <div style={{ marginBottom: '2.5rem' }}>
-        <h1
-          style={{
-            fontFamily: "'Pirata One', 'Playfair Display', cursive",
-            fontSize: 'clamp(1.5rem, 3vw, 2.2rem)',
-            color: '#e94480',
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            marginBottom: '0.25rem',
-          }}
-        >
-          Dashboard
-        </h1>
-        <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)' }}>
-          Welcome back, {session?.user?.name || session?.user?.email}
-        </p>
-      </div>
-
-      {/* Stats Grid */}
-      <DashboardStats stats={stats} />
-
-      {/* Recent Enquiries */}
-      <div
-        style={{
-          background: 'rgba(255,255,255,0.02)',
-          border: '1px solid rgba(255,255,255,0.06)',
-          borderRadius: '14px',
-          padding: '1.75rem 2rem',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1.5rem',
-          }}
-        >
-          <h2
-            style={{
-              fontFamily: "'Pirata One', 'Playfair Display', cursive",
-              fontSize: '1.15rem',
-              color: '#e94480',
-              fontWeight: 400,
-              letterSpacing: '0.05em',
-            }}
-          >
-            Recent Enquiries
-          </h2>
-          <Link
-            href="/admin/enquiries"
-            style={{
-              fontSize: '0.7rem',
-              color: '#e94480',
-              textDecoration: 'none',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              fontWeight: 500,
-            }}
-          >
-            View All →
-          </Link>
-        </div>
-
-        {recentEnquiries.length > 0 ? (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', minWidth: '640px', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-                  {['Name', 'Email', 'Service', 'Date', 'Status'].map((h) => (
-                    <th
-                      key={h}
-                      style={{
-                        textAlign: 'left',
-                        padding: '0.75rem 0.5rem',
-                        fontFamily: "'Inter', sans-serif",
-                        fontSize: '0.65rem',
-                        letterSpacing: '0.12em',
-                        textTransform: 'uppercase',
-                        color: 'rgba(255,255,255,0.35)',
-                        fontWeight: 500,
-                      }}
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {recentEnquiries.map((e) => (
-                  <tr
-                    key={e.id}
-                    style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
-                  >
-                    <td style={{ padding: '0.85rem 0.5rem', color: 'rgba(255,255,255,0.85)' }}>{e.name}</td>
-                    <td style={{ padding: '0.85rem 0.5rem', color: 'rgba(255,255,255,0.55)' }}>{e.email}</td>
-                    <td style={{ padding: '0.85rem 0.5rem', color: 'rgba(255,255,255,0.55)' }}>
-                      {e.service || '-'}
-                    </td>
-                    <td style={{ padding: '0.85rem 0.5rem', color: 'rgba(255,255,255,0.55)' }}>
-                      {e.preferredDate
-                        ? new Date(e.preferredDate).toLocaleDateString('en-GB')
-                        : '-'}
-                    </td>
-                    <td style={{ padding: '0.85rem 0.5rem' }}>
-                      <span
-                        style={{
-                          display: 'inline-block',
-                          padding: '0.25rem 0.6rem',
-                          borderRadius: '4px',
-                          fontSize: '0.65rem',
-                          letterSpacing: '0.08em',
-                          textTransform: 'uppercase',
-                          background:
-                            e.status === 'confirmed'
-                              ? 'rgba(76, 175, 80, 0.15)'
-                              : e.status === 'rejected'
-                              ? 'rgba(244, 67, 54, 0.15)'
-                              : 'rgba(233, 68, 128, 0.15)',
-                          color:
-                            e.status === 'confirmed'
-                              ? '#81c784'
-                              : e.status === 'rejected'
-                              ? '#e57373'
-                              : '#e94480',
-                          border:
-                            e.status === 'confirmed'
-                              ? '1px solid rgba(76, 175, 80, 0.3)'
-                              : e.status === 'rejected'
-                              ? '1px solid rgba(244, 67, 54, 0.3)'
-                              : '1px solid rgba(233, 68, 128, 0.3)',
-                        }}
-                      >
-                        {e.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <p
-            style={{
-              color: 'rgba(255,255,255,0.3)',
-              fontSize: '0.9rem',
-              textAlign: 'center',
-              padding: '2rem',
-            }}
-          >
-            No enquiries yet.
-          </p>
-        )}
-      </div>
-    </div>
+    <DashboardClient
+      stats={stats}
+      recentBookings={recentBookings}
+      upcomingBookings={upcomingBookings}
+      calendarBookings={calendarBookings}
+      recentConsent={recentConsent}
+      recentEnquiries={recentEnquiries}
+    />
   )
 }
