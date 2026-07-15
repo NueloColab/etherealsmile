@@ -11,7 +11,7 @@ export default function Showreel() {
   const { content } = useCmsContent('showreel')
 
   const type = content?.type || 'video'
-  const videoUrl = content?.videoUrl || '/showreel.mp4'
+  const videoUrl = content?.videoUrl || ''
   const fallbackImage = content?.fallbackImage || '/hattie-working.jpg'
   const overlayText = content?.overlayText || 'The Art of the Sparkle'
 
@@ -30,9 +30,9 @@ export default function Showreel() {
 
   useEffect(() => {
     const video = videoRef.current
-    if (!video || !inView || type !== 'video') return
+    if (!video || !inView || type !== 'video' || !videoUrl) return
     video.play().catch(() => {})
-  }, [inView, type])
+  }, [inView, type, videoUrl])
 
   return (
     <section
@@ -48,13 +48,13 @@ export default function Showreel() {
       }}
     >
       {/* Video mode */}
-      {type === 'video' && (
+      {type === 'video' && videoUrl && (
         <video
           ref={videoRef}
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
           src={videoUrl}
           style={{
             position: 'absolute',
@@ -62,7 +62,7 @@ export default function Showreel() {
             left: 0,
             width: '100%',
             height: '100%',
-            objectFit: 'contain',
+            objectFit: 'cover',
           }}
         />
       )}
