@@ -723,3 +723,49 @@ export async function sendConsentEmailWithAttachment({ to, name, documentType, d
     }
   }
 }
+
+export async function sendConsentFailureAlert({ recordId, token, error, stage, clientEmail, clientName }) {
+  const client = getResend()
+  if (!client) {
+    console.error('[CONSENT ALERT] Cannot send alert email - Resend not configured')
+    return { success: false, skipped: true }
+  }
+
+  const subject = `URGENT: Consent form signing failed - ${stage}`
+
+  try {
+    const result = await client.emails.send({
+      from: FROM,
+      to: 'brian@nuelo.co',
+      subject,
+      html: `
+        <div style="background:#0a0e17;margin:0;padding:2rem;font-family:'Inter',sans-serif;color:rgba(255,255,255,0.8)">
+          <div style="max-width:600px;margin:0 auto;background:#0a0e17;border:1px solid rgba(239,68,68,0.3);border-radius:12px;overflow:hidden">
+            <div style="padding:1.5rem 2rem;background:linear-gradient(180deg,rgba(239,68,68,0.15),transparent);text-align:center">
+              <h1 style="font-family:'Playfair Display',serif;color:#e94480;font-size:1.3rem;letter-spacing:0.08em;margin:0">Consent Form Failure Alert</h1>
+            </div>
+            <div style="padding:1.5rem 2rem">
+              <p style="color:rgba(255,255,255,0.7);font-size:0.9rem;line-height:1.6">A customer tried to sign a consent form but it failed. They may need manual follow-up.</p>
+              <table style="width:100%;border-collapse:collapse;margin:1rem 0">
+                <tr><td style="padding:0.4rem 0;color:rgba(255,255,255,0.4);font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;width:35%">Stage</td><td style="padding:0.4rem 0;color:#e94480;font-size:0.9rem;font-weight:500">${stage}</td></tr>
+                <tr><td style="padding:0.4rem 0;color:rgba(255,255,255,0.4);font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase">Record ID</td><td style="padding:0.4rem 0;color:rgba(255,255,255,0.85);font-size:0.9rem">${recordId || 'unknown'}</td></tr>
+                <tr><td style="padding:0.4rem 0;color:rgba(255,255,255,0.4);font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase">Token</td><td style="padding:0.4rem 0;color:rgba(255,255,255,0.85);font-size:0.9rem;font-family:monospace">${(token || 'unknown').substring(0, 16)}...</td></tr>
+                <tr><td style="padding:0.4rem 0;color:rgba(255,255,255,0.4);font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase">Client</td><td style="padding:0.4rem 0;color:rgba(255,255,255,0.85);font-size:0.9rem">${clientName || 'unknown'} &lt;${clientEmail || 'unknown'}&gt;</td></tr>
+              </table>
+              <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:0.75rem 1rem;margin:1rem 0">
+                <p style="font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;color:#e94480;margin:0 0 0.25rem;font-weight:600">Error</p>
+                <pre style="font-size:0.8rem;color:rgba(255,255,255,0.7);margin:0;white-space:pre-wrap;word-break:break-word">${(error || 'Unknown error').substring(0, 1000)}</pre>
+              </div>
+              <p style="color:rgba(255,255,255,0.4);font-size:0.75rem;margin-top:1.5rem">Check Vercel logs for full details. The record may be partially saved - verify in admin before re-sending.</p>
+            </div>
+          </div>
+        </div>
+      `,
+    })
+    console.log('[CONSENT ALERT] Failure alert sent to brian@nuelo.co, id:', result?.data?.id || result?.id)
+    return { success: true, id: result?.data?.id || result?.id || null }
+  } catch (err) {
+    console.error('[CONSENT ALERT] Failed to send failure alert:', err)
+    return { success: false, error: err.message }
+  }
+}

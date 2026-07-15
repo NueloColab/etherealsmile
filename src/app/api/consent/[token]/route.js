@@ -159,6 +159,18 @@ export async function POST(request, { params }) {
       await db.update(consentRecords).set({ signedPdfUrl: signedPdfUrl }).where(eq(consentRecords.id, record.id))
     } catch (pdfErr) {
       console.error('PDF generation/upload failed:', pdfErr)
+      // Alert: record is signed but customer won't get their PDF
+      try {
+        const { sendConsentFailureAlert } = await import('../../../../lib/email')
+        sendConsentFailureAlert({
+          recordId: record.id,
+          token: token,
+          error: 'PDF generation/upload failed: ' + pdfErr.message,
+          stage: 'pdf-generation',
+          clientEmail: client?.email || null,
+          clientName: client?.name || null,
+        }).catch(function(alertErr) { console.error('[CONSENT ALERT] PDF alert send failed:', alertErr.message) })
+      } catch (alertErr) { /* non-blocking */ }
     }
 
     // SEND EMAILS
@@ -195,12 +207,38 @@ export async function POST(request, { params }) {
       }
     } catch (emailErr) {
       console.error('Consent emails failed (non-blocking):', emailErr.message)
+      // Alert: record is signed but emails didn't go out
+      try {
+        const { sendConsentFailureAlert } = await import('../../../../lib/email')
+        sendConsentFailureAlert({
+          recordId: record.id,
+          token: token,
+          error: 'Consent emails failed: ' + emailErr.message,
+          stage: 'email-send',
+          clientEmail: client?.email || null,
+          clientName: client?.name || null,
+        }).catch(function(alertErr) { console.error('[CONSENT ALERT] Email alert send failed:', alertErr.message) })
+      } catch (alertErr) { /* non-blocking */ }
     }
 
     console.log('[CONSENT SIGN] Success - record:', record.id, 'type:', doc?.documentType, 'signedPdfUrl:', signedPdfUrl)
     return NextResponse.json({ success: true, action: 'signed', signedPdfUrl: signedPdfUrl })
   } catch (err) {
     console.error('[CONSENT SIGN] CRITICAL ERROR:', err.message, err.stack)
+    // Alert brian@nuelo.co so we know a real customer hit a failure
+    try {
+      const { sendConsentFailureAlert } = await import('../../../../lib/email')
+      sendConsentFailureAlert({
+        recordId: null,
+        token: token,
+        error: err.message + '\n' + (err.stack || '').substring(0, 500),
+        stage: 'sign-handler',
+        clientEmail: null,
+        clientName: null,
+      }).catch(function(alertErr) { console.error('[CONSENT ALERT] Alert send failed:', alertErr.message) })
+    } catch (alertErr) {
+      console.error('[CONSENT ALERT] Could not import alert function:', alertErr.message)
+    }
     return NextResponse.json({ error: 'Failed to process consent form: ' + err.message }, { status: 500 })
   }
 }
