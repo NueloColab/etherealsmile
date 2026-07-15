@@ -62,7 +62,7 @@ export default function Showreel() {
             left: 0,
             width: '100%',
             height: '100%',
-            objectFit: 'cover',
+            objectFit: 'contain',
           }}
         />
       )}
@@ -88,7 +88,7 @@ export default function Showreel() {
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.25))',
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.25), rgba(0,0,0,0.45))',
         }}
       />
 
