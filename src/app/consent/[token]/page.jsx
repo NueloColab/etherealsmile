@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect, Component } from 'react'
+import { useState, useEffect, Component, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 
 class ConsentErrorBoundary extends Component {
   constructor(props) {
     super(props)
-    this.state = { hasError: false, error: null, errorInfo: null }
+    this.state = { hasError: false, error: null, errorInfo: null, errorStack: null }
   }
 
   static getDerivedStateFromError(error) {
@@ -15,13 +15,14 @@ class ConsentErrorBoundary extends Component {
 
   componentDidCatch(error, errorInfo) {
     console.error('[CONSENT ERROR BOUNDARY]', error, errorInfo)
-    this.setState({ errorInfo: errorInfo })
+    this.setState({ errorInfo: errorInfo, errorStack: error?.stack || null })
   }
 
   render() {
     if (this.state.hasError) {
       var errMsg = this.state.error ? (this.state.error.message || String(this.state.error)) : 'Unknown error'
-      var stack = this.state.errorInfo && this.state.errorInfo.componentStack ? this.state.errorInfo.componentStack.substring(0, 300) : ''
+      var jsStack = this.state.errorStack ? this.state.errorStack.substring(0, 500) : ''
+      var componentStack = this.state.errorInfo && this.state.errorInfo.componentStack ? this.state.errorInfo.componentStack.substring(0, 500) : ''
       return (
         <div style={{ padding: '3rem 1.5rem', maxWidth: '600px', margin: '0 auto', textAlign: 'center', background: '#fff', color: '#1a1a1a', minHeight: '100vh' }}>
           <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(239,68,68,0.1)', border: '2px solid rgba(239,68,68,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
@@ -36,17 +37,23 @@ class ConsentErrorBoundary extends Component {
             <p style={{ fontSize: '0.75rem', color: 'rgba(0,0,0,0.7)', margin: 0, wordBreak: 'break-word', fontFamily: 'monospace' }}>
               {errMsg}
             </p>
-            {stack && (
+            {jsStack && (
+              <details style={{ marginTop: '0.5rem' }}>
+                <summary style={{ fontSize: '0.7rem', color: 'rgba(0,0,0,0.4)', cursor: 'pointer' }}>JS stack trace</summary>
+                <pre style={{ fontSize: '0.65rem', color: 'rgba(0,0,0,0.5)', whiteSpace: 'pre-wrap', margin: '0.25rem 0 0' }}>{jsStack}</pre>
+              </details>
+            )}
+            {componentStack && (
               <details style={{ marginTop: '0.5rem' }}>
                 <summary style={{ fontSize: '0.7rem', color: 'rgba(0,0,0,0.4)', cursor: 'pointer' }}>Component stack</summary>
-                <pre style={{ fontSize: '0.65rem', color: 'rgba(0,0,0,0.5)', whiteSpace: 'pre-wrap', margin: '0.25rem 0 0' }}>{stack}</pre>
+                <pre style={{ fontSize: '0.65rem', color: 'rgba(0,0,0,0.5)', whiteSpace: 'pre-wrap', margin: '0.25rem 0 0' }}>{componentStack}</pre>
               </details>
             )}
           </div>
           <p style={{ fontSize: '0.8rem', color: 'rgba(0,0,0,0.4)' }}>
             Contact <a href="mailto:hattie@etherealsmile.co.uk" style={{ color: '#e94480' }}>hattie@etherealsmile.co.uk</a> if this persists.
           </p>
-          <button onClick={() => window.location.reload()} style={{ marginTop: '1rem', padding: '0.75rem 2rem', borderRadius: '50px', background: '#e94480', color: '#fff', border: 'none', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.08em', cursor: 'pointer' }}>
+          <button type="button" onClick={() => window.location.reload()} style={{ marginTop: '1rem', padding: '0.75rem 2rem', borderRadius: '50px', background: '#e94480', color: '#fff', border: 'none', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.08em', cursor: 'pointer' }}>
             Refresh Page
           </button>
         </div>
@@ -93,6 +100,32 @@ const TEXT_SEC = 'rgba(0,0,0,0.55)'
 const TEXT_TER = 'rgba(0,0,0,0.35)'
 const DIVIDER = 'rgba(0,0,0,0.08)'
 
+// Global uncaught error/rejection handler - survives even if React dies
+if (typeof window !== 'undefined') {
+  window.__CONSENT_CRASH_LOG__ = []
+  window.addEventListener('error', function(evt) {
+    var entry = '[window.error] ' + evt.message + ' | ' + (evt.filename || '') + ':' + (evt.lineno || '') + ':' + (evt.colno || '') + ' | ' + (evt.error?.stack || '').substring(0, 600)
+    console.error('[CONSENT GLOBAL]', entry)
+    window.__CONSENT_CRASH_LOG__.push(entry)
+    // Try to show on page if React is dead
+    var crashDiv = document.getElementById('consent-crash-report')
+    if (crashDiv) {
+      crashDiv.style.display = 'block'
+      crashDiv.textContent = window.__CONSENT_CRASH_LOG__.join('\n\n')
+    }
+  })
+  window.addEventListener('unhandledrejection', function(evt) {
+    var entry = '[unhandledrejection] ' + (evt.reason?.message || evt.reason || String(evt.reason)) + ' | ' + (evt.reason?.stack || '').substring(0, 600)
+    console.error('[CONSENT GLOBAL]', entry)
+    window.__CONSENT_CRASH_LOG__.push(entry)
+    var crashDiv = document.getElementById('consent-crash-report')
+    if (crashDiv) {
+      crashDiv.style.display = 'block'
+      crashDiv.textContent = window.__CONSENT_CRASH_LOG__.join('\n\n')
+    }
+  })
+}
+
 export default function ConsentPageWrapper() {
   return (
     <ConsentErrorBoundary>
@@ -109,6 +142,7 @@ function ConsentPage() {
   const [submitting, setSubmitting] = useState(false)
   const [signed, setSigned] = useState(false)
   const [signedPdfUrl, setSignedPdfUrl] = useState(null)
+  const [crashError, setCrashError] = useState(null)
 
   const [fullName, setFullName] = useState('')
   const [dateOfBirth, setDateOfBirth] = useState('')
@@ -243,87 +277,110 @@ function ConsentPage() {
 
   function handleSubmit(e) {
     e.preventDefault()
-    setSubmitting(true)
-    setError('')
+    try {
+      setSubmitting(true)
+      setError('')
+      setCrashError(null)
 
-    var responses = {}
+      console.log('[CONSENT SUBMIT] Starting submission. token:', params.token?.substring(0, 16), 'docType:', record?.documentType, 'requiresMedical:', docConfig?.requiresMedical, 'requiresSignature:', docConfig?.requiresSignature)
 
-    if (docConfig.requiresMedical) {
-      responses.fullName = fullName
-      responses.dateOfBirth = dateOfBirth
-      responses.age = age
-      responses.phone = phone
-      responses.email = email
-      responses.address = address
-      responses.allergies = allergies
-      responses.currentMedications = currentMedications
-      responses.medicalConditions = Object.assign({}, medicalConditions)
-      responses.illnessInLast48h = illnessInLast48h
-      responses.dentalIssues = dentalIssues
-      responses.previousToothGems = previousToothGems
-      responses.consentAgreed = consentAgreed
-    }
+      var responses = {}
 
-    if (record.documentType === 'guardian_consent') {
-      responses.youngPersonName = youngPersonName
-      responses.youngPersonDOB = youngPersonDOB
-      responses.guardianName = guardianName
-      responses.guardianRelationship = guardianRelationship
-      responses.guardianAddress = guardianAddress
-      responses.guardianPostcode = guardianPostcode
-      responses.guardianPhone = guardianPhone
-      responses.consentStatementAgreed = consentStatementAgreed
-    }
+      if (docConfig.requiresMedical) {
+        responses.fullName = fullName
+        responses.dateOfBirth = dateOfBirth
+        responses.age = age
+        responses.phone = phone
+        responses.email = email
+        responses.address = address
+        responses.allergies = allergies
+        responses.currentMedications = currentMedications
+        responses.medicalConditions = Object.assign({}, medicalConditions)
+        responses.illnessInLast48h = illnessInLast48h
+        responses.dentalIssues = dentalIssues
+        responses.previousToothGems = previousToothGems
+        responses.consentAgreed = consentAgreed
+      }
 
-    if (record.documentType === 'aftercare') {
-      responses.readAcknowledged = readAcknowledged
-    }
+      if (record.documentType === 'guardian_consent') {
+        responses.youngPersonName = youngPersonName
+        responses.youngPersonDOB = youngPersonDOB
+        responses.guardianName = guardianName
+        responses.guardianRelationship = guardianRelationship
+        responses.guardianAddress = guardianAddress
+        responses.guardianPostcode = guardianPostcode
+        responses.guardianPhone = guardianPhone
+        responses.consentStatementAgreed = consentStatementAgreed
+      }
 
-    fetch('/api/consent/' + params.token, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+      if (record.documentType === 'aftercare') {
+        responses.readAcknowledged = readAcknowledged
+      }
+
+      var requestBody = {
         signatoryName: signatoryName,
         signatoryRelationship: docConfig.defaultRelationship,
         responses: responses,
         action: record.documentType === 'aftercare' ? undefined : 'sign',
-      }),
-    })
-    .then(function(r) {
-      console.log('[CONSENT] Sign response status:', r.status, r.statusText)
-      return r.text().then(function(text) {
-        var data
-        try {
-          data = JSON.parse(text)
-        } catch (parseErr) {
-          console.error('[CONSENT] Failed to parse response as JSON. Status:', r.status, 'Body:', text.substring(0, 500))
-          throw new Error('Server returned invalid response (status ' + r.status + '). Please try again.')
-        }
-        return { ok: r.ok, status: r.status, data: data }
-      })
-    })
-    .then(function(result) {
-      console.log('[CONSENT] Sign result:', JSON.stringify({ ok: result.ok, status: result.status, action: result.data?.action, hasPdf: !!result.data?.signedPdfUrl, error: result.data?.error }))
-      if (!result.ok) {
-        if (result.status === 403) {
-          setError('This form has already been signed and cannot be modified.')
-        } else if (result.status === 410) {
-          setError('This form has expired. Please contact us for a new one.')
-        } else {
-          setError(result.data.error || 'Failed to submit (status ' + result.status + ')')
-        }
-        setSubmitting(false)
-        return
       }
-      setSigned(true)
-      setSignedPdfUrl(result.data.signedPdfUrl || null)
+
+      console.log('[CONSENT SUBMIT] Request body keys:', Object.keys(requestBody), 'signatoryName:', signatoryName, 'action:', requestBody.action)
+
+      fetch('/api/consent/' + params.token, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody),
+      })
+      .then(function(r) {
+        console.log('[CONSENT] Sign response status:', r.status, r.statusText, 'headers:', Object.fromEntries(r.headers.entries?.() || []))
+        return r.text().then(function(text) {
+          console.log('[CONSENT] Response body (first 500 chars):', text.substring(0, 500))
+          var data
+          try {
+            data = JSON.parse(text)
+          } catch (parseErr) {
+            console.error('[CONSENT] Failed to parse response as JSON. Status:', r.status, 'Body:', text.substring(0, 500))
+            throw new Error('Server returned invalid response (status ' + r.status + '). Please try again.')
+          }
+          return { ok: r.ok, status: r.status, data: data }
+        })
+      })
+      .then(function(result) {
+        console.log('[CONSENT] Sign result:', JSON.stringify({ ok: result.ok, status: result.status, action: result.data?.action, hasPdf: !!result.data?.signedPdfUrl, error: result.data?.error }))
+        if (!result.ok) {
+          if (result.status === 403) {
+            setError('This form has already been signed and cannot be modified.')
+          } else if (result.status === 410) {
+            setError('This form has expired. Please contact us for a new one.')
+          } else {
+            setError(result.data.error || 'Failed to submit (status ' + result.status + ')')
+          }
+          setSubmitting(false)
+          return
+        }
+        console.log('[CONSENT] Setting signed=true, signedPdfUrl:', result.data.signedPdfUrl)
+        try {
+          setSigned(true)
+          setSignedPdfUrl(result.data.signedPdfUrl || null)
+          setSubmitting(false)
+          console.log('[CONSENT] State updates completed successfully')
+        } catch (stateErr) {
+          console.error('[CONSENT] Error during state update after successful sign:', stateErr)
+          setCrashError('Display error after signing: ' + stateErr.message + '. Your form WAS signed successfully. Please refresh to see the confirmation.')
+          setSubmitting(false)
+        }
+      })
+      .catch(function(err) {
+        console.error('[CONSENT] Sign submission error:', err.message, err.stack)
+        setError('Failed to submit: ' + (err.message || 'Unknown error. Please try again.'))
+        setSubmitting(false)
+      })
+    } catch (syncErr) {
+      // Catch any synchronous errors (e.g. reference errors, undefined access)
+      console.error('[CONSENT] SYNC ERROR in handleSubmit:', syncErr.message, syncErr.stack)
+      setCrashError('Synchronous error: ' + syncErr.message + '\n\n' + (syncErr.stack || '').substring(0, 500))
       setSubmitting(false)
-    })
-    .catch(function(err) {
-      console.error('[CONSENT] Sign submission error:', err.message, err.stack)
-      setError('Failed to submit: ' + (err.message || 'Unknown error. Please try again.'))
-      setSubmitting(false)
-    })
+    }
   }
 
   var medicalLabels = {
@@ -340,6 +397,18 @@ function ConsentPage() {
 
   return (
     <div style={{ padding: '1.5rem', maxWidth: '560px', margin: '0 auto', fontFamily: "'Inter', sans-serif", color: TEXT }}>
+      {/* Crash report div - hidden by default, shown by global error handler if React dies */}
+      <pre id="consent-crash-report" style={{ display: 'none', padding: '1rem', margin: '1rem 0', background: 'rgba(239,68,68,0.08)', border: '2px solid rgba(239,68,68,0.4)', borderRadius: '8px', color: '#dc2626', fontSize: '0.75rem', whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontFamily: 'monospace', maxHeight: '300px', overflow: 'auto' }}></pre>
+
+      {/* Crash error from try/catch in handleSubmit */}
+      {crashError && (
+        <div style={{ padding: '1rem', marginBottom: '1.5rem', background: 'rgba(239,68,68,0.08)', border: '2px solid rgba(239,68,68,0.4)', borderRadius: '8px', color: '#dc2626', fontSize: '0.85rem', lineHeight: 1.5 }}>
+          <strong>Internal error caught:</strong>
+          <pre style={{ fontSize: '0.75rem', whiteSpace: 'pre-wrap', margin: '0.5rem 0 0', fontFamily: 'monospace' }}>{crashError}</pre>
+          <p style={{ margin: '0.75rem 0 0', fontSize: '0.8rem', color: 'rgba(0,0,0,0.5)' }}>Please screenshot this and send to Hattie. Then try refreshing the page.</p>
+        </div>
+      )}
+
       {/* Logo / Brand header */}
       <div style={{ textAlign: 'center', marginBottom: '2rem', padding: '1.5rem', background: PINK_LIGHT, borderRadius: '12px', border: '1px solid ' + PINK_BORDER }}>
         <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', color: PINK, letterSpacing: '0.05em', margin: 0 }}>{docConfig.title}</h1>
