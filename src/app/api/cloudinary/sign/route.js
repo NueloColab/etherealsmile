@@ -15,7 +15,6 @@ export async function POST(req) {
     const paramsToSign = {
       timestamp,
       folder: `nuelo/etherealsmile/${folder}`,
-      ...(resourceType !== 'auto' ? { resource_type: resourceType } : {}),
     }
 
     const signature = cloudinary.utils.api_sign_request(paramsToSign, cloudinary.config().api_secret)
@@ -26,7 +25,6 @@ export async function POST(req) {
       apiKey: cloudinary.config().api_key,
       cloudName: cloudinary.config().cloud_name,
       folder: paramsToSign.folder,
-      resourceType,
     })
   } catch (error) {
     console.error('Cloudinary sign error:', error)
