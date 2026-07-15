@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { MONTHS, WEEKDAYS, getCalendarDays, isDateInPast } from '../../lib/calendar'
+import { MONTHS, WEEKDAYS, getCalendarDays, isDateInPast } from '../lib/calendar'
 
 const STATUS_STYLES = {
   pending: { bg: 'rgba(233,68,128,0.1)', color: '#e94480', border: 'rgba(233,68,128,0.2)' },
